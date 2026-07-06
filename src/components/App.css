@@ -1,0 +1,10 @@
+.app__loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  background-color: var(--gris-niebla);
+}
