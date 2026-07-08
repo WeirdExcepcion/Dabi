@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import Login from './Login/Login'
 import Home from './Home/Home'
+import Empresas from './Empresas/Empresas'
 import './App.css'
 
 function App() {
@@ -24,10 +26,22 @@ function App() {
   }, [])
 
   if (loading) {
-    return <p>Cargando...</p>
+    return <p className="app__loading">Cargando...</p>
   }
 
-  return session ? <Home session={session} /> : <Login />
+  if (!session) {
+    return <Login />
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Home session={session} />}>
+        <Route index element={<Navigate to="/aprendices" replace />} />
+        <Route path="empresas" element={<Empresas />} />
+        <Route path="aprendices" element={<p>Sección de Aprendices (pendiente)</p>} />
+      </Route>
+    </Routes>
+  )
 }
 
 export default App

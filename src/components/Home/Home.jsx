@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { NavLink, Outlet } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
+import { SECCIONES } from '../../constants/navegacion'
 import logoSS from '../../assets/isotipo-ss.png'
 import './Home.css'
 
@@ -31,6 +33,28 @@ function Home({ session }) {
     await supabase.auth.signOut()
   }
 
+  if (cargandoPerfil) {
+    return <p className="app__loading">Cargando perfil...</p>
+  }
+
+  if (!perfil) {
+    return (
+      <div className="home__sin-perfil">
+        <p className="home__sin-perfil-titulo">Tu cuenta no tiene un perfil asignado</p>
+        <p className="home__sin-perfil-texto">
+          Contacta al administrador del sistema para que configure tu acceso.
+        </p>
+        <button className="home__sin-perfil-boton" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
+      </div>
+    )
+  }
+
+  const seccionesVisibles = SECCIONES.filter((seccion) =>
+    seccion.roles.includes(perfil.rol)
+  )
+
   return (
     <div className="home">
       <header className="home__header">
@@ -46,22 +70,31 @@ function Home({ session }) {
         </div>
       </header>
 
-      <main className="home__content">
-        {cargandoPerfil ? (
-          <p className="home__subtitle">Cargando perfil...</p>
-        ) : perfil ? (
-          <>
-            <p className="home__eyebrow">Rol: {perfil.rol}</p>
-            <h1 className="home__title">Bienvenido, {perfil.nombre_completo}</h1>
-            <p className="home__subtitle">
-              Aún no hay módulos activos. Estamos construyendo el registro de
-              aprendices, la gestión de cursos y la generación de certificados.
-            </p>
-          </>
-        ) : (
-          <h1 className="home__title">No se pudo cargar tu perfil</h1>
-        )}
-      </main>
+      <div className="home__body">
+        <nav className="home__nav">
+          <p className="home__nav-eyebrow">{perfil.rol}</p>
+          <p className="home__nav-nombre">{perfil.nombre_completo}</p>
+
+          <ul className="home__nav-lista">
+            {seccionesVisibles.map((seccion) => (
+              <li key={seccion.ruta}>
+                <NavLink
+                  to={seccion.ruta}
+                  className={({ isActive }) =>
+                    isActive ? 'home__nav-link home__nav-link_activo' : 'home__nav-link'
+                  }
+                >
+                  {seccion.etiqueta}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <main className="home__content">
+          <Outlet context={{ perfil, session }} />
+        </main>
+      </div>
     </div>
   )
 }

@@ -1,0 +1,93 @@
+.form-empresa {
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  padding: 28px;
+  margin-bottom: 28px;
+  background-color: var(--blanco);
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  border-radius: 8px;
+}
+
+.form-empresa__titulo {
+  font-family: var(--font-brand);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0 0 24px;
+}
+
+.form-empresa__label {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 8px;
+}
+
+.form-empresa__input {
+  padding: 11px 14px;
+  margin-bottom: 18px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-empresa__input:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.form-empresa__error {
+  margin: -8px 0 16px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+}
+
+.form-empresa__acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.form-empresa__boton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.form-empresa__boton:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.form-empresa__boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.form-empresa__boton_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.form-empresa__boton_secundario:hover {
+  background-color: var(--gris-niebla);
+  border-color: var(--azul-acero);
+}
