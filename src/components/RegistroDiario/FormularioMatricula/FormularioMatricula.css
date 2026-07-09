@@ -1,0 +1,224 @@
+.form-matricula {
+  max-width: 720px;
+  padding: 28px;
+  margin-bottom: 28px;
+  background-color: var(--blanco);
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  border-radius: 8px;
+}
+
+.form-matricula__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.form-matricula__titulo {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.form-matricula__cerrar {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--texto-secundario);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.form-matricula__cerrar:hover {
+  background-color: var(--gris-niebla);
+}
+
+.form-matricula__seccion {
+  border: none;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+  padding: 20px 0 4px;
+  margin: 0;
+}
+
+.form-matricula__legend {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  padding: 0 10px 0 0;
+}
+
+.form-matricula__fila {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.form-matricula__campo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.form-matricula__campo_corto {
+  flex: 0 0 100px;
+}
+
+.form-matricula__campo_ancho {
+  margin-bottom: 16px;
+}
+
+.form-matricula__label {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.form-matricula__input,
+.form-matricula__select {
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-matricula__input:focus,
+.form-matricula__select:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.form-matricula__input:disabled,
+.form-matricula__select:disabled {
+  background-color: var(--gris-niebla);
+  color: var(--texto-secundario);
+}
+
+.form-matricula__boton-buscar {
+  align-self: flex-end;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.form-matricula__boton-buscar:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.form-matricula__boton-buscar_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.form-matricula__boton-buscar_secundario:hover {
+  background-color: var(--gris-niebla);
+}
+
+.form-matricula__aviso {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 4px 0 0;
+}
+
+.form-matricula__aviso_existe {
+  background-color: rgba(3, 120, 168, 0.1);
+  color: var(--azul-primario);
+}
+
+.form-matricula__aviso_nuevo {
+  background-color: rgba(29, 158, 117, 0.12);
+  color: #0F6E56;
+}
+
+.form-matricula__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.form-matricula__error {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+  margin: 16px 0 0;
+}
+
+.form-matricula__acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+}
+
+.form-matricula__boton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.form-matricula__boton:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.form-matricula__boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.form-matricula__boton_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.form-matricula__boton_secundario:hover {
+  background-color: var(--gris-niebla);
+}
+
+@media (max-width: 620px) {
+  .form-matricula__fila {
+    flex-direction: column;
+  }
+
+  .form-matricula__campo_corto {
+    flex: 1;
+  }
+}

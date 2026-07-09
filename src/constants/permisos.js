@@ -7,3 +7,19 @@ export const PUEDE_CREAR_EMPRESAS = [
   'auxiliar-admin',
   'auxiliar-cont',
 ]
+
+export const PUEDE_CREAR_APRENDICES = [
+  'admin',
+  'gerente-general',
+  'coordinador',
+  'supervisor',
+  'auxiliar-admin',
+]
+
+export const PUEDE_CREAR_MATRICULAS = [
+  'admin',
+  'gerente-general',
+  'coordinador',
+  'supervisor',
+  'auxiliar-admin',
+]

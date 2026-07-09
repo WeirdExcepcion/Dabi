@@ -1,0 +1,124 @@
+.selector-grupo__mensaje {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin: 0;
+}
+
+.selector-grupo__select,
+.selector-grupo__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.selector-grupo__select:focus,
+.selector-grupo__input:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.selector-grupo__nuevo {
+  padding: 20px;
+  background-color: var(--gris-niebla);
+  border: 1.5px solid var(--ceruleo);
+  border-radius: 8px;
+}
+
+.selector-grupo__nuevo-titulo {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 18px;
+}
+
+.selector-grupo__fila {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.selector-grupo__campo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.selector-grupo__label {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.selector-grupo__calculo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--azul-primario);
+  margin: 0 0 14px;
+}
+
+.selector-grupo__error {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+  margin: 0 0 14px;
+}
+
+.selector-grupo__acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.selector-grupo__boton {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.selector-grupo__boton:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.selector-grupo__boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.selector-grupo__boton_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.selector-grupo__boton_secundario:hover {
+  background-color: var(--blanco);
+}
+
+@media (max-width: 560px) {
+  .selector-grupo__fila {
+    flex-direction: column;
+  }
+}

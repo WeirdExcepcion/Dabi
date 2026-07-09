@@ -4,6 +4,8 @@ import { supabase } from '../lib/supabaseClient'
 import Login from './Login/Login'
 import Home from './Home/Home'
 import Empresas from './Empresas/Empresas'
+import Aprendices from './Aprendices/Aprendices'
+import RegistroDiario from './RegistroDiario/RegistroDiario'
 import './App.css'
 
 function App() {
@@ -38,10 +40,15 @@ function App() {
       <Route path="/" element={<Home session={session} />}>
         <Route index element={<Navigate to="/aprendices" replace />} />
         <Route path="empresas" element={<Empresas />} />
-        <Route path="aprendices" element={<p>Sección de Aprendices (pendiente)</p>} />
+        <Route path="aprendices" element={<Aprendices />} />
+        <Route index element={<Navigate to="/registro" replace />} />
+        <Route path="registro" element={<RegistroDiario />} />
+        <Route path="*" element={<Navigate to="/registro" replace />} />
+
       </Route>
     </Routes>
   )
 }
+
 
 export default App
