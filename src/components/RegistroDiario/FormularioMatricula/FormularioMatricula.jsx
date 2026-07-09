@@ -96,6 +96,14 @@ function FormularioMatricula({ onGuardada, onCancelar }) {
     return valor === '' ? null : valor
   }
 
+  function hoyLocal() {
+    const hoy = new Date()
+    const yyyy = hoy.getFullYear()
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0')
+    const dd = String(hoy.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+  }
+
   async function guardar() {
     setError('')
 
@@ -132,6 +140,7 @@ function FormularioMatricula({ onGuardada, onCancelar }) {
       p_cargo_id: opcional(cargoId),
       p_fecha_arl: opcional(fechaArl),
       p_fecha_examen: opcional(fechaExamen),
+      p_fecha_ingreso: hoyLocal(),
     })
 
     setGuardando(false)
