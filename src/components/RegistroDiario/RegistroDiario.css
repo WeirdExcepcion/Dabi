@@ -202,3 +202,34 @@
     align-items: stretch;
   }
 }
+
+.matriculas__td_acciones {
+  width: 60px;
+  text-align: right;
+}
+
+.matriculas__boton-ver {
+  padding: 6px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.matriculas__boton-ver:hover {
+  background-color: var(--gris-niebla);
+}
+.matriculas__td_acciones {
+  width: 140px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.matriculas__boton-ver + .matriculas__boton-ver {
+  margin-left: 6px;
+}

@@ -1,0 +1,236 @@
+.editar-mat {
+  max-width: 720px;
+  padding: 28px;
+  margin-bottom: 28px;
+  background-color: var(--blanco);
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  border-radius: 8px;
+}
+
+.editar-mat__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.editar-mat__titulo {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.editar-mat__cerrar {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--texto-secundario);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.editar-mat__cerrar:hover {
+  background-color: var(--gris-niebla);
+}
+
+.editar-mat__seccion {
+  border: none;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+  padding: 20px 0 4px;
+  margin: 0;
+}
+
+.editar-mat__legend {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  padding: 0 10px 0 0;
+}
+
+.editar-mat__fila {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.editar-mat__campo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.editar-mat__campo_corto {
+  flex: 0 0 100px;
+}
+
+.editar-mat__campo_ancho {
+  margin-bottom: 16px;
+}
+
+.editar-mat__label {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.editar-mat__input,
+.editar-mat__select {
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.editar-mat__input:focus,
+.editar-mat__select:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.editar-mat__input:disabled,
+.editar-mat__select:disabled {
+  background-color: var(--gris-niebla);
+  color: var(--texto-secundario);
+}
+
+.editar-mat__boton-buscar {
+  align-self: flex-end;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.editar-mat__boton-buscar:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.editar-mat__boton-buscar_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.editar-mat__boton-buscar_secundario:hover {
+  background-color: var(--gris-niebla);
+}
+
+.editar-mat__aviso {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 4px 0 0;
+}
+
+.editar-mat__aviso_existe {
+  background-color: rgba(3, 120, 168, 0.1);
+  color: var(--azul-primario);
+}
+
+.editar-mat__aviso_nuevo {
+  background-color: rgba(29, 158, 117, 0.12);
+  color: #0F6E56;
+}
+
+.editar-mat__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.editar-mat__error {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+  margin: 16px 0 0;
+}
+
+.editar-mat__acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+}
+
+.editar-mat__boton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.editar-mat__boton:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.editar-mat__boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.editar-mat__boton_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.editar-mat__boton_secundario:hover {
+  background-color: var(--gris-niebla);
+}
+
+@media (max-width: 620px) {
+  .editar-mat__fila {
+    flex-direction: column;
+  }
+
+  .editar-mat__campo_corto {
+    flex: 1;
+  }
+}
+
+.editar-mat__doc {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.editar-mat__doc-nota {
+  font-size: 12px;
+  font-style: italic;
+}

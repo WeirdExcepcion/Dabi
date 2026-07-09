@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { PUEDE_CREAR_MATRICULAS } from '../../constants/permisos'
+import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS } from '../../constants/permisos'
 import './RegistroDiario.css'
 import FormularioMatricula from './FormularioMatricula/FormularioMatricula'
+import DetalleMatricula from './DetalleMatricula/DetalleMatricula'
+import Modal from '../Modal/Modal'
+import EditarMatricula from './EditarMatricula/EditarMatricula'
+
 
 const ESTADOS = {
   en_proceso: 'En proceso',
@@ -31,13 +35,32 @@ function formatearFechaLarga(iso) {
 const CAMPOS_MATRICULA = `
   id,
   estado,
-  aprendices ( tipo_documento, numero_documento, nombres, apellidos ),
+  fecha_ingreso,
+  fecha_arl,
+  fecha_examen,
+  examen_vence,
+  grupo_id,
+  empresa_id,
+  arl_id,
+  eps_id,
+  area_id,
+  cargo_id,
+  aprendices (
+    tipo_documento, numero_documento, nombres, apellidos,
+    sexo, pais, fecha_nacimiento, rh,
+    niveles_educativos ( nombre )
+  ),
   empresas ( razon_social ),
+  arls ( nombre ),
+  eps ( nombre ),
+  areas ( nombre ),
+  cargos ( nombre ),
   grupos (
     fecha_inicio,
     fecha_fin,
     identificador,
-    cursos ( nombre )
+    cursos ( nombre ),
+    entrenador:entrenador_id ( nombre_completo )
   )
 `
 
@@ -48,6 +71,9 @@ function RegistroDiario() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [mostrandoFormulario, setMostrandoFormulario] = useState(false)
+  const [matriculaViendo, setMatriculaViendo] = useState(null)
+  const [matriculaEditando, setMatriculaEditando] = useState(null)
+  const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
 
   const puedeCrear = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const esHoy = fecha === hoyISO()
@@ -119,6 +145,29 @@ function RegistroDiario() {
         />
       )}
 
+      {matriculaViendo && (
+        <Modal onCerrar={() => setMatriculaViendo(null)}>
+          <DetalleMatricula
+            matricula={matriculaViendo}
+            onCerrar={() => setMatriculaViendo(null)}
+          />
+        </Modal>
+      )}
+
+      {matriculaEditando && (
+        <Modal onCerrar={() => setMatriculaEditando(null)}>
+          <EditarMatricula
+            matricula={matriculaEditando}
+            rol={perfil.rol}
+            onGuardada={() => {
+              setMatriculaEditando(null)
+              obtenerMatriculas()
+            }}
+            onCancelar={() => setMatriculaEditando(null)}
+          />
+        </Modal>
+      )}
+
       {cargando && <p className="matriculas__mensaje">Cargando registro...</p>}
 
       {error && <p className="matriculas__mensaje">{error}</p>}
@@ -148,6 +197,7 @@ function RegistroDiario() {
                     <th className="matriculas__th">Grupo</th>
                     <th className="matriculas__th">Empresa</th>
                     <th className="matriculas__th">Estado</th>
+                    <th className="matriculas__th"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -169,6 +219,22 @@ function RegistroDiario() {
                         <span className={`matriculas__estado matriculas__estado_${matricula.estado}`}>
                           {ESTADOS[matricula.estado]}
                         </span>
+                      </td>
+                      <td className="matriculas__td matriculas__td_acciones">
+                        <button
+                          className="matriculas__boton-ver"
+                          onClick={() => setMatriculaViendo(matricula)}
+                        >
+                          Ver
+                        </button>
+                        {puedeEditar && (
+                          <button
+                            className="matriculas__boton-ver"
+                            onClick={() => setMatriculaEditando(matricula)}
+                          >
+                            Editar
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

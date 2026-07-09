@@ -1,0 +1,34 @@
+.modal__fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: rgba(2, 17, 60, 0.55);
+  overflow-y: auto;
+}
+
+.modal__contenido {
+  width: 100%;
+  max-width: 720px;
+  animation: modal-aparecer 0.18s ease-out;
+}
+
+@keyframes modal-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 560px) {
+  .modal__fondo {
+    padding: 16px 12px;
+  }
+}
