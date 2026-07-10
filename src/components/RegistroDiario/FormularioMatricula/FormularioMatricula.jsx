@@ -22,6 +22,7 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
   const [buscando, setBuscando] = useState(false)
   const [aprendizExistente, setAprendizExistente] = useState(null)
   const [busquedaHecha, setBusquedaHecha] = useState(false)
+  const [ultimaMatricula, setUltimaMatricula] = useState(null)
 
   const [persona, setPersona] = useState(DATOS_PERSONA_VACIOS)
 
@@ -44,6 +45,7 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
   function reiniciarBusqueda() {
     setBusquedaHecha(false)
     setAprendizExistente(null)
+    setUltimaMatricula(null)
     setPersona(DATOS_PERSONA_VACIOS)
     setNumeroDocumento('')
     setError('')
@@ -86,8 +88,26 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
         nivel_educativo_id: data.nivel_educativo_id || '',
         rh: data.rh || '',
       })
+
+      const { data: ultima } = await supabase
+        .from('matriculas')
+        .select(`
+          fecha_arl,
+          fecha_examen,
+          examen_vence,
+          arls ( nombre ),
+          eps ( nombre ),
+          grupos ( fecha_inicio, cursos ( nombre ) )
+        `)
+        .eq('aprendiz_id', data.id)
+        .order('id', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      setUltimaMatricula(ultima || null)
     } else {
       setAprendizExistente(null)
+      setUltimaMatricula(null)
       setPersona(DATOS_PERSONA_VACIOS)
     }
   }
@@ -102,6 +122,12 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
     const mm = String(hoy.getMonth() + 1).padStart(2, '0')
     const dd = String(hoy.getDate()).padStart(2, '0')
     return `${yyyy}-${mm}-${dd}`
+  }
+
+  function formatearFechaCorta(iso) {
+    if (!iso) return '—'
+    const [anio, mes, dia] = iso.split('-')
+    return `${dia}/${mes}/${anio}`
   }
 
   async function guardar() {
@@ -232,9 +258,59 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
         </div>
 
         {busquedaHecha && aprendizExistente && (
-          <p className="form-matricula__aviso form-matricula__aviso_existe">
-            Aprendiz ya registrado. Sus datos se autocompletaron; revisa que sigan vigentes.
-          </p>
+          <>
+            <p className="form-matricula__aviso form-matricula__aviso_existe">
+              Aprendiz ya registrado. Sus datos se autocompletaron; revisa que sigan vigentes.
+            </p>
+
+            {ultimaMatricula && (
+              <div className="form-matricula__referencia">
+                <p className="form-matricula__referencia-titulo">
+                  Referencia de su último curso
+                  {ultimaMatricula.grupos && (
+                    <span className="form-matricula__referencia-curso">
+                      {' · '}
+                      {ultimaMatricula.grupos.cursos.nombre}
+                      {' · '}
+                      {formatearFechaCorta(ultimaMatricula.grupos.fecha_inicio)}
+                    </span>
+                  )}
+                </p>
+                <div className="form-matricula__referencia-datos">
+                  <span>
+                    <strong>ARL:</strong> {ultimaMatricula.arls?.nombre || '—'}
+                    {ultimaMatricula.fecha_arl && (
+                      <span className="form-matricula__referencia-fecha">
+                        {' '}({formatearFechaCorta(ultimaMatricula.fecha_arl)})
+                      </span>
+                    )}
+                  </span>
+                  <span>
+                    <strong>EPS:</strong> {ultimaMatricula.eps?.nombre || '—'}
+                  </span>
+                  <span>
+                    <strong>Examen:</strong> {formatearFechaCorta(ultimaMatricula.fecha_examen)}
+                    {ultimaMatricula.examen_vence && (
+                      <span
+                        className={
+                          ultimaMatricula.examen_vence < hoyLocal()
+                            ? 'form-matricula__referencia-vencido'
+                            : 'form-matricula__referencia-vigente'
+                        }
+                      >
+                        {ultimaMatricula.examen_vence < hoyLocal()
+                          ? ' (vencido)'
+                          : ` (vigente hasta ${formatearFechaCorta(ultimaMatricula.examen_vence)})`}
+                      </span>
+                    )}
+                  </span>
+                </div>
+                <p className="form-matricula__referencia-nota">
+                  Estos datos no se copian automáticamente: cada curso guarda los suyos.
+                </p>
+              </div>
+            )}
+          </>
         )}
 
         {busquedaHecha && !aprendizExistente && (

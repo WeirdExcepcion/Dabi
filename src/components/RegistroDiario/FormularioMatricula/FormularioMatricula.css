@@ -230,3 +230,61 @@
   color: var(--azul-medianoche);
   background-color: var(--gris-niebla);
 }
+
+.form-matricula__referencia {
+  padding: 14px 16px;
+  margin-top: 10px;
+  background-color: var(--gris-niebla);
+  border-radius: 6px;
+}
+
+.form-matricula__referencia-titulo {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+  margin: 0 0 10px;
+}
+
+.form-matricula__referencia-curso {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.form-matricula__referencia-datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--azul-medianoche);
+}
+
+.form-matricula__referencia-datos strong {
+  font-weight: 500;
+  color: var(--texto-secundario);
+}
+
+.form-matricula__referencia-vencido {
+  color: #B3261E;
+  font-weight: 500;
+}
+
+.form-matricula__referencia-vigente {
+  color: #0F6E56;
+}
+
+.form-matricula__referencia-nota {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--texto-secundario);
+  margin: 10px 0 0;
+}
+
+.form-matricula__referencia-fecha {
+  color: var(--texto-secundario);
+}

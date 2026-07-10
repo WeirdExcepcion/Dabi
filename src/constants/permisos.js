@@ -38,3 +38,10 @@ export const PUEDE_CAMBIAR_ESTADO_GRUPO = [
   'coordinador',
   'supervisor',
 ]
+
+export const PUEDE_CORREGIR_DOCUMENTO = [
+  'admin',
+  'gerente-general',
+  'coordinador',
+  'supervisor',
+]
