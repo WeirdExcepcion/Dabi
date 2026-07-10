@@ -14,7 +14,7 @@ const DATOS_PERSONA_VACIOS = {
   rh: '',
 }
 
-function FormularioMatricula({ onGuardada, onCancelar }) {
+function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
   const { catalogos, cargando: cargandoCatalogos } = useCatalogos()
 
   const [tipoDocumento, setTipoDocumento] = useState('CC')
@@ -25,7 +25,7 @@ function FormularioMatricula({ onGuardada, onCancelar }) {
 
   const [persona, setPersona] = useState(DATOS_PERSONA_VACIOS)
 
-  const [grupoId, setGrupoId] = useState(null)
+  const [grupoId, setGrupoId] = useState(grupoFijo ? grupoFijo.id : null)
   const [empresaId, setEmpresaId] = useState('')
   const [arlId, setArlId] = useState('')
   const [epsId, setEpsId] = useState('')
@@ -354,7 +354,18 @@ function FormularioMatricula({ onGuardada, onCancelar }) {
 
             <div className="form-matricula__campo form-matricula__campo_ancho">
               <label className="form-matricula__label">Grupo *</label>
-              <SelectorGrupo valor={grupoId} onCambio={setGrupoId} />
+              {grupoFijo ? (
+                <p className="form-matricula__grupo-fijo">
+                  {grupoFijo.cursos.nombre}
+                  {grupoFijo.identificador && ` (${grupoFijo.identificador})`}
+                  {' · '}
+                  {grupoFijo.fecha_inicio.split('-').reverse().join('/')}
+                  {' – '}
+                  {grupoFijo.fecha_fin.split('-').reverse().join('/')}
+                </p>
+              ) : (
+                <SelectorGrupo valor={grupoId} onCambio={setGrupoId} />
+              )}
             </div>
 
             <div className="form-matricula__fila">

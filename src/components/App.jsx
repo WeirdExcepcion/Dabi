@@ -6,7 +6,11 @@ import Home from './Home/Home'
 import Empresas from './Empresas/Empresas'
 import Aprendices from './Aprendices/Aprendices'
 import RegistroDiario from './RegistroDiario/RegistroDiario'
+import Grupos from './Grupos/Grupos'
+import DetalleGrupo from './DetalleGrupo/DetalleGrupo'
+
 import './App.css'
+
 
 function App() {
   const [session, setSession] = useState(null)
@@ -44,6 +48,8 @@ function App() {
         <Route index element={<Navigate to="/registro" replace />} />
         <Route path="registro" element={<RegistroDiario />} />
         <Route path="*" element={<Navigate to="/registro" replace />} />
+        <Route path="grupos" element={<Grupos />} />
+        <Route path="grupos/:grupoId" element={<DetalleGrupo />} />
 
       </Route>
     </Routes>

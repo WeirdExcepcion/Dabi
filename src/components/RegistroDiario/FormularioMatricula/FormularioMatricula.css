@@ -1,9 +1,6 @@
 .form-matricula {
-  max-width: 720px;
   padding: 28px;
-  margin-bottom: 28px;
   background-color: var(--blanco);
-  border: 1px solid rgba(2, 17, 60, 0.08);
   border-radius: 8px;
 }
 
@@ -221,4 +218,15 @@
   .form-matricula__campo_corto {
     flex: 1;
   }
+}
+
+.form-matricula__grupo-fijo {
+  padding: 11px 14px;
+  margin: 0;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--gris-niebla);
 }

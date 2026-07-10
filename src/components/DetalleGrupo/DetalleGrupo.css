@@ -1,0 +1,221 @@
+.det-grupo__volver {
+  padding: 6px 0;
+  margin-bottom: 16px;
+  border: none;
+  background: transparent;
+  color: var(--texto-secundario);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.det-grupo__volver:hover {
+  color: var(--ceruleo);
+}
+
+.det-grupo__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.det-grupo__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 6px;
+}
+
+.det-grupo__titulo {
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.det-grupo__id {
+  font-weight: 400;
+  color: var(--texto-secundario);
+}
+
+.det-grupo__detalle {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.det-grupo__boton-agregar {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.det-grupo__boton-agregar:hover {
+  background-color: var(--ceruleo);
+}
+
+.det-grupo__aviso {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  padding: 11px 15px;
+  border-radius: 6px;
+  background-color: rgba(234, 145, 12, 0.14);
+  color: #B36A00;
+  margin: 0 0 20px;
+}
+
+.det-grupo__resumen {
+  margin-bottom: 12px;
+}
+
+.det-grupo__conteo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+}
+
+.det-grupo__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.det-grupo__tabla-wrap {
+  background-color: var(--blanco);
+  border-radius: 8px;
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  overflow-x: auto;
+}
+
+.det-grupo__tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.det-grupo__th {
+  padding: 14px 16px;
+  text-align: left;
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+  border-bottom: 1px solid rgba(2, 17, 60, 0.08);
+  white-space: nowrap;
+}
+
+.det-grupo__td {
+  padding: 14px 16px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  border-bottom: 1px solid rgba(2, 17, 60, 0.05);
+}
+
+.det-grupo__td_indice {
+  color: var(--texto-secundario);
+  width: 40px;
+}
+
+.det-grupo__td_doc {
+  white-space: nowrap;
+}
+
+.det-grupo__td_principal {
+  font-weight: 500;
+}
+
+.det-grupo__td_acciones {
+  width: 140px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.det-grupo__tabla tbody tr:last-child .det-grupo__td {
+  border-bottom: none;
+}
+
+.det-grupo__tabla tbody tr:hover {
+  background-color: var(--gris-niebla);
+}
+
+.det-grupo__boton-accion {
+  padding: 6px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.det-grupo__boton-accion:hover {
+  background-color: var(--gris-niebla);
+}
+
+.det-grupo__boton-accion + .det-grupo__boton-accion {
+  margin-left: 6px;
+}
+
+.det-grupo__estado {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.det-grupo__estado_en_proceso {
+  background-color: rgba(3, 120, 168, 0.12);
+  color: var(--ceruleo);
+}
+
+.det-grupo__estado_faltan_documentos {
+  background-color: rgba(234, 145, 12, 0.14);
+  color: #B36A00;
+}
+
+.det-grupo__estado_esperando_fecha {
+  background-color: rgba(79, 126, 167, 0.16);
+  color: var(--azul-primario);
+}
+
+.det-grupo__estado_certificado {
+  background-color: rgba(29, 158, 117, 0.14);
+  color: #0F6E56;
+}
+
+.det-grupo__estado_anulado {
+  background-color: rgba(179, 38, 30, 0.1);
+  color: #B3261E;
+}
+
+@media (max-width: 720px) {
+  .det-grupo__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

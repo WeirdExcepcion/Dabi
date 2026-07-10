@@ -136,13 +136,15 @@ function RegistroDiario() {
       </header>
 
       {mostrandoFormulario && (
-        <FormularioMatricula
-          onGuardada={() => {
-            setMostrandoFormulario(false)
-            obtenerMatriculas()
-          }}
-          onCancelar={() => setMostrandoFormulario(false)}
-        />
+        <Modal onCerrar={() => setMostrandoFormulario(false)}>
+          <FormularioMatricula
+            onGuardada={() => {
+              setMostrandoFormulario(false)
+              obtenerMatriculas()
+            }}
+            onCancelar={() => setMostrandoFormulario(false)}
+          />
+        </Modal>
       )}
 
       {matriculaViendo && (
