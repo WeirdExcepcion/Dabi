@@ -80,3 +80,25 @@
 .empresas__tabla tbody tr:hover {
   background-color: var(--gris-niebla);
 }
+
+.empresas__td_acciones {
+  width: 90px;
+  text-align: right;
+}
+
+.empresas__boton-editar {
+  padding: 6px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.empresas__boton-editar:hover {
+  background-color: var(--gris-niebla);
+}

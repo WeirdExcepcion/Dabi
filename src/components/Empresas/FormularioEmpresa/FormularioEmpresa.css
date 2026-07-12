@@ -91,3 +91,11 @@
   background-color: var(--gris-niebla);
   border-color: var(--azul-acero);
 }
+
+.form-empresa__ayuda {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--texto-secundario);
+  margin: -12px 0 18px;
+}

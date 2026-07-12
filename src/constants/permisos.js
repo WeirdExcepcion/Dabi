@@ -45,3 +45,10 @@ export const PUEDE_CORREGIR_DOCUMENTO = [
   'coordinador',
   'supervisor',
 ]
+
+export const PUEDE_EDITAR_EMPRESAS = [
+  'admin',
+  'gerente-general',
+  'coordinador',
+  'supervisor',
+]

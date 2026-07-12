@@ -451,7 +451,17 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
                   id="empresa"
                   className="form-matricula__select"
                   value={empresaId}
-                  onChange={(e) => setEmpresaId(e.target.value)}
+                  onChange={(e) => {
+                    const nuevaEmpresaId = e.target.value
+                    setEmpresaId(nuevaEmpresaId)
+
+                    const empresaElegida = catalogos.empresas.find(
+                      (emp) => String(emp.id) === String(nuevaEmpresaId)
+                    )
+                    if (empresaElegida?.arl_id && !arlId) {
+                      setArlId(String(empresaElegida.arl_id))
+                    }
+                  }}
                 >
                   <option value="">Selecciona…</option>
                   {catalogos.empresas.map((empresa) => (

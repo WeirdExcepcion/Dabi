@@ -1,50 +1,83 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabaseClient'
 import './FormularioEmpresa.css'
 
-function FormularioEmpresa({ onCreada, onCancelar }) {
-  const [razonSocial, setRazonSocial] = useState('')
-  const [nit, setNit] = useState('')
-  const [representanteLegal, setRepresentanteLegal] = useState('')
-  const [correo, setCorreo] = useState('')
-  const [telefono, setTelefono] = useState('')
+function FormularioEmpresa({ empresa = null, onGuardada, onCancelar }) {
+  const esEdicion = empresa !== null
+
+  const [razonSocial, setRazonSocial] = useState(empresa?.razon_social || '')
+  const [nit, setNit] = useState(empresa?.nit || '')
+  const [representanteLegal, setRepresentanteLegal] = useState(empresa?.representante_legal || '')
+  const [correo, setCorreo] = useState(empresa?.correo || '')
+  const [telefono, setTelefono] = useState(empresa?.telefono || '')
+  const [arlId, setArlId] = useState(empresa?.arl_id || '')
+
+  const [arls, setArls] = useState([])
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
+
+  useEffect(() => {
+    async function cargarArls() {
+      const { data } = await supabase
+        .from('arls')
+        .select('id, nombre')
+        .eq('activo', true)
+        .order('nombre')
+      if (data) setArls(data)
+    }
+    cargarArls()
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
     setGuardando(true)
 
-    const { data, error } = await supabase
-      .from('empresas')
-      .insert({
-        razon_social: razonSocial,
-        nit: nit || null,
-        representante_legal: representanteLegal || null,
-        correo: correo || null,
-        telefono: telefono || null,
-      })
-      .select()
-      .single()
+    const datos = {
+      razon_social: razonSocial,
+      nit: nit || null,
+      representante_legal: representanteLegal || null,
+      correo: correo || null,
+      telefono: telefono || null,
+      arl_id: arlId ? Number(arlId) : null,
+    }
 
-    if (error) {
-      if (error.code === '23505') {
+    let resultado
+    if (esEdicion) {
+      resultado = await supabase
+        .from('empresas')
+        .update(datos)
+        .eq('id', empresa.id)
+        .select('*, arls ( nombre )')
+        .single()
+    } else {
+      resultado = await supabase
+        .from('empresas')
+        .insert(datos)
+        .select('*, arls ( nombre )')
+        .single()
+    }
+
+    setGuardando(false)
+
+    if (resultado.error) {
+      if (resultado.error.code === '23505') {
         setError('Ya existe una empresa con ese NIT')
       } else {
         setError('No se pudo guardar la empresa')
       }
-      console.error(error.message)
-      setGuardando(false)
+      console.error(resultado.error.message)
       return
     }
 
-    onCreada(data)
+    onGuardada(resultado.data)
   }
 
   return (
     <form className="form-empresa" onSubmit={handleSubmit}>
-      <h2 className="form-empresa__titulo">Nueva empresa</h2>
+      <h2 className="form-empresa__titulo">
+        {esEdicion ? 'Editar empresa' : 'Nueva empresa'}
+      </h2>
 
       <label className="form-empresa__label" htmlFor="razon_social">
         Razón social *
@@ -97,6 +130,22 @@ function FormularioEmpresa({ onCreada, onCancelar }) {
         onChange={(e) => setTelefono(e.target.value)}
       />
 
+      <label className="form-empresa__label" htmlFor="arl">ARL por defecto</label>
+      <select
+        id="arl"
+        className="form-empresa__input"
+        value={arlId}
+        onChange={(e) => setArlId(e.target.value)}
+      >
+        <option value="">Sin asignar</option>
+        {arls.map((arl) => (
+          <option key={arl.id} value={arl.id}>{arl.nombre}</option>
+        ))}
+      </select>
+      <p className="form-empresa__ayuda">
+        Se sugerirá automáticamente al matricular aprendices de esta empresa.
+      </p>
+
       {error && <p className="form-empresa__error">{error}</p>}
 
       <div className="form-empresa__acciones">
@@ -112,7 +161,7 @@ function FormularioEmpresa({ onCreada, onCancelar }) {
           className="form-empresa__boton"
           disabled={guardando}
         >
-          {guardando ? 'Guardando...' : 'Guardar empresa'}
+          {guardando ? 'Guardando…' : esEdicion ? 'Guardar cambios' : 'Guardar empresa'}
         </button>
       </div>
     </form>

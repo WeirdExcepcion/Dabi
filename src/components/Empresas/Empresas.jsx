@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { PUEDE_CREAR_EMPRESAS } from '../../constants/permisos'
+import { PUEDE_CREAR_EMPRESAS, PUEDE_EDITAR_EMPRESAS } from '../../constants/permisos'
+import Modal from '../Modal/Modal'
 import FormularioEmpresa from './FormularioEmpresa/FormularioEmpresa'
 import './Empresas.css'
 
@@ -11,14 +12,16 @@ function Empresas() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [mostrandoFormulario, setMostrandoFormulario] = useState(false)
+  const [empresaEditando, setEmpresaEditando] = useState(null)
 
   const puedeCrear = PUEDE_CREAR_EMPRESAS.includes(perfil.rol)
+  const puedeEditar = PUEDE_EDITAR_EMPRESAS.includes(perfil.rol)
 
   useEffect(() => {
     async function obtenerEmpresas() {
       const { data, error } = await supabase
         .from('empresas')
-        .select('id, razon_social, nit, representante_legal, correo, telefono')
+        .select('id, razon_social, nit, representante_legal, correo, telefono, arl_id, arls ( nombre )')
         .order('razon_social', { ascending: true })
 
       if (error) {
@@ -41,6 +44,15 @@ function Empresas() {
       )
     )
     setMostrandoFormulario(false)
+  }
+
+  function handleEmpresaEditada(empresaActualizada) {
+    setEmpresas((anteriores) =>
+      anteriores
+        .map((e) => (e.id === empresaActualizada.id ? empresaActualizada : e))
+        .sort((a, b) => a.razon_social.localeCompare(b.razon_social))
+    )
+    setEmpresaEditando(null)
   }
 
   if (cargando) {
@@ -73,10 +85,22 @@ function Empresas() {
       </header>
 
       {mostrandoFormulario && (
-        <FormularioEmpresa
-          onCreada={handleEmpresaCreada}
-          onCancelar={() => setMostrandoFormulario(false)}
-        />
+        <Modal onCerrar={() => setMostrandoFormulario(false)}>
+          <FormularioEmpresa
+            onGuardada={handleEmpresaCreada}
+            onCancelar={() => setMostrandoFormulario(false)}
+          />
+        </Modal>
+      )}
+
+      {empresaEditando && (
+        <Modal onCerrar={() => setEmpresaEditando(null)}>
+          <FormularioEmpresa
+            empresa={empresaEditando}
+            onGuardada={handleEmpresaEditada}
+            onCancelar={() => setEmpresaEditando(null)}
+          />
+        </Modal>
       )}
 
       {empresas.length === 0 ? (
@@ -91,6 +115,8 @@ function Empresas() {
                 <th className="empresas__th">Representante legal</th>
                 <th className="empresas__th">Correo</th>
                 <th className="empresas__th">Teléfono</th>
+                <th className="empresas__th">ARL</th>
+                <th className="empresas__th"></th>
               </tr>
             </thead>
             <tbody>
@@ -101,6 +127,17 @@ function Empresas() {
                   <td className="empresas__td">{empresa.representante_legal || '—'}</td>
                   <td className="empresas__td">{empresa.correo || '—'}</td>
                   <td className="empresas__td">{empresa.telefono || '—'}</td>
+                  <td className="empresas__td">{empresa.arls?.nombre || '—'}</td>
+                  <td className="empresas__td empresas__td_acciones">
+                    {puedeEditar && (
+                      <button
+                        className="empresas__boton-editar"
+                        onClick={() => setEmpresaEditando(empresa)}
+                      >
+                        Editar
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

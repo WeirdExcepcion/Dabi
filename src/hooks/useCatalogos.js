@@ -15,7 +15,7 @@ export function useCatalogos() {
   useEffect(() => {
     async function cargar() {
       const [empresas, arls, eps, areas, cargos, niveles] = await Promise.all([
-        supabase.from('empresas').select('id, razon_social').order('razon_social'),
+        supabase.from('empresas').select('id, razon_social,arl_id').order('razon_social'),
         supabase.from('arls').select('id, nombre').eq('activo', true).order('nombre'),
         supabase.from('eps').select('id, nombre').eq('activo', true).order('nombre'),
         supabase.from('areas').select('id, nombre').eq('activo', true).order('nombre'),
