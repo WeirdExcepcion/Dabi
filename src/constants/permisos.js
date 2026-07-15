@@ -52,3 +52,10 @@ export const PUEDE_EDITAR_EMPRESAS = [
   'coordinador',
   'supervisor',
 ]
+
+export const PUEDE_APROBAR = [
+  'admin',
+  'gerente-general',
+  'coordinador',
+  'supervisor',
+]

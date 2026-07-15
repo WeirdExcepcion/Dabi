@@ -5,6 +5,11 @@ export const SECCIONES = [
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
   },
   {
+    ruta: '/aprobacion',
+    etiqueta: 'Aprobación',
+    roles: ['admin', 'gerente-general', 'coordinador', 'supervisor'],
+  },
+  {
     ruta: '/grupos',
     etiqueta: 'Grupos',
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
@@ -20,3 +25,4 @@ export const SECCIONES = [
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
   },
 ]
+

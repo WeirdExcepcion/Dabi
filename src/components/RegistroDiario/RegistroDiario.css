@@ -233,3 +233,13 @@
 .matriculas__boton-ver + .matriculas__boton-ver {
   margin-left: 6px;
 }
+
+.matriculas__estado_completo {
+  background-color: rgba(3, 120, 168, 0.18);
+  color: #025A7E;
+}
+
+.matriculas__estado_aprobado {
+  background-color: rgba(29, 158, 117, 0.2);
+  color: #0A5240;
+}

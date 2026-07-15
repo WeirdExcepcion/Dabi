@@ -1,0 +1,87 @@
+.sel-estado {
+  display: inline-block;
+}
+
+.sel-estado__select {
+  padding: 5px 8px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.sel-estado__select:hover {
+  border-color: var(--azul-acero);
+}
+
+.sel-estado__select:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+}
+
+.sel-estado__select:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.sel-estado__fijo {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sel-estado__select_en_proceso,
+.sel-estado__fijo_en_proceso {
+  background-color: rgba(3, 120, 168, 0.12);
+  color: var(--ceruleo);
+}
+
+.sel-estado__select_faltan_documentos,
+.sel-estado__fijo_faltan_documentos {
+  background-color: rgba(234, 145, 12, 0.14);
+  color: #B36A00;
+}
+
+.sel-estado__select_esperando_fecha,
+.sel-estado__fijo_esperando_fecha {
+  background-color: rgba(79, 126, 167, 0.16);
+  color: var(--azul-primario);
+}
+
+.sel-estado__select_completo,
+.sel-estado__fijo_completo {
+  background-color: rgba(3, 120, 168, 0.18);
+  color: #025A7E;
+}
+
+.sel-estado__select_aprobado,
+.sel-estado__fijo_aprobado {
+  background-color: rgba(29, 158, 117, 0.2);
+  color: #0A5240;
+}
+
+.sel-estado__select_certificado,
+.sel-estado__fijo_certificado {
+  background-color: rgba(29, 158, 117, 0.14);
+  color: #0F6E56;
+}
+
+.sel-estado__select_anulado,
+.sel-estado__fijo_anulado {
+  background-color: rgba(179, 38, 30, 0.1);
+  color: #B3261E;
+}
+
+.sel-estado__error {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  color: #B3261E;
+  margin: 4px 0 0;
+}

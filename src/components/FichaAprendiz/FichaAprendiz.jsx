@@ -5,14 +5,7 @@ import { PUEDE_CORREGIR_DOCUMENTO } from '../../constants/permisos'
 import Modal from '../Modal/Modal'
 import CorregirDocumento from './CorregirDocumento/CorregirDocumento'
 import './FichaAprendiz.css'
-
-const ESTADOS = {
-  en_proceso: 'En proceso',
-  faltan_documentos: 'Faltan documentos',
-  esperando_fecha: 'Esperando fecha',
-  certificado: 'Certificado',
-  anulado: 'Anulado',
-}
+import { ESTADOS_MATRICULA as ESTADOS } from '../../constants/estados'
 
 function formatearFecha(iso) {
   if (!iso) return '—'

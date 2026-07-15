@@ -7,15 +7,9 @@ import FormularioMatricula from './FormularioMatricula/FormularioMatricula'
 import DetalleMatricula from './DetalleMatricula/DetalleMatricula'
 import Modal from '../Modal/Modal'
 import EditarMatricula from './EditarMatricula/EditarMatricula'
+import { ESTADOS_MATRICULA as ESTADOS } from '../../constants/estados'
+import SelectorEstado from '../SelectorEstado/SelectorEstado'
 
-
-const ESTADOS = {
-  en_proceso: 'En proceso',
-  faltan_documentos: 'Faltan documentos',
-  esperando_fecha: 'Esperando fecha',
-  certificado: 'Certificado',
-  anulado: 'Anulado',
-}
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
@@ -77,6 +71,12 @@ function RegistroDiario() {
 
   const puedeCrear = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const esHoy = fecha === hoyISO()
+
+  function actualizarEstadoLocal(matriculaId, nuevoEstado) {
+    setMatriculas((anteriores) =>
+      anteriores.map((m) => (m.id === matriculaId ? { ...m, estado: nuevoEstado } : m))
+    )
+  }
 
   async function obtenerMatriculas() {
     setCargando(true)
@@ -218,9 +218,11 @@ function RegistroDiario() {
                       </td>
                       <td className="matriculas__td">{matricula.empresas.razon_social}</td>
                       <td className="matriculas__td">
-                        <span className={`matriculas__estado matriculas__estado_${matricula.estado}`}>
-                          {ESTADOS[matricula.estado]}
-                        </span>
+                        <SelectorEstado
+                          matricula={matricula}
+                          rol={perfil.rol}
+                          onCambiado={(nuevo) => actualizarEstadoLocal(matricula.id, nuevo)}
+                        />
                       </td>
                       <td className="matriculas__td matriculas__td_acciones">
                         <button

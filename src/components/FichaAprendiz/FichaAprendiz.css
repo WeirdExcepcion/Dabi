@@ -265,3 +265,13 @@
   color: #B3261E;
   border-color: #B3261E;
 }
+
+.ficha__estado_completo {
+  background-color: rgba(3, 120, 168, 0.18);
+  color: #025A7E;
+}
+
+.ficha__estado_aprobado {
+  background-color: rgba(29, 158, 117, 0.2);
+  color: #0A5240;
+}

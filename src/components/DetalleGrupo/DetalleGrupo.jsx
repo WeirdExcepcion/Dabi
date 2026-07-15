@@ -6,15 +6,8 @@ import Modal from '../Modal/Modal'
 import FormularioMatricula from '../RegistroDiario/FormularioMatricula/FormularioMatricula'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
 import EditarMatricula from '../RegistroDiario/EditarMatricula/EditarMatricula'
+import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import './DetalleGrupo.css'
-
-const ESTADOS = {
-  en_proceso: 'En proceso',
-  faltan_documentos: 'Faltan documentos',
-  esperando_fecha: 'Esperando fecha',
-  certificado: 'Certificado',
-  anulado: 'Anulado',
-}
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -79,6 +72,12 @@ function DetalleGrupo() {
 
   const puedeAgregar = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
+
+  function actualizarEstadoLocal(matriculaId, nuevoEstado) {
+    setMatriculas((anteriores) =>
+      anteriores.map((m) => (m.id === matriculaId ? { ...m, estado: nuevoEstado } : m))
+    )
+  }
 
   async function cargarDatos() {
     setCargando(true)
@@ -232,9 +231,11 @@ function DetalleGrupo() {
                   <td className="det-grupo__td">{matricula.empresas.razon_social}</td>
                   <td className="det-grupo__td">{formatearFecha(matricula.fecha_ingreso)}</td>
                   <td className="det-grupo__td">
-                    <span className={`det-grupo__estado det-grupo__estado_${matricula.estado}`}>
-                      {ESTADOS[matricula.estado]}
-                    </span>
+                    <SelectorEstado
+                      matricula={matricula}
+                      rol={perfil.rol}
+                      onCambiado={(nuevo) => actualizarEstadoLocal(matricula.id, nuevo)}
+                    />
                   </td>
                   <td className="det-grupo__td det-grupo__td_acciones">
                     <button

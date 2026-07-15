@@ -7,6 +7,7 @@ import Empresas from './Empresas/Empresas'
 import Aprendices from './Aprendices/Aprendices'
 import FichaAprendiz from './FichaAprendiz/FichaAprendiz'
 import RegistroDiario from './RegistroDiario/RegistroDiario'
+import Aprobacion from './Aprobacion/Aprobacion'
 import Grupos from './Grupos/Grupos'
 import DetalleGrupo from './DetalleGrupo/DetalleGrupo'
 
@@ -49,6 +50,7 @@ function App() {
         <Route path="aprendices/:aprendizId" element={<FichaAprendiz />} />
         <Route index element={<Navigate to="/registro" replace />} />
         <Route path="registro" element={<RegistroDiario />} />
+        <Route path="aprobacion" element={<Aprobacion />} />
         <Route path="*" element={<Navigate to="/registro" replace />} />
         <Route path="grupos" element={<Grupos />} />
         <Route path="grupos/:grupoId" element={<DetalleGrupo />} />

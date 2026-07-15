@@ -1,12 +1,6 @@
 import './DetalleMatricula.css'
+import { ESTADOS_MATRICULA as ESTADOS } from '../../../constants/estados'
 
-const ESTADOS = {
-  en_proceso: 'En proceso',
-  faltan_documentos: 'Faltan documentos',
-  esperando_fecha: 'Esperando fecha',
-  certificado: 'Certificado',
-  anulado: 'Anulado',
-}
 
 function formatearFecha(iso) {
   if (!iso) return '—'

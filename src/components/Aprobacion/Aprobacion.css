@@ -1,0 +1,168 @@
+.aprob__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.aprob__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 6px;
+}
+
+.aprob__titulo {
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.aprob__subtitulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.aprob__conteo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  white-space: nowrap;
+}
+
+.aprob__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.aprob__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aprob__tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 22px;
+  background-color: var(--blanco);
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  border-radius: 8px;
+}
+
+.aprob__tarjeta-principal {
+  min-width: 0;
+}
+
+.aprob__nombre {
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0 0 3px;
+}
+
+.aprob__doc,
+.aprob__grupo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin: 0;
+}
+
+.aprob__grupo {
+  margin-top: 2px;
+}
+
+.aprob__avisos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.aprob__aviso {
+  padding: 3px 9px;
+  border-radius: 10px;
+  background-color: rgba(234, 145, 12, 0.14);
+  color: #B36A00;
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.aprob__acciones {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.aprob__boton {
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.aprob__boton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.aprob__boton_ver {
+  border: 1.5px solid var(--azul-acero);
+  background-color: transparent;
+  color: var(--azul-medianoche);
+}
+
+.aprob__boton_ver:hover {
+  background-color: var(--gris-niebla);
+}
+
+.aprob__boton_devolver {
+  border: 1.5px solid rgba(234, 145, 12, 0.5);
+  background-color: transparent;
+  color: #B36A00;
+}
+
+.aprob__boton_devolver:hover:not(:disabled) {
+  background-color: rgba(234, 145, 12, 0.1);
+}
+
+.aprob__boton_aprobar {
+  border: none;
+  background-color: #1D9E75;
+  color: var(--blanco);
+  font-weight: 600;
+}
+
+.aprob__boton_aprobar:hover:not(:disabled) {
+  background-color: #178560;
+}
+
+@media (max-width: 720px) {
+  .aprob__tarjeta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .aprob__acciones {
+    justify-content: flex-end;
+  }
+}
