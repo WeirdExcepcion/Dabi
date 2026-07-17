@@ -275,3 +275,29 @@
   background-color: rgba(29, 158, 117, 0.2);
   color: #0A5240;
 }
+
+.ficha__td_cert {
+  white-space: nowrap;
+}
+
+.ficha__codigo {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #0F6E56;
+  background-color: rgba(29, 158, 117, 0.14);
+  padding: 4px 9px;
+  border-radius: 4px;
+}
+
+.ficha__codigo-revocado {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  color: #B3261E;
+}
+
+.ficha__sin-cert {
+  color: var(--texto-secundario);
+}

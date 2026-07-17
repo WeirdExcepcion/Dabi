@@ -54,7 +54,8 @@ const CAMPOS_MATRICULA = `
     identificador,
     cursos ( nombre ),
     entrenador:entrenador_id ( nombre_completo )
-  )
+  ),
+  certificados ( codigo, estado, emitido_en )
 `
 
 function DetalleGrupo() {

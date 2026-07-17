@@ -14,6 +14,8 @@
 
   --font-brand: 'Poppins', sans-serif;
 
+  --font-mono: 'SF Mono', 'Consolas', 'Monaco', monospace;
+
   --gradient-marca:
     radial-gradient(70% 55% at 50% 110%, rgba(3, 120, 168, 0.85), transparent 72%),
     linear-gradient(160deg, #020814, #02113C 45%, #023170);

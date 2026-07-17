@@ -20,6 +20,8 @@ function Dato({ etiqueta, valor }) {
 function DetalleMatricula({ matricula, onCerrar }) {
   const a = matricula.aprendices
   const g = matricula.grupos
+  const certificado = matricula.certificados?.find((c) => c.estado === 'vigente')
+  console.log('Certificados de esta matrícula:', matricula.certificados)
 
   const examenVencido =
     matricula.examen_vence && matricula.examen_vence < new Date().toISOString().slice(0, 10)
@@ -99,6 +101,24 @@ function DetalleMatricula({ matricula, onCerrar }) {
           </div>
         </div>
       </div>
+
+      {certificado && (
+        <div className="detalle__seccion">
+          <p className="detalle__seccion-titulo">Certificado</p>
+          <div className="detalle__certificado">
+            <div>
+              <p className="detalle__etiqueta">Código de verificación</p>
+              <code className="detalle__codigo">{certificado.codigo}</code>
+            </div>
+            <div>
+              <p className="detalle__etiqueta">Emitido</p>
+              <p className="detalle__valor">
+                {new Date(certificado.emitido_en).toLocaleDateString('es-CO')}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="detalle__pie">
         <Dato etiqueta="Fecha de ingreso" valor={formatearFecha(matricula.fecha_ingreso)} />

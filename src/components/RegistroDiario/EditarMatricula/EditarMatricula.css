@@ -234,3 +234,64 @@
   font-size: 12px;
   font-style: italic;
 }
+
+.editar-mat__cert-alerta {
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background-color: rgba(234, 145, 12, 0.12);
+  border-left: 3px solid #EF9F27;
+  border-radius: 0 6px 6px 0;
+}
+
+.editar-mat__cert-titulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 600;
+  color: #B36A00;
+  margin: 0 0 6px;
+}
+
+.editar-mat__cert-codigo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--azul-medianoche);
+  margin: 0 0 6px;
+}
+
+.editar-mat__cert-codigo code {
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  background-color: rgba(2, 17, 60, 0.06);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.editar-mat__cert-texto {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.editar-mat__pendiente {
+  text-align: center;
+  padding: 12px 0;
+}
+
+.editar-mat__pendiente-titulo {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0 0 10px;
+}
+
+.editar-mat__pendiente-texto {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--texto-secundario);
+  margin: 0 auto 24px;
+  max-width: 420px;
+}

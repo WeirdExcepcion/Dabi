@@ -50,7 +50,8 @@ const CAMPOS_HISTORIAL = `
     identificador,
     cursos ( nombre ),
     entrenador:entrenador_id ( nombre_completo )
-  )
+  ),
+  certificados ( codigo, estado, emitido_en )
 `
 
 function FichaAprendiz() {
@@ -194,6 +195,7 @@ function FichaAprendiz() {
                   <th className="ficha__th">Entrenador</th>
                   <th className="ficha__th">Empresa</th>
                   <th className="ficha__th">Estado</th>
+                  <th className="ficha__th">Certificado</th>
                   <th className="ficha__th"></th>
                 </tr>
               </thead>
@@ -219,7 +221,23 @@ function FichaAprendiz() {
                         {ESTADOS[matricula.estado]}
                       </span>
                     </td>
+                    
+                    <td className="ficha__td ficha__td_cert">
+                      {(() => {
+                        const cert = matricula.certificados?.find((c) => c.estado === 'vigente')
+                        const revocado = matricula.certificados?.find((c) => c.estado === 'revocado')
+
+                        if (cert) {
+                          return <code className="ficha__codigo">{cert.codigo}</code>
+                        }
+                        if (revocado) {
+                          return <span className="ficha__codigo-revocado">Revocado</span>
+                        }
+                        return <span className="ficha__sin-cert">—</span>
+                      })()}
+                    </td>
                     <td className="ficha__td ficha__td_accion">
+
                       <Link to={`/grupos/${matricula.grupos.id}`} className="ficha__enlace">
                         Ver grupo
                       </Link>

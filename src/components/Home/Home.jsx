@@ -2,12 +2,16 @@ import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { SECCIONES } from '../../constants/navegacion'
+import { PUEDE_APROBAR } from '../../constants/permisos'
+import PanelLateral from '../PanelLateral/PanelLateral'
+import Auditoria from '../Auditoria/Auditoria'
 import logoSS from '../../assets/isotipo-ss.png'
 import './Home.css'
 
 function Home({ session }) {
   const [perfil, setPerfil] = useState(null)
   const [cargandoPerfil, setCargandoPerfil] = useState(true)
+  const [auditoriaAbierta, setAuditoriaAbierta] = useState(false)
 
   useEffect(() => {
     async function obtenerPerfil() {
@@ -54,6 +58,7 @@ function Home({ session }) {
   const seccionesVisibles = SECCIONES.filter((seccion) =>
     seccion.roles.includes(perfil.rol)
   )
+  const puedeAuditar = PUEDE_APROBAR.includes(perfil.rol)
 
   return (
     <div className="home">
@@ -62,33 +67,56 @@ function Home({ session }) {
           <img src={logoSS} alt="Staff & Services" className="home__logo" />
           <span className="home__wordmark">DABI</span>
         </div>
-        <div className="home__user">
-          <span className="home__email">{session.user.email}</span>
-          <button className="home__logout" onClick={handleLogout}>
-            Cerrar sesión
+
+        {puedeAuditar && (
+          <button
+            className="home__auditoria"
+            onClick={() => setAuditoriaAbierta(true)}
+            title="Registro de auditoría"
+            aria-label="Registro de auditoría"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
           </button>
-        </div>
+        )}
       </header>
 
+        {auditoriaAbierta && (
+        <PanelLateral onCerrar={() => setAuditoriaAbierta(false)}>
+          <Auditoria onCerrar={() => setAuditoriaAbierta(false)} />
+        </PanelLateral>
+      )}
+      
       <div className="home__body">
         <nav className="home__nav">
-          <p className="home__nav-eyebrow">{perfil.rol}</p>
-          <p className="home__nav-nombre">{perfil.nombre_completo}</p>
+          <div className="home__nav-superior">
+            <p className="home__nav-eyebrow">{perfil.rol}</p>
+            <p className="home__nav-nombre">{perfil.nombre_completo}</p>
 
-          <ul className="home__nav-lista">
-            {seccionesVisibles.map((seccion) => (
-              <li key={seccion.ruta}>
-                <NavLink
-                  to={seccion.ruta}
-                  className={({ isActive }) =>
-                    isActive ? 'home__nav-link home__nav-link_activo' : 'home__nav-link'
-                  }
-                >
-                  {seccion.etiqueta}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+            <ul className="home__nav-lista">
+              {seccionesVisibles.map((seccion) => (
+                <li key={seccion.ruta}>
+                  <NavLink
+                    to={seccion.ruta}
+                    className={({ isActive }) =>
+                      isActive ? 'home__nav-link home__nav-link_activo' : 'home__nav-link'
+                    }
+                  >
+                    {seccion.etiqueta}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="home__nav-pie">
+            <p className="home__email">{session.user.email}</p>
+            <button className="home__logout" onClick={handleLogout}>
+              Cerrar sesión
+            </button>
+          </div>
         </nav>
 
         <main className="home__content">

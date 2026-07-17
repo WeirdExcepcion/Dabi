@@ -150,3 +150,25 @@
   background-color: rgba(29, 158, 117, 0.2);
   color: #0A5240;
 }
+
+.detalle__certificado {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  padding: 14px 16px;
+  background-color: rgba(29, 158, 117, 0.08);
+  border-radius: 6px;
+}
+
+.detalle__codigo {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #0F6E56;
+  background-color: rgba(29, 158, 117, 0.16);
+  padding: 5px 12px;
+  border-radius: 4px;
+  margin-top: 2px;
+}

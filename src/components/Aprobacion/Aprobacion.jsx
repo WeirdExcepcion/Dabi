@@ -4,6 +4,8 @@ import { supabase } from '../../lib/supabaseClient'
 import { PUEDE_APROBAR } from '../../constants/permisos'
 import Modal from '../Modal/Modal'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
+import CambioPendiente from './CambioPendiente/CambioPendiente'
+import { useCatalogos } from '../../hooks/useCatalogos'
 import './Aprobacion.css'
 
 function hoyISO() {
@@ -60,6 +62,8 @@ function Aprobacion() {
   const [error, setError] = useState('')
   const [procesando, setProcesando] = useState(null)
   const [viendo, setViendo] = useState(null)
+  const [cambios, setCambios] = useState([])
+  const { catalogos } = useCatalogos()
 
   const puedeAprobar = PUEDE_APROBAR.includes(perfil.rol)
 
@@ -67,17 +71,43 @@ function Aprobacion() {
     setCargando(true)
     setError('')
 
-    const { data, error } = await supabase
-      .from('matriculas')
-      .select(CAMPOS)
-      .eq('estado', 'completo')
-      .order('id', { ascending: true })
+    const [resMatriculas, resCambios] = await Promise.all([
+      supabase
+        .from('matriculas')
+        .select(CAMPOS)
+        .eq('estado', 'completo')
+        .order('id', { ascending: true }),
+      supabase
+        .from('cambios_pendientes')
+        .select(`
+          id,
+          cambios,
+          solicitado_en,
+          solicitante:solicitado_por ( nombre_completo ),
+          matriculas (
+            id,
+            empresa_id, arl_id, eps_id, area_id, cargo_id,
+            fecha_arl, fecha_examen, grupo_id, estado,
+            aprendices ( tipo_documento, numero_documento, nombres, apellidos ),
+            grupos ( cursos ( nombre ) ),
+            certificados ( codigo, estado )
+          )
+        `)
+        .eq('estado', 'pendiente')
+        .order('id', { ascending: true }),
+    ])
 
-    if (error) {
+    if (resMatriculas.error) {
       setError('No se pudieron cargar las matrículas pendientes')
-      console.error(error.message)
+      console.error(resMatriculas.error.message)
     } else {
-      setMatriculas(data)
+      setMatriculas(resMatriculas.data)
+    }
+
+    if (resCambios.error) {
+      console.error(resCambios.error.message)
+    } else {
+      setCambios(resCambios.data)
     }
 
     setCargando(false)
@@ -137,15 +167,39 @@ function Aprobacion() {
             Matrículas con la digitación completa, pendientes de revisión
           </p>
         </div>
-        <span className="aprob__conteo">
-          {matriculas.length} {matriculas.length === 1 ? 'pendiente' : 'pendientes'}
-        </span>
+        
       </header>
 
       {viendo && (
         <Modal onCerrar={() => setViendo(null)}>
           <DetalleMatricula matricula={viendo} onCerrar={() => setViendo(null)} />
         </Modal>
+      )}
+
+      {!cargando && cambios.length > 0 && (
+        <div className="aprob__bloque">
+          <div className="aprob__bloque-encabezado aprob__bloque-encabezado_alerta">
+            <h2 className="aprob__bloque-titulo">Cambios en certificados emitidos</h2>
+            <span className="aprob__bloque-conteo">
+              {cambios.length} {cambios.length === 1 ? 'solicitud' : 'solicitudes'}
+            </span>
+          </div>
+          <p className="aprob__bloque-nota">
+            Estas matrículas ya tienen certificado emitido. Autorizar el cambio lo
+            aplicará de inmediato y quedará registrado con tu nombre.
+          </p>
+
+          <div className="aprob__lista">
+            {cambios.map((cambio) => (
+              <CambioPendiente
+                key={cambio.id}
+                cambio={cambio}
+                catalogos={catalogos}
+                onResuelto={(id) => setCambios((ant) => ant.filter((c) => c.id !== id))}
+              />
+            ))}
+          </div>
+        </div>
       )}
 
       {cargando && <p className="aprob__mensaje">Cargando...</p>}
@@ -157,7 +211,15 @@ function Aprobacion() {
       )}
 
       {!cargando && !error && matriculas.length > 0 && (
-        <div className="aprob__lista">
+        <div className="aprob__bloque">
+          <div className="aprob__bloque-encabezado">
+            <h2 className="aprob__bloque-titulo">Matrículas pendientes de aprobar</h2>
+            <span className="aprob__bloque-conteo">
+              {matriculas.length} {matriculas.length === 1 ? 'pendiente' : 'pendientes'}
+            </span>
+          </div>
+
+          <div className="aprob__lista">
           {matriculas.map((matricula) => {
             const avisos = alertas(matricula)
             const ocupado = procesando === matricula.id
@@ -216,6 +278,7 @@ function Aprobacion() {
               </article>
             )
           })}
+          </div>
         </div>
       )}
     </section>

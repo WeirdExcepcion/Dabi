@@ -29,6 +29,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
 
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [resultado, setResultado] = useState(null)
 
   function opcional(valor) {
     return valor === '' ? null : Number(valor)
@@ -67,10 +68,10 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
       cambios.grupo_id = grupoId
     }
 
-    const { error } = await supabase
-      .from('matriculas')
-      .update(cambios)
-      .eq('id', matricula.id)
+    const { data, error } = await supabase.rpc('editar_matricula', {
+      p_matricula_id: matricula.id,
+      p_cambios: cambios,
+    })
 
     setGuardando(false)
 
@@ -79,8 +80,8 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
         setError('Este aprendiz ya está en otro grupo con fechas que se cruzan')
       } else if (error.message.includes('no tiene entrenador')) {
         setError('No se puede certificar: el grupo no tiene entrenador asignado')
-      } else if (error.message.includes('no permite cambiar')) {
-        setError('Tu rol no permite cambiar el estado o el grupo')
+      } else if (error.message.includes('no permite')) {
+        setError('Tu rol no permite este cambio')
       } else if (error.code === '23505') {
         setError('Este aprendiz ya está matriculado en ese grupo')
       } else {
@@ -90,12 +91,36 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
       return
     }
 
+    if (data?.resultado === 'pendiente_aprobacion') {
+      setResultado('pendiente')
+      return
+    }
+
     onGuardada()
   }
 
   if (cargandoCatalogos) {
     return <p className="editar-mat__mensaje">Cargando catálogos...</p>
   }
+
+  if (resultado === 'pendiente') {
+    return (
+      <div className="editar-mat">
+        <div className="editar-mat__pendiente">
+          <p className="editar-mat__pendiente-titulo">Solicitud enviada</p>
+          <p className="editar-mat__pendiente-texto">
+            Esta matrícula tiene un certificado emitido, así que tu cambio requiere
+            autorización de coordinación. Se aplicará cuando lo aprueben.
+          </p>
+          <button className="editar-mat__boton" onClick={onGuardada}>
+            Entendido
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const certificadoVigente = matricula.certificados?.find((c) => c.estado === 'vigente')
 
   const a = matricula.aprendices
 
@@ -121,6 +146,21 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
           ×
         </button>
       </div>
+
+      {certificadoVigente && (
+        <div className="editar-mat__cert-alerta">
+          <p className="editar-mat__cert-titulo">
+            Esta matrícula tiene un certificado emitido
+          </p>
+          <p className="editar-mat__cert-codigo">
+            Código: <code>{certificadoVigente.codigo}</code>
+          </p>
+          <p className="editar-mat__cert-texto">
+            Si cambias datos que aparecen en el certificado, este perderá validez y
+            habrá que emitirlo de nuevo.
+          </p>
+        </div>
+      )}
 
       {puedeEstadoGrupo && (
         <fieldset className="editar-mat__seccion">
@@ -159,7 +199,17 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
               id="edit_empresa"
               className="editar-mat__select"
               value={empresaId}
-              onChange={(e) => setEmpresaId(e.target.value)}
+              onChange={(e) => {
+                const nuevaEmpresaId = e.target.value
+                setEmpresaId(nuevaEmpresaId)
+
+                const empresaElegida = catalogos.empresas.find(
+                  (emp) => String(emp.id) === String(nuevaEmpresaId)
+                )
+                if (empresaElegida?.arl_id && !arlId) {
+                  setArlId(String(empresaElegida.arl_id))
+                }
+              }}
             >
               <option value="">Selecciona…</option>
               {catalogos.empresas.map((empresa) => (
