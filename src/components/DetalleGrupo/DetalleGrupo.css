@@ -229,3 +229,27 @@
   background-color: rgba(29, 158, 117, 0.2);
   color: #0A5240;
 }
+
+.det-grupo__header-acciones {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.det-grupo__boton-certificar {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #1D9E75;
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.det-grupo__boton-certificar:hover {
+  background-color: #178560;
+}

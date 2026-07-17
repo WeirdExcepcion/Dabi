@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS } from '../../constants/permisos'
+import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_APROBAR } from '../../constants/permisos'
 import Modal from '../Modal/Modal'
 import FormularioMatricula from '../RegistroDiario/FormularioMatricula/FormularioMatricula'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
 import EditarMatricula from '../RegistroDiario/EditarMatricula/EditarMatricula'
 import SelectorEstado from '../SelectorEstado/SelectorEstado'
+import CertificarGrupo from './CertificarGrupo/CertificarGrupo'
 import './DetalleGrupo.css'
 
 function formatearFecha(iso) {
@@ -69,9 +70,12 @@ function DetalleGrupo() {
   const [agregando, setAgregando] = useState(false)
   const [matriculaViendo, setMatriculaViendo] = useState(null)
   const [matriculaEditando, setMatriculaEditando] = useState(null)
+  const [certificando, setCertificando] = useState(false)
 
   const puedeAgregar = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
+  const puedeCertificar = PUEDE_APROBAR.includes(perfil.rol)
+  const hayAprobados = matriculas.some((m) => m.estado === 'aprobado')
 
   function actualizarEstadoLocal(matriculaId, nuevoEstado) {
     setMatriculas((anteriores) =>
@@ -146,11 +150,21 @@ function DetalleGrupo() {
           </p>
         </div>
 
-        {puedeAgregar && (
-          <button className="det-grupo__boton-agregar" onClick={() => setAgregando(true)}>
-            Agregar aprendiz
-          </button>
-        )}
+        <div className="det-grupo__header-acciones">
+          {puedeCertificar && hayAprobados && (
+            <button
+              className="det-grupo__boton-certificar"
+              onClick={() => setCertificando(true)}
+            >
+              Certificar grupo
+            </button>
+          )}
+          {puedeAgregar && (
+            <button className="det-grupo__boton-agregar" onClick={() => setAgregando(true)}>
+              Agregar aprendiz
+            </button>
+          )}
+        </div>
       </header>
 
       {!grupo.entrenador && (
@@ -158,6 +172,20 @@ function DetalleGrupo() {
           Este grupo no tiene entrenador asignado. No se podrán emitir certificados
           hasta que se asigne uno.
         </p>
+      )}
+      
+      {certificando && (
+        <Modal onCerrar={() => setCertificando(false)}>
+          <CertificarGrupo
+            grupo={grupo}
+            matriculas={matriculas}
+            onCertificado={() => {
+              setCertificando(false)
+              cargarDatos()
+            }}
+            onCancelar={() => setCertificando(false)}
+          />
+        </Modal>
       )}
 
       {agregando && (

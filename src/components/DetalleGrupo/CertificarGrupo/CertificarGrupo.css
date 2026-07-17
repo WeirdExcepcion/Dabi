@@ -1,0 +1,222 @@
+.cert-grupo {
+  padding: 28px;
+  background-color: var(--blanco);
+  border-radius: 8px;
+}
+
+.cert-grupo__encabezado {
+  margin-bottom: 22px;
+}
+
+.cert-grupo__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 8px;
+}
+
+.cert-grupo__titulo {
+  font-family: var(--font-brand);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.cert-grupo__subtitulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.cert-grupo__resumen {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.cert-grupo__stat {
+  flex: 1;
+  padding: 14px 16px;
+  background-color: var(--gris-niebla);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.cert-grupo__stat_principal {
+  background-color: rgba(29, 158, 117, 0.12);
+}
+
+.cert-grupo__stat-numero {
+  font-family: var(--font-brand);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.cert-grupo__stat_principal .cert-grupo__stat-numero {
+  color: #0F6E56;
+}
+
+.cert-grupo__stat-texto {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.cert-grupo__lista {
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  background-color: var(--gris-niebla);
+  border-radius: 8px;
+}
+
+.cert-grupo__lista-titulo {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+  margin: 0 0 10px;
+}
+
+.cert-grupo__nombres {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.cert-grupo__nombre {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--azul-medianoche);
+}
+
+.cert-grupo__nombre-doc {
+  font-weight: 400;
+  color: var(--texto-secundario);
+}
+
+.cert-grupo__vacio {
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  background-color: var(--gris-niebla);
+  border-radius: 8px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.cert-grupo__nota {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--texto-secundario);
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  background-color: rgba(3, 120, 168, 0.07);
+  border-radius: 6px;
+}
+
+.cert-grupo__error {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+  margin: 0 0 14px;
+}
+
+.cert-grupo__codigos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.cert-grupo__codigo-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 14px;
+  background-color: var(--gris-niebla);
+  border-radius: 6px;
+}
+
+.cert-grupo__codigo-nombre {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+}
+
+.cert-grupo__codigo {
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F6E56;
+  background-color: rgba(29, 158, 117, 0.14);
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.cert-grupo__acciones {
+  display: flex;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+}
+
+.cert-grupo__boton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #1D9E75;
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.cert-grupo__boton:hover:not(:disabled) {
+  background-color: #178560;
+}
+
+.cert-grupo__boton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.cert-grupo__boton_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.cert-grupo__boton_secundario:hover {
+  background-color: var(--gris-niebla);
+}
+
+@media (max-width: 560px) {
+  .cert-grupo__resumen {
+    flex-direction: column;
+  }
+}
