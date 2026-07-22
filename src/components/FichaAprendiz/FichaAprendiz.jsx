@@ -6,6 +6,7 @@ import Modal from '../Modal/Modal'
 import CorregirDocumento from './CorregirDocumento/CorregirDocumento'
 import './FichaAprendiz.css'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../constants/estados'
+import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -207,6 +208,7 @@ function FichaAprendiz() {
                       {matricula.grupos.identificador && (
                         <span className="ficha__td-id"> ({matricula.grupos.identificador})</span>
                       )}
+                      <MarcaAuditoria matriculaId={matricula.id} />
                     </td>
                     <td className="ficha__td ficha__td_fechas">
                       {formatearFecha(matricula.grupos.fecha_inicio)} –{' '}

@@ -21,6 +21,7 @@
     linear-gradient(160deg, #020814, #02113C 45%, #023170);
   --gradient-vertical: linear-gradient(180deg, #02113C 0%, #064B87 60%, #0378A8 100%);
   --gradient-suave: linear-gradient(135deg, #023170, #4F7EA7);
+  --gradient-oscuro: linear-gradient(180deg, #02113C 30%, #0a1e5a 100%);
 }
 
 * {

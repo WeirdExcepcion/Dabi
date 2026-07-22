@@ -1,3 +1,4 @@
+import './DetalleGrupo.css'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
@@ -8,7 +9,7 @@ import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricul
 import EditarMatricula from '../RegistroDiario/EditarMatricula/EditarMatricula'
 import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import CertificarGrupo from './CertificarGrupo/CertificarGrupo'
-import './DetalleGrupo.css'
+import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -256,6 +257,7 @@ function DetalleGrupo() {
                   </td>
                   <td className="det-grupo__td det-grupo__td_principal">
                     {matricula.aprendices.apellidos} {matricula.aprendices.nombres}
+                    <MarcaAuditoria matriculaId={matricula.id} />
                   </td>
                   <td className="det-grupo__td">{matricula.empresas.razon_social}</td>
                   <td className="det-grupo__td">{formatearFecha(matricula.fecha_ingreso)}</td>

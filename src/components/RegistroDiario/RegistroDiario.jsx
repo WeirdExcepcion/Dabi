@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS } from '../../constants/permisos'
+import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import './RegistroDiario.css'
 import FormularioMatricula from './FormularioMatricula/FormularioMatricula'
 import DetalleMatricula from './DetalleMatricula/DetalleMatricula'
@@ -212,6 +213,7 @@ function RegistroDiario() {
                       </td>
                       <td className="matriculas__td matriculas__td_principal">
                         {matricula.aprendices.apellidos} {matricula.aprendices.nombres}
+                        <MarcaAuditoria matriculaId={matricula.id} />
                       </td>
                       <td className="matriculas__td">
                         {matricula.grupos.cursos.nombre}

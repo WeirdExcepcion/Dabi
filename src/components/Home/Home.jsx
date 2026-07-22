@@ -3,6 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { SECCIONES } from '../../constants/navegacion'
 import { PUEDE_APROBAR } from '../../constants/permisos'
+import { AuditoriaProvider } from '../../context/AuditoriaContext'
 import PanelLateral from '../PanelLateral/PanelLateral'
 import Auditoria from '../Auditoria/Auditoria'
 import logoSS from '../../assets/isotipo-ss.png'
@@ -61,6 +62,7 @@ function Home({ session }) {
   const puedeAuditar = PUEDE_APROBAR.includes(perfil.rol)
 
   return (
+    <AuditoriaProvider>
     <div className="home">
       <header className="home__header">
         <div className="home__brand">
@@ -123,7 +125,8 @@ function Home({ session }) {
           <Outlet context={{ perfil, session }} />
         </main>
       </div>
-    </div>
+   </div>
+    </AuditoriaProvider>
   )
 }
 

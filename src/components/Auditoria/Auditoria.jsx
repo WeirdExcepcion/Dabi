@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { useAuditoria } from '../../context/AuditoriaContext'
 import './Auditoria.css'
 
 const ETIQUETAS_CAMPO = {
@@ -51,6 +52,7 @@ function Auditoria({ onCerrar }) {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [busqueda, setBusqueda] = useState('')
+  const { modoActivo, activar, desactivar } = useAuditoria()
 
   useEffect(() => {
     async function cargar() {
@@ -175,6 +177,21 @@ function Auditoria({ onCerrar }) {
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
+
+        <button
+          className={modoActivo ? 'audit__modo audit__modo_activo' : 'audit__modo'}
+          onClick={() => {
+            if (modoActivo) {
+              desactivar()
+            } else {
+              activar()
+              onCerrar()
+            }
+          }}
+        >
+          <span className="audit__modo-punto" />
+          {modoActivo ? 'Resaltado activo — clic para apagar' : 'Resaltar ediciones en la app'}
+        </button>
       </header>
 
       <div className="audit__scroll">
