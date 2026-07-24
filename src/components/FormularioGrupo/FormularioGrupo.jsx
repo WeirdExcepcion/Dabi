@@ -45,7 +45,7 @@ function FormularioGrupo({ onCreado, onCancelar }) {
     async function cargar() {
       const [resCursos, resEntrenadores] = await Promise.all([
         supabase.from('cursos').select('id, nombre, duracion_dias').eq('activo', true).order('nombre'),
-        supabase.from('profiles').select('id, nombre_completo').eq('rol', 'entrenador').order('nombre_completo'),
+        supabase.from('entrenadores').select('id, nombre_completo').eq('activo', true).order('nombre_completo'),
       ])
 
       if (resCursos.data) setCursos(resCursos.data)

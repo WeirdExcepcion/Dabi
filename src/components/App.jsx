@@ -8,8 +8,10 @@ import Aprendices from './Aprendices/Aprendices'
 import FichaAprendiz from './FichaAprendiz/FichaAprendiz'
 import RegistroDiario from './RegistroDiario/RegistroDiario'
 import Aprobacion from './Aprobacion/Aprobacion'
+import Entrenadores from './Entrenadores/Entrenadores'
 import Grupos from './Grupos/Grupos'
 import DetalleGrupo from './DetalleGrupo/DetalleGrupo'
+
 
 import './App.css'
 
@@ -51,6 +53,7 @@ function App() {
         <Route index element={<Navigate to="/registro" replace />} />
         <Route path="registro" element={<RegistroDiario />} />
         <Route path="aprobacion" element={<Aprobacion />} />
+        <Route path="entrenadores" element={<Entrenadores />} />
         <Route path="*" element={<Navigate to="/registro" replace />} />
         <Route path="grupos" element={<Grupos />} />
         <Route path="grupos/:grupoId" element={<DetalleGrupo />} />

@@ -46,7 +46,7 @@ function Grupos() {
     async function cargarCatalogos() {
       const [resCursos, resEntrenadores] = await Promise.all([
         supabase.from('cursos').select('id, nombre').order('nombre'),
-        supabase.from('profiles').select('id, nombre_completo').eq('rol', 'entrenador').order('nombre_completo'),
+        supabase.from('entrenadores').select('id, nombre_completo').eq('activo', true).order('nombre_completo'),
       ])
 
       if (resCursos.data) setCursos(resCursos.data)

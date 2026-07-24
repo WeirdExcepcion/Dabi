@@ -59,3 +59,10 @@ export const PUEDE_APROBAR = [
   'coordinador',
   'supervisor',
 ]
+
+export const PUEDE_GESTIONAR_ENTRENADORES = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+]

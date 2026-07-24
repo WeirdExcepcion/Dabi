@@ -1,0 +1,106 @@
+.entren__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.entren__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 6px;
+}
+
+.entren__titulo {
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.entren__subtitulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+  max-width: 480px;
+}
+
+.entren__conteo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  white-space: nowrap;
+}
+
+.entren__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.entren__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.entren__header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.entren__boton-nuevo {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.entren__boton-nuevo:hover {
+  background-color: var(--ceruleo);
+}
+
+.entren__filtro {
+  margin-bottom: 14px;
+}
+
+.entren__toggle {
+  padding: 7px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--texto-secundario);
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.entren__toggle:hover {
+  border-color: var(--ceruleo);
+  color: var(--azul-medianoche);
+}
+
+.entren__toggle_activo {
+  border-color: var(--ceruleo);
+  color: var(--azul-medianoche);
+  background-color: var(--gris-niebla);
+}

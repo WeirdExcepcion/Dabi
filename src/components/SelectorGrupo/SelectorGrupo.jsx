@@ -75,10 +75,10 @@ function SelectorGrupo({ valor, onCambio }) {
           .eq('activo', true)
           .order('nombre'),
         supabase
-          .from('profiles')
-          .select('id, nombre_completo')
-          .eq('rol', 'entrenador')
-          .order('nombre_completo'),
+        .from('entrenadores')
+        .select('id, nombre_completo')
+        .eq('activo', true)
+        .order('nombre_completo'),
       ])
 
       if (resGrupos.error) console.error(resGrupos.error.message)
