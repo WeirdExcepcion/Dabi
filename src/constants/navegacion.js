@@ -25,8 +25,8 @@ export const SECCIONES = [
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
   },
   {
-    ruta: '/entrenadores',
-    etiqueta: 'Entrenadores',
+    ruta: '/personal',
+    etiqueta: 'Personal',
     roles: ['admin', 'gerente-general', 'director-operaciones', 'coordinador-procesos'],
   },
 ]

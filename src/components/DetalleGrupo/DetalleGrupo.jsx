@@ -10,6 +10,7 @@ import EditarMatricula from '../RegistroDiario/EditarMatricula/EditarMatricula'
 import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import CertificarGrupo from './CertificarGrupo/CertificarGrupo'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
+import AsignarPersonal from './AsignarPersonal/AsignarPersonal'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -22,8 +23,11 @@ const CAMPOS_GRUPO = `
   fecha_inicio,
   fecha_fin,
   identificador,
+  entrenador_id,
+  supervisor_id,
   cursos ( nombre, duracion_dias ),
-  entrenador:entrenador_id ( nombre_completo )
+  entrenador:entrenadores!grupos_entrenador_id_fkey ( nombre_completo ),
+          supervisor:entrenadores!grupos_supervisor_id_fkey ( nombre_completo )
 `
 
 const CAMPOS_MATRICULA = `
@@ -73,11 +77,13 @@ function DetalleGrupo() {
   const [matriculaViendo, setMatriculaViendo] = useState(null)
   const [matriculaEditando, setMatriculaEditando] = useState(null)
   const [certificando, setCertificando] = useState(false)
+  const [asignando, setAsignando] = useState(false)
 
   const puedeAgregar = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
   const puedeCertificar = PUEDE_APROBAR.includes(perfil.rol)
   const hayAprobados = matriculas.some((m) => m.estado === 'aprobado')
+  const listoParaCertificar = grupo?.entrenador_id && grupo?.supervisor_id
 
   function actualizarEstadoLocal(matriculaId, nuevoEstado) {
     setMatriculas((anteriores) =>
@@ -147,13 +153,26 @@ function DetalleGrupo() {
           </h1>
           <p className="det-grupo__detalle">
             {formatearFecha(grupo.fecha_inicio)} – {formatearFecha(grupo.fecha_fin)}
-            {' · '}
-            {grupo.entrenador?.nombre_completo || 'Sin entrenador'}
+          </p>
+          <p className="det-grupo__personal">
+            <span className="det-grupo__personal-item">
+              <span className="det-grupo__personal-rol">Entrenador:</span>{' '}
+              {grupo.entrenador?.nombre_completo || <em>sin asignar</em>}
+            </span>
+            <span className="det-grupo__personal-item">
+              <span className="det-grupo__personal-rol">Supervisor:</span>{' '}
+              {grupo.supervisor?.nombre_completo || <em>sin asignar</em>}
+            </span>
+            {puedeCertificar && (
+              <button className="det-grupo__asignar" onClick={() => setAsignando(true)}>
+                {grupo.entrenador_id && grupo.supervisor_id ? 'Cambiar' : 'Asignar'}
+              </button>
+            )}
           </p>
         </div>
 
         <div className="det-grupo__header-acciones">
-          {puedeCertificar && hayAprobados && (
+          {puedeCertificar && hayAprobados && listoParaCertificar && (
             <button
               className="det-grupo__boton-certificar"
               onClick={() => setCertificando(true)}
@@ -169,13 +188,30 @@ function DetalleGrupo() {
         </div>
       </header>
 
-      {!grupo.entrenador && (
+      {(!grupo.entrenador_id || !grupo.supervisor_id) && (
         <p className="det-grupo__aviso">
-          Este grupo no tiene entrenador asignado. No se podrán emitir certificados
-          hasta que se asigne uno.
+          {!grupo.entrenador_id && !grupo.supervisor_id
+            ? 'Este grupo no tiene entrenador ni supervisor. '
+            : !grupo.entrenador_id
+            ? 'Este grupo no tiene entrenador. '
+            : 'Este grupo no tiene supervisor. '}
+          No se podrán emitir certificados hasta asignarlos.
         </p>
       )}
       
+      {asignando && (
+        <Modal onCerrar={() => setAsignando(false)}>
+          <AsignarPersonal
+            grupo={grupo}
+            onAsignado={() => {
+              setAsignando(false)
+              cargarDatos()
+            }}
+            onCancelar={() => setAsignando(false)}
+          />
+        </Modal>
+      )}
+
       {certificando && (
         <Modal onCerrar={() => setCertificando(false)}>
           <CertificarGrupo

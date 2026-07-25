@@ -27,7 +27,8 @@ const CAMPOS_GRUPO = `
   fecha_fin,
   identificador,
   cursos ( id, nombre, duracion_dias ),
-  entrenador:entrenador_id ( nombre_completo )
+  entrenador:entrenador_id ( nombre_completo ),
+  supervisor:supervisor_id ( nombre_completo )
 `
 
 function FormularioGrupo({ onCreado, onCancelar }) {
@@ -37,6 +38,7 @@ function FormularioGrupo({ onCreado, onCancelar }) {
   const [cursoId, setCursoId] = useState('')
   const [fechaInicio, setFechaInicio] = useState(hoyISO())
   const [entrenadorId, setEntrenadorId] = useState('')
+  const [supervisorId, setSupervisorId] = useState('')
   const [identificador, setIdentificador] = useState('')
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -45,7 +47,11 @@ function FormularioGrupo({ onCreado, onCancelar }) {
     async function cargar() {
       const [resCursos, resEntrenadores] = await Promise.all([
         supabase.from('cursos').select('id, nombre, duracion_dias').eq('activo', true).order('nombre'),
-        supabase.from('entrenadores').select('id, nombre_completo').eq('activo', true).order('nombre_completo'),
+        supabase
+          .from('entrenadores')
+          .select('id, nombre_completo, puede_entrenar, puede_supervisar')
+          .or('puede_entrenar.eq.true,puede_supervisar.eq.true')
+          .order('nombre_completo'),
       ])
 
       if (resCursos.data) setCursos(resCursos.data)
@@ -74,7 +80,8 @@ function FormularioGrupo({ onCreado, onCancelar }) {
       .from('grupos')
       .insert({
         curso_id: Number(cursoId),
-        entrenador_id: entrenadorId || null,
+        entrenador_id: entrenadorId ? Number(entrenadorId) : null,
+        supervisor_id: supervisorId ? Number(supervisorId) : null,
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFinCalculada,
         identificador: identificador.trim() || null,
@@ -85,8 +92,10 @@ function FormularioGrupo({ onCreado, onCancelar }) {
     setGuardando(false)
 
     if (error) {
-      if (error.code === '23P01') {
-        setError('Ese entrenador ya dicta otro grupo en fechas que se cruzan')
+      if (error.message.includes('ya está comprometida')) {
+        setError('Esa persona ya está en otro grupo con fechas que se cruzan')
+      } else if (error.message.includes('entrenador_distinto_supervisor')) {
+        setError('El entrenador y el supervisor no pueden ser la misma persona')
       } else {
         setError('No se pudo crear el grupo')
       }
@@ -143,14 +152,37 @@ function FormularioGrupo({ onCreado, onCancelar }) {
             onChange={(e) => setEntrenadorId(e.target.value)}
           >
             <option value="">Sin asignar</option>
-            {entrenadores.map((entrenador) => (
-              <option key={entrenador.id} value={entrenador.id}>
-                {entrenador.nombre_completo}
-              </option>
-            ))}
+            {entrenadores
+              .filter((p) => p.puede_entrenar)
+              .map((entrenador) => (
+                <option key={entrenador.id} value={entrenador.id}>
+                  {entrenador.nombre_completo}
+                </option>
+              ))}
           </select>
         </div>
 
+        <div className="form-grupo__campo">
+          <label className="form-grupo__label" htmlFor="fg_supervisor">Supervisor</label>
+          <select
+            id="fg_supervisor"
+            className="form-grupo__select"
+            value={supervisorId}
+            onChange={(e) => setSupervisorId(e.target.value)}
+          >
+            <option value="">Sin asignar</option>
+            {entrenadores
+              .filter((p) => p.puede_supervisar && String(p.id) !== String(entrenadorId))
+              .map((sup) => (
+                <option key={sup.id} value={sup.id}>
+                  {sup.nombre_completo}
+                </option>
+              ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="form-grupo__fila">
         <div className="form-grupo__campo">
           <label className="form-grupo__label" htmlFor="fg_identificador">Identificador</label>
           <input

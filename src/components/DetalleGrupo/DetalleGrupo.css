@@ -253,3 +253,41 @@
 .det-grupo__boton-certificar:hover {
   background-color: #178560;
 }
+
+.det-grupo__personal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 6px 0 0;
+}
+
+.det-grupo__personal-rol {
+  font-weight: 500;
+  color: var(--azul-medianoche);
+}
+
+.det-grupo__personal em {
+  color: #B36A00;
+  font-style: normal;
+}
+
+.det-grupo__asignar {
+  padding: 4px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.det-grupo__asignar:hover {
+  background-color: var(--gris-niebla);
+}

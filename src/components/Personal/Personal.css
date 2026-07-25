@@ -1,4 +1,4 @@
-.entren__header {
+.personal__header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -6,7 +6,7 @@
   margin-bottom: 24px;
 }
 
-.entren__eyebrow {
+.personal__eyebrow {
   font-family: var(--font-brand);
   font-size: 10px;
   font-weight: 500;
@@ -16,7 +16,7 @@
   margin: 0 0 6px;
 }
 
-.entren__titulo {
+.personal__titulo {
   font-family: var(--font-brand);
   font-size: 28px;
   font-weight: 600;
@@ -25,41 +25,29 @@
   margin: 0;
 }
 
-.entren__subtitulo {
+.personal__subtitulo {
   font-family: var(--font-brand);
   font-size: 14px;
   color: var(--texto-secundario);
   margin: 4px 0 0;
-  max-width: 480px;
+  max-width: 500px;
 }
 
-.entren__conteo {
-  font-family: var(--font-brand);
-  font-size: 13px;
-  color: var(--texto-secundario);
-  white-space: nowrap;
-}
-
-.entren__mensaje {
-  font-family: var(--font-brand);
-  font-size: 14px;
-  color: var(--texto-secundario);
-}
-
-.entren__lista {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.entren__header-acciones {
+.personal__header-acciones {
   display: flex;
   align-items: center;
   gap: 14px;
   flex-shrink: 0;
 }
 
-.entren__boton-nuevo {
+.personal__conteo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  white-space: nowrap;
+}
+
+.personal__boton-nuevo {
   padding: 11px 20px;
   border: none;
   border-radius: 6px;
@@ -73,15 +61,15 @@
   transition: background-color 0.15s ease;
 }
 
-.entren__boton-nuevo:hover {
+.personal__boton-nuevo:hover {
   background-color: var(--ceruleo);
 }
 
-.entren__filtro {
+.personal__filtro {
   margin-bottom: 14px;
 }
 
-.entren__toggle {
+.personal__toggle {
   padding: 7px 14px;
   border: 1.5px solid var(--azul-acero);
   border-radius: 6px;
@@ -94,13 +82,25 @@
   transition: border-color 0.15s ease, color 0.15s ease;
 }
 
-.entren__toggle:hover {
+.personal__toggle:hover {
   border-color: var(--ceruleo);
   color: var(--azul-medianoche);
 }
 
-.entren__toggle_activo {
+.personal__toggle_activo {
   border-color: var(--ceruleo);
   color: var(--azul-medianoche);
   background-color: var(--gris-niebla);
+}
+
+.personal__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.personal__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }

@@ -1,4 +1,4 @@
-.form-entren {
+.form-per {
   display: flex;
   flex-direction: column;
   padding: 28px;
@@ -6,7 +6,7 @@
   border-radius: 8px;
 }
 
-.form-entren__eyebrow {
+.form-per__eyebrow {
   font-family: var(--font-brand);
   font-size: 10px;
   font-weight: 500;
@@ -16,7 +16,7 @@
   margin: 0 0 7px;
 }
 
-.form-entren__titulo {
+.form-per__titulo {
   font-family: var(--font-brand);
   font-size: 22px;
   font-weight: 600;
@@ -24,7 +24,7 @@
   margin: 0 0 22px;
 }
 
-.form-entren__label {
+.form-per__label {
   font-family: var(--font-brand);
   font-size: 11px;
   font-weight: 500;
@@ -34,7 +34,7 @@
   margin-bottom: 6px;
 }
 
-.form-entren__input {
+.form-per__input {
   padding: 10px 12px;
   margin-bottom: 16px;
   border: 1.5px solid var(--azul-acero);
@@ -46,25 +46,25 @@
   min-width: 0;
 }
 
-.form-entren__input:focus {
+.form-per__input:focus {
   outline: none;
   border-color: var(--ceruleo);
   box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
 }
 
-.form-entren__fila {
+.form-per__fila {
   display: flex;
   gap: 12px;
 }
 
-.form-entren__campo {
+.form-per__campo {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
 }
 
-.form-entren__ayuda {
+.form-per__ayuda {
   font-family: var(--font-brand);
   font-size: 12.5px;
   line-height: 1.55;
@@ -75,21 +75,21 @@
   border-radius: 6px;
 }
 
-.form-entren__error {
+.form-per__error {
   font-family: var(--font-brand);
   font-size: 13px;
   color: #B3261E;
   margin: 0 0 14px;
 }
 
-.form-entren__acciones {
+.form-per__acciones {
   display: flex;
   gap: 12px;
   padding-top: 18px;
   border-top: 1px solid rgba(2, 17, 60, 0.08);
 }
 
-.form-entren__boton {
+.form-per__boton {
   flex: 1;
   padding: 12px;
   border: none;
@@ -103,22 +103,22 @@
   transition: background-color 0.15s ease, opacity 0.15s ease;
 }
 
-.form-entren__boton:hover:not(:disabled) {
+.form-per__boton:hover:not(:disabled) {
   background-color: var(--ceruleo);
 }
 
-.form-entren__boton:disabled {
+.form-per__boton:disabled {
   opacity: 0.45;
   cursor: default;
 }
 
-.form-entren__boton_sec {
+.form-per__boton_sec {
   background-color: transparent;
   color: var(--azul-medianoche);
   border: 1.5px solid var(--azul-acero);
   font-weight: 500;
 }
 
-.form-entren__boton_sec:hover {
+.form-per__boton_sec:hover {
   background-color: var(--gris-niebla);
 }

@@ -46,7 +46,7 @@ function Grupos() {
     async function cargarCatalogos() {
       const [resCursos, resEntrenadores] = await Promise.all([
         supabase.from('cursos').select('id, nombre').order('nombre'),
-        supabase.from('entrenadores').select('id, nombre_completo').or('puede_entrenar.eq.true,puede_supervisar.eq.true').order('nombre_completo'),
+        supabase.from('entrenadores').select('id, nombre_completo').eq('activo', true).order('nombre_completo'),
       ])
 
       if (resCursos.data) setCursos(resCursos.data)
@@ -68,8 +68,9 @@ function Grupos() {
           fecha_fin,
           identificador,
           cursos ( nombre ),
-          entrenador:entrenadores!grupos_entrenador_id_fkey ( nombre_completo ),
-          supervisor:entrenadores!grupos_supervisor_id_fkey ( nombre_completo ),
+          entrenador:entrenador_id ( nombre_completo ),
+          entrenador:entrenador_id ( nombre_completo ),
+          supervisor:supervisor_id ( nombre_completo )
           matriculas ( count )
         `)
 
