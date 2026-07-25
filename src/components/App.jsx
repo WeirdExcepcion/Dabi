@@ -11,10 +11,9 @@ import Aprobacion from './Aprobacion/Aprobacion'
 import Personal from './Personal/Personal'
 import Grupos from './Grupos/Grupos'
 import DetalleGrupo from './DetalleGrupo/DetalleGrupo'
-
+import Verificar from './Verificar/Verificar'
 
 import './App.css'
-
 
 function App() {
   const [session, setSession] = useState(null)
@@ -39,29 +38,31 @@ function App() {
     return <p className="app__loading">Cargando...</p>
   }
 
-  if (!session) {
-    return <Login />
-  }
-
   return (
     <Routes>
-      <Route path="/" element={<Home session={session} />}>
-        <Route index element={<Navigate to="/aprendices" replace />} />
-        <Route path="empresas" element={<Empresas />} />
-        <Route path="aprendices" element={<Aprendices />} />
-        <Route path="aprendices/:aprendizId" element={<FichaAprendiz />} />
-        <Route index element={<Navigate to="/registro" replace />} />
-        <Route path="registro" element={<RegistroDiario />} />
-        <Route path="aprobacion" element={<Aprobacion />} />
-        <Route path="personal" element={<Personal />} />
-        <Route path="*" element={<Navigate to="/registro" replace />} />
-        <Route path="grupos" element={<Grupos />} />
-        <Route path="grupos/:grupoId" element={<DetalleGrupo />} />
+      {/* Público — sin login */}
+      <Route path="/verificar" element={<Verificar />} />
+      <Route path="/verificar/:codigo" element={<Verificar />} />
 
-      </Route>
+      {/* Privado — requiere sesión */}
+      {session ? (
+        <Route path="/" element={<Home session={session} />}>
+          <Route index element={<Navigate to="/aprendices" replace />} />
+          <Route path="empresas" element={<Empresas />} />
+          <Route path="aprendices" element={<Aprendices />} />
+          <Route path="aprendices/:aprendizId" element={<FichaAprendiz />} />
+          <Route path="registro" element={<RegistroDiario />} />
+          <Route path="aprobacion" element={<Aprobacion />} />
+          <Route path="personal" element={<Personal />} />
+          <Route path="grupos" element={<Grupos />} />
+          <Route path="grupos/:grupoId" element={<DetalleGrupo />} />
+          <Route path="*" element={<Navigate to="/registro" replace />} />
+        </Route>
+      ) : (
+        <Route path="*" element={<Login />} />
+      )}
     </Routes>
   )
 }
-
 
 export default App
