@@ -11,6 +11,7 @@ import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import CertificarGrupo from './CertificarGrupo/CertificarGrupo'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import AsignarPersonal from './AsignarPersonal/AsignarPersonal'
+import BotonCertificado from '../BotonCertificado/BotonCertificado'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -319,6 +320,7 @@ function DetalleGrupo() {
                         Editar
                       </button>
                     )}
+                    <BotonCertificado matricula={matricula} rol={perfil.rol} compacto />
                   </td>
                 </tr>
               ))}

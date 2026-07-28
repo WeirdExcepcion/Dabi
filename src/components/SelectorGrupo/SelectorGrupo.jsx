@@ -64,21 +64,11 @@ function SelectorGrupo({ valor, onCambio }) {
   useEffect(() => {
     async function cargarDatos() {
       const [resGrupos, resCursos, resEntrenadores] = await Promise.all([
-        supabase
-          .from('grupos')
-          .select(CAMPOS_GRUPO)
-          .gte('fecha_fin', hoyISO())
-          .order('fecha_inicio', { ascending: true }),
-        supabase
-          .from('cursos')
-          .select('id, nombre, duracion_dias')
-          .eq('activo', true)
-          .order('nombre'),
-        supabase
-        .from('entrenadores')
-        .select('id, nombre_completo')
-        .eq('activo', true)
-        .order('nombre_completo'),
+        supabase.from('grupos').select(CAMPOS_GRUPO).gte('fecha_fin', hoyISO()).order('fecha_inicio', { ascending: true }),
+        
+        supabase.from('cursos').select('id, nombre, duracion_dias').eq('activo', true).order('nombre'),
+
+        supabase.from('entrenadores').select('id, nombre_completo, puede_entrenar, puede_supervisar').or('puede_entrenar.eq.true,puede_supervisar.eq.true').order('nombre_completo'),
       ])
 
       if (resGrupos.error) console.error(resGrupos.error.message)

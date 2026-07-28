@@ -35,8 +35,8 @@ export async function obtenerDatosCertificado(codigo) {
         grupos (
           fecha_inicio,
           fecha_fin,
-          cursos ( nombre, duracion_horas ),
-          entrenador:entrenador_id (
+          cursos ( nombre, nombre_certificado, duracion_horas ),
+          entrenador:entrenadores!grupos_entrenador_id_fkey (
             nombre_completo, licencia_numero, licencia_fecha, firma_path
           )
         )
@@ -55,27 +55,28 @@ export async function obtenerDatosCertificado(codigo) {
 
   const inicio = desglosarFecha(g.fecha_inicio)
   const fin = desglosarFecha(g.fecha_fin)
-  const firma = desglosarFecha(cert.emitido_en?.split('T')[0])
+  const firma = desglosarFecha(g.fecha_fin)
 
-  let firmaUrl = null
-  if (entrenador?.firma_path) {
-    const { data: urlData } = await supabase.storage
-      .from('firmas')
-      .createSignedUrl(entrenador.firma_path, 120)
-    firmaUrl = urlData?.signedUrl || null
-  }
+  const rutasFirmas = ['representante-legal.png']
+  if (entrenador?.firma_path) rutasFirmas.push(entrenador.firma_path)
+
+  const { data: urls } = await supabase.storage
+    .from('firmas')
+    .createSignedUrls(rutasFirmas, 300)
+
+  const buscarUrl = (ruta) => urls?.find((u) => u.path === ruta)?.signedUrl || null
 
   return {
     folio: cert.codigo,
     estado: cert.estado,
     nombre: `${a.nombres} ${a.apellidos}`,
-    documentoTipo: a.tipo_documento,
+    tipoDocumento: a.tipo_documento,
     documento: a.numero_documento,
-    curso: g.cursos.nombre,
+    curso: g.cursos.nombre_certificado || g.cursos.nombre,
     horas: g.cursos.duracion_horas ? `${g.cursos.duracion_horas} horas` : '—',
-    empresa: m.empresas.razon_social,
-    empresaNit: m.empresas.nit || '—',
-    repLegal: m.empresas.representante_legal || '—',
+    empresa: m.empresas?.razon_social || '—',
+    empresaNit: m.empresas?.nit || '—',
+    repLegal: m.empresas?.representante_legal || '—',
     arl: m.arls?.nombre || '—',
     diaInicio: inicio.dia, mesInicio: inicio.mes, anioInicio: inicio.anio,
     diaFin: fin.dia, mesFin: fin.mes, anioFin: fin.anio,
@@ -85,6 +86,7 @@ export async function obtenerDatosCertificado(codigo) {
       entrenador?.licencia_numero && entrenador?.licencia_fecha
         ? `${entrenador.licencia_numero} de ${formatearFechaCorta(entrenador.licencia_fecha)}`
         : '—',
-    firmaUrl,
+    firmaEntrenadorUrl: entrenador?.firma_path ? buscarUrl(entrenador.firma_path) : null,
+    firmaRepLegalUrl: buscarUrl('representante-legal.png'),
   }
 }

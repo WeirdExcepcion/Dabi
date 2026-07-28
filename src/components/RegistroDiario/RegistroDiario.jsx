@@ -10,6 +10,7 @@ import Modal from '../Modal/Modal'
 import EditarMatricula from './EditarMatricula/EditarMatricula'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../constants/estados'
 import SelectorEstado from '../SelectorEstado/SelectorEstado'
+import BotonCertificado from '../BotonCertificado/BotonCertificado'
 
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
@@ -235,12 +236,12 @@ function RegistroDiario() {
                           Ver
                         </button>
                         {puedeEditar && (
-                          <button
+                          <><button
                             className="matriculas__boton-ver"
                             onClick={() => setMatriculaEditando(matricula)}
                           >
                             Editar
-                          </button>
+                          </button><BotonCertificado matricula={matricula} rol={perfil.rol} compacto /></>
                         )}
                       </td>
                     </tr>

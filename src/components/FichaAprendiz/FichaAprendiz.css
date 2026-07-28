@@ -301,3 +301,7 @@
 .ficha__sin-cert {
   color: var(--texto-secundario);
 }
+
+.ficha__td_accion .btn-cert {
+  margin-right: 10px;
+}

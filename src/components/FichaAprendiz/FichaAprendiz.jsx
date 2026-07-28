@@ -7,6 +7,7 @@ import CorregirDocumento from './CorregirDocumento/CorregirDocumento'
 import './FichaAprendiz.css'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../constants/estados'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
+import BotonCertificado from '../BotonCertificado/BotonCertificado'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -239,7 +240,11 @@ function FichaAprendiz() {
                       })()}
                     </td>
                     <td className="ficha__td ficha__td_accion">
-
+                      <BotonCertificado
+                        matricula={{ ...matricula, aprendices: aprendiz }}
+                        rol={perfil.rol}
+                        compacto
+                      />
                       <Link to={`/grupos/${matricula.grupos.id}`} className="ficha__enlace">
                         Ver grupo
                       </Link>
