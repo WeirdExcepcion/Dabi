@@ -1,0 +1,108 @@
+.sel-busc {
+  position: relative;
+  width: 100%;
+}
+
+.sel-busc__disparador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: var(--blanco);
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease;
+}
+
+.sel-busc__disparador:hover {
+  border-color: var(--ceruleo);
+}
+
+.sel-busc__valor {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sel-busc__valor_vacio {
+  color: var(--texto-secundario);
+}
+
+.sel-busc__flecha {
+  color: var(--texto-secundario);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.sel-busc__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background-color: var(--blanco);
+  border: 1.5px solid var(--ceruleo);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(2, 17, 60, 0.14);
+  overflow: hidden;
+}
+
+.sel-busc__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid rgba(2, 17, 60, 0.1);
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+}
+
+.sel-busc__input:focus {
+  outline: none;
+  background-color: var(--gris-niebla);
+}
+
+.sel-busc__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.sel-busc__opcion {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background-color: transparent;
+  font-family: var(--font-brand);
+  font-size: 13.5px;
+  color: var(--azul-medianoche);
+  text-align: left;
+  cursor: pointer;
+}
+
+.sel-busc__opcion_activa {
+  background-color: rgba(3, 120, 168, 0.1);
+}
+
+.sel-busc__opcion_vacia {
+  color: var(--texto-secundario);
+  border-bottom: 1px solid rgba(2, 17, 60, 0.06);
+}
+
+.sel-busc__sin-resultados {
+  padding: 12px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  text-align: center;
+}

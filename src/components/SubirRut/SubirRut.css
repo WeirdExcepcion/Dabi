@@ -1,0 +1,84 @@
+.rut {
+  margin-bottom: 18px;
+}
+
+.rut__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 14px;
+  border: 1px solid rgba(2, 17, 60, 0.1);
+  border-radius: 6px;
+  background-color: var(--gris-niebla);
+}
+
+.rut__estado {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto-secundario);
+}
+
+.rut__estado_ok {
+  color: #0F6E56;
+}
+
+.rut__acciones {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.rut__ver {
+  padding: 6px 13px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.rut__ver:hover {
+  background-color: var(--blanco);
+}
+
+.rut__subir {
+  display: inline-block;
+  padding: 6px 13px;
+  border: 1.5px dashed var(--azul-acero);
+  border-radius: 6px;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.rut__subir:hover {
+  border-color: var(--ceruleo);
+  background-color: var(--blanco);
+}
+
+.rut__aviso {
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  color: #B36A00;
+  background-color: rgba(234, 145, 12, 0.1);
+  padding: 10px 13px;
+  border-radius: 6px;
+  margin: 0 0 18px;
+}
+
+.rut__error {
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  color: #B3261E;
+  margin: 8px 0 0;
+}

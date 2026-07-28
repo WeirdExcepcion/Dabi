@@ -1,0 +1,184 @@
+.elim {
+  padding: 28px;
+  background-color: var(--blanco);
+  border-radius: 8px;
+}
+
+.elim__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: #B3261E;
+  margin: 0 0 8px;
+}
+
+.elim__titulo {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0 0 3px;
+}
+
+.elim__doc {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin: 0 0 20px;
+}
+
+.elim__texto {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--azul-medianoche);
+  margin: 0 0 20px;
+}
+
+.elim__alerta {
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  background-color: rgba(179, 38, 30, 0.07);
+  border-left: 3px solid #B3261E;
+  border-radius: 0 6px 6px 0;
+}
+
+.elim__alerta-titulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 600;
+  color: #B3261E;
+  margin: 0 0 8px;
+}
+
+.elim__alerta-texto {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--azul-medianoche);
+  margin: 0 0 8px;
+}
+
+.elim__alerta-texto:last-child {
+  margin-bottom: 0;
+}
+
+.elim__nota {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--texto-secundario);
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  background-color: var(--gris-niebla);
+  border-radius: 6px;
+}
+
+.elim__bloqueado {
+  padding: 18px 20px;
+  background-color: rgba(234, 145, 12, 0.1);
+  border-left: 3px solid #EF9F27;
+  border-radius: 0 6px 6px 0;
+}
+
+.elim__bloqueado-titulo {
+  font-family: var(--font-brand);
+  font-size: 15px;
+  font-weight: 600;
+  color: #B36A00;
+  margin: 0 0 8px;
+}
+
+.elim__bloqueado-texto {
+  font-family: var(--font-brand);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--azul-medianoche);
+  margin: 0 0 16px;
+}
+
+.elim__label {
+  display: block;
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.elim__input {
+  width: 100%;
+  padding: 11px 13px;
+  margin-bottom: 18px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+}
+
+.elim__input:focus {
+  outline: none;
+  border-color: #B3261E;
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.15);
+}
+
+.elim__error {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+  margin: 0 0 14px;
+}
+
+.elim__acciones {
+  display: flex;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+}
+
+.elim__boton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.elim__boton:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.elim__boton_sec {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+  font-weight: 500;
+}
+
+.elim__boton_sec:hover {
+  background-color: var(--gris-niebla);
+}
+
+.elim__boton_peligro {
+  background-color: #B3261E;
+}
+
+.elim__boton_peligro:hover:not(:disabled) {
+  background-color: #931E17;
+}
+
+.elim__boton_peligro:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

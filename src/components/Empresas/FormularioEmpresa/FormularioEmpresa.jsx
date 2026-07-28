@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabaseClient'
+import { PUEDE_GESTIONAR_RUT, PUEDE_VER_RUT } from '../../../constants/permisos'
+import SubirRut from '../../SubirRut/SubirRut'
 import './FormularioEmpresa.css'
 
-function FormularioEmpresa({ empresa = null, onGuardada, onCancelar }) {
+function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar }) {
   const esEdicion = empresa !== null
 
   const [razonSocial, setRazonSocial] = useState(empresa?.razon_social || '')
@@ -11,21 +13,27 @@ function FormularioEmpresa({ empresa = null, onGuardada, onCancelar }) {
   const [correo, setCorreo] = useState(empresa?.correo || '')
   const [telefono, setTelefono] = useState(empresa?.telefono || '')
   const [arlId, setArlId] = useState(empresa?.arl_id || '')
+  const [sectorId, setSectorId] = useState(empresa?.sector_id || '')
 
   const [arls, setArls] = useState([])
+  const [sectores, setSectores] = useState([])
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [rutPath, setRutPath] = useState(empresa?.rut_path || null)
+
+  const puedeGestionarRut = PUEDE_GESTIONAR_RUT.includes(rol)
+  const puedeVerRut = PUEDE_VER_RUT.includes(rol)
 
   useEffect(() => {
-    async function cargarArls() {
-      const { data } = await supabase
-        .from('arls')
-        .select('id, nombre')
-        .eq('activo', true)
-        .order('nombre')
-      if (data) setArls(data)
+    async function cargarCatalogos() {
+      const [resArls, resSectores] = await Promise.all([
+        supabase.from('arls').select('id, nombre').eq('activo', true).order('nombre'),
+        supabase.from('sectores').select('id, nombre').eq('activo', true).order('nombre'),
+      ])
+      if (resArls.data) setArls(resArls.data)
+      if (resSectores.data) setSectores(resSectores.data)
     }
-    cargarArls()
+    cargarCatalogos()
   }, [])
 
   async function handleSubmit(e) {
@@ -39,7 +47,7 @@ function FormularioEmpresa({ empresa = null, onGuardada, onCancelar }) {
       representante_legal: representanteLegal || null,
       correo: correo || null,
       telefono: telefono || null,
-      arl_id: arlId ? Number(arlId) : null,
+      sector_id: sectorId ? Number(sectorId) : null,
     }
 
     let resultado
@@ -48,13 +56,13 @@ function FormularioEmpresa({ empresa = null, onGuardada, onCancelar }) {
         .from('empresas')
         .update(datos)
         .eq('id', empresa.id)
-        .select('*, arls ( nombre )')
+        .select('*, arls ( nombre ), sectores ( nombre )')
         .single()
     } else {
       resultado = await supabase
         .from('empresas')
         .insert(datos)
-        .select('*, arls ( nombre )')
+        .select('*, arls ( nombre ), sectores ( nombre )')
         .single()
     }
 
@@ -146,6 +154,42 @@ function FormularioEmpresa({ empresa = null, onGuardada, onCancelar }) {
         Se sugerirá automáticamente al matricular aprendices de esta empresa.
       </p>
 
+      <label className="form-empresa__label" htmlFor="sector">Sector</label>
+      <select
+        id="sector"
+        className="form-empresa__input"
+        value={sectorId}
+        onChange={(e) => setSectorId(e.target.value)}
+      >
+        <option value="">Sin asignar</option>
+        {sectores.map((sector) => (
+          <option key={sector.id} value={sector.id}>{sector.nombre}</option>
+        ))}
+      </select>
+      <p className="form-empresa__ayuda">
+        También se sugerirá al matricular.
+      </p>
+
+        {esEdicion && puedeVerRut && (
+        <>
+          <label className="form-empresa__label">RUT</label>
+          {puedeGestionarRut ? (
+            <SubirRut
+              empresaId={empresa.id}
+              rutPath={rutPath}
+              onSubido={(ruta) => setRutPath(ruta)}
+            />
+          ) : (
+            <SubirRut
+              empresaId={empresa.id}
+              rutPath={rutPath}
+              onSubido={() => {}}
+              soloLectura
+            />
+          )}
+        </>
+      )}
+      
       {error && <p className="form-empresa__error">{error}</p>}
 
       <div className="form-empresa__acciones">

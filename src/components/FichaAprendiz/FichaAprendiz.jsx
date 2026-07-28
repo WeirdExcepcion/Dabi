@@ -8,6 +8,8 @@ import './FichaAprendiz.css'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../constants/estados'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
+import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
+import { useFaltantes } from '../../context/FaltantesContext'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -66,6 +68,7 @@ function FichaAprendiz() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [corrigiendo, setCorrigiendo] = useState(false)
+  const { cargarFaltantes } = useFaltantes()
 
   
     async function cargarDatos() {
@@ -93,6 +96,7 @@ function FichaAprendiz() {
         console.error(resHistorial.error.message)
       } else {
         setHistorial(resHistorial.data)
+        cargarFaltantes(resHistorial.data.map((m) => m.id))
       }
 
       setCargando(false)
@@ -210,6 +214,7 @@ function FichaAprendiz() {
                         <span className="ficha__td-id"> ({matricula.grupos.identificador})</span>
                       )}
                       <MarcaAuditoria matriculaId={matricula.id} />
+                      <AvisoFaltantes matriculaId={matricula.id} />
                     </td>
                     <td className="ficha__td ficha__td_fechas">
                       {formatearFecha(matricula.grupos.fecha_inicio)} –{' '}

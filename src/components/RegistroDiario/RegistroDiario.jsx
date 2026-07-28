@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS } from '../../constants/permisos'
+import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_ELIMINAR_MATRICULAS } from '../../constants/permisos'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
+import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
+import { useFaltantes } from '../../context/FaltantesContext'
 import './RegistroDiario.css'
 import FormularioMatricula from './FormularioMatricula/FormularioMatricula'
 import DetalleMatricula from './DetalleMatricula/DetalleMatricula'
@@ -11,6 +13,7 @@ import EditarMatricula from './EditarMatricula/EditarMatricula'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../constants/estados'
 import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
+import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
 
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
@@ -35,12 +38,14 @@ const CAMPOS_MATRICULA = `
   fecha_arl,
   fecha_examen,
   examen_vence,
-  grupo_id,
+   grupo_id,
+  aprendiz_id,
   empresa_id,
   arl_id,
   eps_id,
   area_id,
   cargo_id,
+  sector_id,
   aprendices (
     tipo_documento, numero_documento, nombres, apellidos,
     sexo, pais, fecha_nacimiento, rh,
@@ -51,11 +56,12 @@ const CAMPOS_MATRICULA = `
   eps ( nombre ),
   areas ( nombre ),
   cargos ( nombre ),
+  sectores ( nombre ),
   grupos (
     fecha_inicio,
     fecha_fin,
     identificador,
-    cursos ( nombre ),
+    cursos ( nombre, requiere_certificado_previo ),
     entrenador:entrenador_id ( nombre_completo )
   ),
   certificados ( codigo, estado, emitido_en )
@@ -71,8 +77,12 @@ function RegistroDiario() {
   const [matriculaViendo, setMatriculaViendo] = useState(null)
   const [matriculaEditando, setMatriculaEditando] = useState(null)
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
+  const [matriculaEliminando, setMatriculaEliminando] = useState(null)
+  
 
   const puedeCrear = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
+  const puedeEliminar = PUEDE_ELIMINAR_MATRICULAS.includes(perfil.rol)
+  const { cargarFaltantes } = useFaltantes()
   const esHoy = fecha === hoyISO()
 
   function actualizarEstadoLocal(matriculaId, nuevoEstado) {
@@ -96,6 +106,7 @@ function RegistroDiario() {
       console.error(error.message)
     } else {
       setMatriculas(data)
+      cargarFaltantes(data.map((m) => m.id))
     }
 
     setCargando(false)
@@ -173,6 +184,19 @@ function RegistroDiario() {
         </Modal>
       )}
 
+      {matriculaEliminando && (
+        <Modal onCerrar={() => setMatriculaEliminando(null)}>
+          <EliminarMatricula
+            matricula={matriculaEliminando}
+            onEliminada={() => {
+              setMatriculaEliminando(null)
+              obtenerMatriculas()
+            }}
+            onCancelar={() => setMatriculaEliminando(null)}
+          />
+        </Modal>
+      )}
+
       {cargando && <p className="matriculas__mensaje">Cargando registro...</p>}
 
       {error && <p className="matriculas__mensaje">{error}</p>}
@@ -215,6 +239,7 @@ function RegistroDiario() {
                       <td className="matriculas__td matriculas__td_principal">
                         {matricula.aprendices.apellidos} {matricula.aprendices.nombres}
                         <MarcaAuditoria matriculaId={matricula.id} />
+                        <AvisoFaltantes matriculaId={matricula.id} />
                       </td>
                       <td className="matriculas__td">
                         {matricula.grupos.cursos.nombre}
@@ -236,12 +261,22 @@ function RegistroDiario() {
                           Ver
                         </button>
                         {puedeEditar && (
-                          <><button
-                            className="matriculas__boton-ver"
-                            onClick={() => setMatriculaEditando(matricula)}
+                    <button
+                      className="matriculas__boton-ver"
+                      onClick={() => setMatriculaEditando(matricula)}
+                    >
+                      Editar
+                    </button>
+                  )}
+                  <BotonCertificado matricula={matricula} rol={perfil.rol} compacto />
+                        {puedeEliminar && (
+                          <button
+                            className="matriculas__boton-eliminar"
+                            onClick={() => setMatriculaEliminando(matricula)}
+                            title="Eliminar matrícula"
                           >
-                            Editar
-                          </button><BotonCertificado matricula={matricula} rol={perfil.rol} compacto /></>
+                            ×
+                          </button>
                         )}
                       </td>
                     </tr>

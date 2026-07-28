@@ -30,11 +30,13 @@ const CAMPOS = `
   fecha_examen,
   examen_vence,
   grupo_id,
+  aprendiz_id,
   empresa_id,
   arl_id,
   eps_id,
   area_id,
   cargo_id,
+  sector_id,
   aprendices (
     tipo_documento, numero_documento, nombres, apellidos,
     sexo, pais, fecha_nacimiento, rh,
@@ -45,14 +47,16 @@ const CAMPOS = `
   eps ( nombre ),
   areas ( nombre ),
   cargos ( nombre ),
+  sectores ( nombre ),
   grupos (
     id,
     fecha_inicio,
     fecha_fin,
     identificador,
-    cursos ( nombre ),
+    cursos ( nombre, requiere_certificado_previo ),
     entrenador:entrenador_id ( nombre_completo )
-  )
+  ),
+  certificados ( codigo, estado, emitido_en )
 `
 
 function Aprobacion() {

@@ -49,7 +49,7 @@
 }
 
 .empresas__th {
-  padding: 14px 16px;
+  padding: 12px 10px;
   text-align: left;
   font-family: var(--font-brand);
   font-size: 10px;
@@ -61,10 +61,11 @@
   white-space: nowrap;
 }
 
+
 .empresas__td {
-  padding: 14px 16px;
+  padding: 12px 10px;
   font-family: var(--font-brand);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--azul-medianoche);
   border-bottom: 1px solid rgba(2, 17, 60, 0.05);
 }
@@ -82,18 +83,19 @@
 }
 
 .empresas__td_acciones {
-  width: 90px;
+  width: 155px;
   text-align: right;
+  white-space: nowrap;
 }
 
 .empresas__boton-editar {
-  padding: 6px 14px;
+  padding: 5px 10px;
   border: 1.5px solid var(--azul-acero);
   border-radius: 6px;
   background-color: transparent;
   color: var(--azul-medianoche);
   font-family: var(--font-brand);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.15s ease;
@@ -101,4 +103,122 @@
 
 .empresas__boton-editar:hover {
   background-color: var(--gris-niebla);
+}
+
+.empresas__mensaje-accion {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--azul-medianoche);
+  padding: 12px 15px;
+  background-color: rgba(3, 120, 168, 0.08);
+  border-radius: 6px;
+  margin: 0 0 16px;
+}
+
+.empresas__toggle {
+  padding: 7px 14px;
+  margin-bottom: 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--texto-secundario);
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.empresas__toggle:hover {
+  border-color: var(--ceruleo);
+  color: var(--azul-medianoche);
+}
+
+.empresas__boton-eliminar,
+.empresas__boton-reactivar {
+  margin-left: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background-color: transparent;
+  font-family: var(--font-brand);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.empresas__boton-eliminar {
+  border: 1.5px solid rgba(179, 38, 30, 0.3);
+  color: #B3261E;
+}
+
+.empresas__boton-eliminar:hover {
+  background-color: rgba(179, 38, 30, 0.08);
+}
+
+.empresas__boton-reactivar {
+  border: 1.5px solid rgba(29, 158, 117, 0.4);
+  color: #0F6E56;
+}
+
+.empresas__boton-reactivar:hover {
+  background-color: rgba(29, 158, 117, 0.08);
+}
+
+.empresas__header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.empresas__boton-nueva {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.empresas__boton-nueva:hover {
+  background-color: var(--ceruleo);
+}
+
+.empresas__buscador {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.empresas__input-busqueda {
+  flex: 1;
+  max-width: 420px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.empresas__input-busqueda:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.empresas__resultado-conteo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  white-space: nowrap;
 }

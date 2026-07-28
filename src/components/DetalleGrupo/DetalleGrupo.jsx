@@ -2,7 +2,7 @@ import './DetalleGrupo.css'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_APROBAR } from '../../constants/permisos'
+import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_APROBAR, PUEDE_ELIMINAR_MATRICULAS, PUEDE_ELIMINAR_GRUPOS } from '../../constants/permisos'
 import Modal from '../Modal/Modal'
 import FormularioMatricula from '../RegistroDiario/FormularioMatricula/FormularioMatricula'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
@@ -11,7 +11,11 @@ import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import CertificarGrupo from './CertificarGrupo/CertificarGrupo'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import AsignarPersonal from './AsignarPersonal/AsignarPersonal'
+import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
+import { useFaltantes } from '../../context/FaltantesContext'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
+import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
+
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -39,11 +43,13 @@ const CAMPOS_MATRICULA = `
   fecha_examen,
   examen_vence,
   grupo_id,
+  aprendiz_id,
   empresa_id,
   arl_id,
   eps_id,
   area_id,
   cargo_id,
+  sector_id,
   aprendices (
     tipo_documento, numero_documento, nombres, apellidos,
     sexo, pais, fecha_nacimiento, rh,
@@ -54,11 +60,12 @@ const CAMPOS_MATRICULA = `
   eps ( nombre ),
   areas ( nombre ),
   cargos ( nombre ),
+  sectores ( nombre ),
   grupos (
     fecha_inicio,
     fecha_fin,
     identificador,
-    cursos ( nombre ),
+    cursos ( nombre, requiere_certificado_previo ),
     entrenador:entrenador_id ( nombre_completo )
   ),
   certificados ( codigo, estado, emitido_en )
@@ -79,10 +86,16 @@ function DetalleGrupo() {
   const [matriculaEditando, setMatriculaEditando] = useState(null)
   const [certificando, setCertificando] = useState(false)
   const [asignando, setAsignando] = useState(false)
+  const [matriculaEliminando, setMatriculaEliminando] = useState(null)
+  const [eliminandoGrupo, setEliminandoGrupo] = useState(false)
+  const [errorEliminar, setErrorEliminar] = useState('')
 
   const puedeAgregar = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
   const puedeCertificar = PUEDE_APROBAR.includes(perfil.rol)
+  const puedeEliminar = PUEDE_ELIMINAR_MATRICULAS.includes(perfil.rol)
+  const { cargarFaltantes } = useFaltantes()
+  const puedeEliminarGrupo = PUEDE_ELIMINAR_GRUPOS.includes(perfil.rol) && matriculas.length === 0
   const hayAprobados = matriculas.some((m) => m.estado === 'aprobado')
   const listoParaCertificar = grupo?.entrenador_id && grupo?.supervisor_id
 
@@ -90,6 +103,29 @@ function DetalleGrupo() {
     setMatriculas((anteriores) =>
       anteriores.map((m) => (m.id === matriculaId ? { ...m, estado: nuevoEstado } : m))
     )
+  }
+
+  async function eliminarGrupo() {
+    setErrorEliminar('')
+    setEliminandoGrupo(true)
+
+    const { error } = await supabase.rpc('eliminar_grupo', { p_grupo_id: Number(grupoId) })
+
+    setEliminandoGrupo(false)
+
+    if (error) {
+      if (error.message.includes('matriculado')) {
+        setErrorEliminar('El grupo tiene aprendices. Elimínalos primero.')
+      } else if (error.message.includes('no permite')) {
+        setErrorEliminar('Tu rol no permite eliminar grupos')
+      } else {
+        setErrorEliminar('No se pudo eliminar el grupo')
+      }
+      console.error(error.message)
+      return
+    }
+
+    navegar('/grupos')
   }
 
   async function cargarDatos() {
@@ -113,6 +149,7 @@ function DetalleGrupo() {
       console.error(resMatriculas.error.message)
     } else {
       setMatriculas(resMatriculas.data)
+      cargarFaltantes(resMatriculas.data.map((m) => m.id))
     }
 
     setCargando(false)
@@ -186,6 +223,19 @@ function DetalleGrupo() {
               Agregar aprendiz
             </button>
           )}
+          {puedeEliminarGrupo && (
+            <button
+              className="det-grupo__boton-eliminar-grupo"
+              onClick={() => {
+                if (window.confirm('¿Eliminar este grupo? Está vacío, así que no se pierde información de aprendices.')) {
+                  eliminarGrupo()
+                }
+              }}
+              disabled={eliminandoGrupo}
+            >
+              {eliminandoGrupo ? 'Eliminando…' : 'Eliminar grupo'}
+            </button>
+          )}
         </div>
       </header>
 
@@ -199,7 +249,21 @@ function DetalleGrupo() {
           No se podrán emitir certificados hasta asignarlos.
         </p>
       )}
+      {errorEliminar && <p className="det-grupo__error">{errorEliminar}</p>}
       
+      {matriculaEliminando && (
+        <Modal onCerrar={() => setMatriculaEliminando(null)}>
+          <EliminarMatricula
+            matricula={matriculaEliminando}
+            onEliminada={() => {
+              setMatriculaEliminando(null)
+              cargarDatos()
+            }}
+            onCancelar={() => setMatriculaEliminando(null)}
+          />
+        </Modal>
+      )}
+
       {asignando && (
         <Modal onCerrar={() => setAsignando(false)}>
           <AsignarPersonal
@@ -295,6 +359,7 @@ function DetalleGrupo() {
                   <td className="det-grupo__td det-grupo__td_principal">
                     {matricula.aprendices.apellidos} {matricula.aprendices.nombres}
                     <MarcaAuditoria matriculaId={matricula.id} />
+                    <AvisoFaltantes matriculaId={matricula.id} />
                   </td>
                   <td className="det-grupo__td">{matricula.empresas.razon_social}</td>
                   <td className="det-grupo__td">{formatearFecha(matricula.fecha_ingreso)}</td>
@@ -321,6 +386,15 @@ function DetalleGrupo() {
                       </button>
                     )}
                     <BotonCertificado matricula={matricula} rol={perfil.rol} compacto />
+                    {puedeEliminar && (
+                      <button
+                        className="det-grupo__boton-eliminar"
+                        onClick={() => setMatriculaEliminando(matricula)}
+                        title="Eliminar matrícula"
+                      >
+                        ×
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

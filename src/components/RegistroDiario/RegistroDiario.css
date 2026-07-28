@@ -243,3 +243,22 @@
   background-color: rgba(29, 158, 117, 0.2);
   color: #0A5240;
 }
+
+.matriculas__boton-eliminar {
+  margin-left: 6px;
+  padding: 6px 12px;
+  border: 1.5px solid rgba(179, 38, 30, 0.3);
+  border-radius: 6px;
+  background-color: transparent;
+  color: #B3261E;
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.matriculas__boton-eliminar:hover {
+  background-color: rgba(179, 38, 30, 0.08);
+}

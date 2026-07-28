@@ -12,6 +12,7 @@ import Personal from './Personal/Personal'
 import Grupos from './Grupos/Grupos'
 import DetalleGrupo from './DetalleGrupo/DetalleGrupo'
 import Verificar from './Verificar/Verificar'
+import { FaltantesProvider } from '../context/FaltantesContext'
 
 import './App.css'
 
@@ -46,7 +47,7 @@ function App() {
 
       {/* Privado — requiere sesión */}
       {session ? (
-        <Route path="/" element={<Home session={session} />}>
+        <Route path="/" element={<FaltantesProvider><Home session={session} /></FaltantesProvider>}>
           <Route index element={<Navigate to="/aprendices" replace />} />
           <Route path="empresas" element={<Empresas />} />
           <Route path="aprendices" element={<Aprendices />} />

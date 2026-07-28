@@ -1,5 +1,7 @@
 import './DetalleMatricula.css'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../../constants/estados'
+import { useState } from 'react'
+import DocumentosMatricula from '../../DocumentosMatricula/DocumentosMatricula'
 
 
 function formatearFecha(iso) {
@@ -21,7 +23,7 @@ function DetalleMatricula({ matricula, onCerrar }) {
   const a = matricula.aprendices
   const g = matricula.grupos
   const certificado = matricula.certificados?.find((c) => c.estado === 'vigente')
-  console.log('Certificados de esta matrícula:', matricula.certificados)
+  const [pestana, setPestana] = useState('datos')
 
   const examenVencido =
     matricula.examen_vence && matricula.examen_vence < new Date().toISOString().slice(0, 10)
@@ -51,6 +53,35 @@ function DetalleMatricula({ matricula, onCerrar }) {
           ×
         </button>
       </div>
+
+      <div className="detalle__pestanas">
+        <button
+          type="button"
+          className={pestana === 'datos' ? 'detalle__pestana detalle__pestana_activa' : 'detalle__pestana'}
+          onClick={() => setPestana('datos')}
+        >
+          Datos
+        </button>
+        <button
+          type="button"
+          className={pestana === 'documentos' ? 'detalle__pestana detalle__pestana_activa' : 'detalle__pestana'}
+          onClick={() => setPestana('documentos')}
+        >
+          Documentos
+        </button>
+      </div>
+
+      {pestana === 'documentos' && (
+        <DocumentosMatricula
+          matriculaId={matricula.id}
+          aprendizId={matricula.aprendiz_id}
+          requiereCertificadoPrevio={g.cursos?.requiere_certificado_previo}
+          soloLectura
+        />
+      )}
+
+      {pestana === 'datos' && (
+        <>
 
       <div className="detalle__seccion">
         <p className="detalle__seccion-titulo">Datos personales</p>
@@ -120,6 +151,9 @@ function DetalleMatricula({ matricula, onCerrar }) {
         </div>
       )}
 
+      </>
+      )}
+      
       <div className="detalle__pie">
         <Dato etiqueta="Fecha de ingreso" valor={formatearFecha(matricula.fecha_ingreso)} />
       </div>

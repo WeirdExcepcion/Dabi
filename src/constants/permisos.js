@@ -66,3 +66,46 @@ export const PUEDE_GESTIONAR_PERSONAL = [
   'director-operaciones',
   'coordinador-procesos',
 ]
+
+export const PUEDE_ELIMINAR_MATRICULAS = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'coordinador',
+  'supervisor',
+]
+
+export const PUEDE_ELIMINAR_GRUPOS = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'coordinador',
+  'supervisor',
+]
+
+export const PUEDE_ELIMINAR_EMPRESAS = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'coordinador',
+  'supervisor',
+]
+
+export const PUEDE_GESTIONAR_RUT = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+]
+
+export const PUEDE_VER_RUT = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'contable',
+  'auxiliar-cont',
+]

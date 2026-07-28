@@ -3,15 +3,10 @@ import { supabase } from '../../../lib/supabaseClient'
 import { useCatalogos } from '../../../hooks/useCatalogos'
 import { PUEDE_CAMBIAR_ESTADO_GRUPO } from '../../../constants/permisos'
 import SelectorGrupo from '../../SelectorGrupo/SelectorGrupo'
+import SelectorBuscable from '../../SelectorBuscable/SelectorBuscable'
 import './EditarMatricula.css'
-
-const ESTADOS = {
-  en_proceso: 'En proceso',
-  faltan_documentos: 'Faltan documentos',
-  esperando_fecha: 'Esperando fecha',
-  certificado: 'Certificado',
-  anulado: 'Anulado',
-}
+import { ESTADOS_MATRICULA, ESTADOS_APROBACION } from '../../../constants/estados'
+import DocumentosMatricula from '../../DocumentosMatricula/DocumentosMatricula'
 
 function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const { catalogos, cargando: cargandoCatalogos } = useCatalogos()
@@ -22,6 +17,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const [epsId, setEpsId] = useState(matricula.eps_id || '')
   const [areaId, setAreaId] = useState(matricula.area_id || '')
   const [cargoId, setCargoId] = useState(matricula.cargo_id || '')
+  const [sectorId, setSectorId] = useState(matricula.sector_id || '')
   const [fechaArl, setFechaArl] = useState(matricula.fecha_arl || '')
   const [fechaExamen, setFechaExamen] = useState(matricula.fecha_examen || '')
   const [estado, setEstado] = useState(matricula.estado)
@@ -30,6 +26,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [resultado, setResultado] = useState(null)
+  const [pestana, setPestana] = useState('datos')
 
   function opcional(valor) {
     return valor === '' ? null : Number(valor)
@@ -59,6 +56,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
       eps_id: opcional(epsId),
       area_id: opcional(areaId),
       cargo_id: opcional(cargoId),
+      sector_id: opcional(sectorId),
       fecha_arl: opcionalFecha(fechaArl),
       fecha_examen: opcionalFecha(fechaExamen),
     }
@@ -161,7 +159,35 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
           </p>
         </div>
       )}
+        <div className="editar-mat__pestanas">
+        <button
+          type="button"
+          className={pestana === 'datos' ? 'editar-mat__pestana editar-mat__pestana_activa' : 'editar-mat__pestana'}
+          onClick={() => setPestana('datos')}
+        >
+          Datos
+        </button>
+        <button
+          type="button"
+          className={pestana === 'documentos' ? 'editar-mat__pestana editar-mat__pestana_activa' : 'editar-mat__pestana'}
+          onClick={() => setPestana('documentos')}
+        >
+          Documentos
+        </button>
+      </div>
 
+      {pestana === 'documentos' && (
+        <DocumentosMatricula
+          matriculaId={matricula.id}
+          aprendizId={matricula.aprendiz_id}
+          requiereCertificadoPrevio={matricula.grupos?.cursos?.requiere_certificado_previo}
+        />
+      )}
+
+      {pestana === 'datos' && (
+        <>
+      
+      
       {puedeEstadoGrupo && (
         <fieldset className="editar-mat__seccion">
           <legend className="editar-mat__legend">Estado y grupo</legend>
@@ -175,8 +201,8 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
                 value={estado}
                 onChange={(e) => setEstado(e.target.value)}
               >
-                {Object.entries(ESTADOS).map(([valor, etiqueta]) => (
-                  <option key={valor} value={valor}>{etiqueta}</option>
+                {ESTADOS_APROBACION.map((valor) => (
+                  <option key={valor} value={valor}>{ESTADOS_MATRICULA[valor]}</option>
                 ))}
               </select>
             </div>
@@ -195,12 +221,14 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
         <div className="editar-mat__fila">
           <div className="editar-mat__campo">
             <label className="editar-mat__label" htmlFor="edit_empresa">Empresa *</label>
-            <select
+            <SelectorBuscable
               id="edit_empresa"
-              className="editar-mat__select"
-              value={empresaId}
-              onChange={(e) => {
-                const nuevaEmpresaId = e.target.value
+              opciones={catalogos.empresas}
+              valor={empresaId}
+              campoTexto="razon_social"
+              placeholder="Buscar empresa…"
+              vacioTexto="Selecciona…"
+              onCambio={(nuevaEmpresaId) => {
                 setEmpresaId(nuevaEmpresaId)
 
                 const empresaElegida = catalogos.empresas.find(
@@ -209,45 +237,46 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
                 if (empresaElegida?.arl_id && !arlId) {
                   setArlId(String(empresaElegida.arl_id))
                 }
+                if (empresaElegida?.sector_id && !sectorId) {
+                  setSectorId(String(empresaElegida.sector_id))
+                }
               }}
-            >
-              <option value="">Selecciona…</option>
-              {catalogos.empresas.map((empresa) => (
-                <option key={empresa.id} value={empresa.id}>{empresa.razon_social}</option>
-              ))}
-            </select>
+            />
           </div>
         </div>
+
+        <div className="editar-mat__campo">
+            <label className="editar-mat__label" htmlFor="edit_sector">Sector</label>
+            <SelectorBuscable
+              id="edit_sector"
+              opciones={catalogos.sectores}
+              valor={sectorId}
+              onCambio={setSectorId}
+              placeholder="Buscar sector…"
+            />
+          </div>
 
         <div className="editar-mat__fila">
           <div className="editar-mat__campo">
             <label className="editar-mat__label" htmlFor="edit_area">Área</label>
-            <select
+            <SelectorBuscable
               id="edit_area"
-              className="editar-mat__select"
-              value={areaId}
-              onChange={(e) => setAreaId(e.target.value)}
-            >
-              <option value="">—</option>
-              {catalogos.areas.map((area) => (
-                <option key={area.id} value={area.id}>{area.nombre}</option>
-              ))}
-            </select>
+              opciones={catalogos.areas}
+              valor={areaId}
+              onCambio={setAreaId}
+              placeholder="Buscar área…"
+            />
           </div>
 
           <div className="editar-mat__campo">
             <label className="editar-mat__label" htmlFor="edit_cargo">Cargo</label>
-            <select
+            <SelectorBuscable
               id="edit_cargo"
-              className="editar-mat__select"
-              value={cargoId}
-              onChange={(e) => setCargoId(e.target.value)}
-            >
-              <option value="">—</option>
-              {catalogos.cargos.map((cargo) => (
-                <option key={cargo.id} value={cargo.id}>{cargo.nombre}</option>
-              ))}
-            </select>
+              opciones={catalogos.cargos}
+              valor={cargoId}
+              onCambio={setCargoId}
+              placeholder="Buscar cargo…"
+            />
           </div>
         </div>
       </fieldset>
@@ -258,17 +287,13 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
         <div className="editar-mat__fila">
           <div className="editar-mat__campo">
             <label className="editar-mat__label" htmlFor="edit_arl">ARL</label>
-            <select
+            <SelectorBuscable
               id="edit_arl"
-              className="editar-mat__select"
-              value={arlId}
-              onChange={(e) => setArlId(e.target.value)}
-            >
-              <option value="">—</option>
-              {catalogos.arls.map((arl) => (
-                <option key={arl.id} value={arl.id}>{arl.nombre}</option>
-              ))}
-            </select>
+              opciones={catalogos.arls}
+              valor={arlId}
+              onCambio={setArlId}
+              placeholder="Buscar ARL…"
+            />
           </div>
 
           <div className="editar-mat__campo">
@@ -286,17 +311,13 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
         <div className="editar-mat__fila">
           <div className="editar-mat__campo">
             <label className="editar-mat__label" htmlFor="edit_eps">EPS</label>
-            <select
+            <SelectorBuscable
               id="edit_eps"
-              className="editar-mat__select"
-              value={epsId}
-              onChange={(e) => setEpsId(e.target.value)}
-            >
-              <option value="">—</option>
-              {catalogos.eps.map((eps) => (
-                <option key={eps.id} value={eps.id}>{eps.nombre}</option>
-              ))}
-            </select>
+              opciones={catalogos.eps}
+              valor={epsId}
+              onCambio={setEpsId}
+              placeholder="Buscar EPS…"
+            />
           </div>
 
           <div className="editar-mat__campo">
@@ -311,7 +332,8 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
           </div>
         </div>
       </fieldset>
-
+              </>
+      )}
       {error && <p className="editar-mat__error">{error}</p>}
 
       <div className="editar-mat__acciones">

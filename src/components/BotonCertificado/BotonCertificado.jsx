@@ -22,8 +22,9 @@ function BotonCertificado({ matricula, rol, compacto = false }) {
 
   const certificado = matricula.certificados?.find((c) => c.estado === 'vigente')
   const puedeDescargar = ROLES_DESCARGA.includes(rol)
+  const estaCertificada = matricula.estado === 'certificado'
 
-  if (!certificado || !puedeDescargar) return null
+  if (!certificado || !puedeDescargar || !estaCertificada) return null
 
   async function descargar(e) {
     e.stopPropagation()
