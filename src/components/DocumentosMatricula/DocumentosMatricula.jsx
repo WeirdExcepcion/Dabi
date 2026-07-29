@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import './DocumentosMatricula.css'
+import { comprimirImagen } from '../../lib/comprimirImagen'
 
 const MAX_BYTES = 5 * 1024 * 1024
 const TIPOS_ACEPTADOS = ['application/pdf', 'image/png', 'image/jpeg']
@@ -79,11 +80,12 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
     setError('')
     setSubiendo(tipo)
 
-    const ruta = `matriculas/${matriculaId}/${tipo}.${extensionDe(archivo)}`
+    const comprimido = await comprimirImagen(archivo)
+    const ruta = `matriculas/${matriculaId}/${tipo}.${extensionDe(comprimido)}`
 
     const { error: errorSubida } = await supabase.storage
       .from('documentos')
-      .upload(ruta, archivo, { upsert: true, contentType: archivo.type })
+      .upload(ruta, comprimido, { upsert: true, contentType: comprimido.type })
 
     if (errorSubida) {
       setSubiendo(null)
@@ -128,11 +130,12 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
     setError('')
     setSubiendo(tipo)
 
-    const ruta = `aprendices/${aprendizId}/${tipo}.${extensionDe(archivo)}`
+    const comprimido = await comprimirImagen(archivo)
+    const ruta = `aprendices/${aprendizId}/${tipo}.${extensionDe(comprimido)}`
 
     const { error: errorSubida } = await supabase.storage
       .from('documentos')
-      .upload(ruta, archivo, { upsert: true, contentType: archivo.type })
+      .upload(ruta, comprimido, { upsert: true, contentType: comprimido.type })
 
     if (errorSubida) {
       setSubiendo(null)

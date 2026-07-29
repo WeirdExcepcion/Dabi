@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { comprimirImagen } from '../../lib/comprimirImagen'
 import './SubirRut.css'
+
 
 const MAX_BYTES = 5 * 1024 * 1024
 const TIPOS = ['application/pdf', 'image/png', 'image/jpeg']
@@ -29,13 +31,14 @@ function SubirRut({ empresaId, rutPath, onSubido, soloLectura = false }) {
 
     setSubiendo(true)
 
+    const comprimido = await comprimirImagen(archivo)
     const extension =
-      archivo.type === 'application/pdf' ? 'pdf' : archivo.type === 'image/png' ? 'png' : 'jpg'
+      comprimido.type === 'application/pdf' ? 'pdf' : comprimido.type === 'image/png' ? 'png' : 'jpg'
     const ruta = `empresas/${empresaId}/rut.${extension}`
 
     const { error: errorSubida } = await supabase.storage
       .from('documentos')
-      .upload(ruta, archivo, { upsert: true, contentType: archivo.type })
+      .upload(ruta, comprimido, { upsert: true, contentType: comprimido.type })
 
     if (errorSubida) {
       setSubiendo(false)
