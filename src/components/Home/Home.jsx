@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { SECCIONES } from '../../constants/navegacion'
 import { PUEDE_APROBAR } from '../../constants/permisos'
 import { AuditoriaProvider } from '../../context/AuditoriaContext'
 import PanelLateral from '../compartidos/PanelLateral/PanelLateral'
 import Auditoria from '../Alturas/Auditoria/Auditoria'
-import logoSS from '../../assets/isotipo-ss.png'
+import logoSS from '../../assets/isotipo-ss-p.png'
 import './Home.css'
 
 function Home({ session }) {
   const [perfil, setPerfil] = useState(null)
   const [cargandoPerfil, setCargandoPerfil] = useState(true)
   const [auditoriaAbierta, setAuditoriaAbierta] = useState(false)
+  const navegar = useNavigate()
 
   useEffect(() => {
     async function obtenerPerfil() {
@@ -36,6 +37,7 @@ function Home({ session }) {
 
   async function handleLogout() {
     await supabase.auth.signOut()
+    navegar('/login')
   }
 
   if (cargandoPerfil) {
@@ -65,10 +67,14 @@ function Home({ session }) {
     <AuditoriaProvider>
     <div className="home">
       <header className="home__header">
-        <div className="home__brand">
+        <button
+          className="home__brand"
+          onClick={() => navegar('/')}
+          title="Ir al inicio"
+        >
           <img src={logoSS} alt="Staff & Services" className="home__logo" />
           <span className="home__wordmark">DABI</span>
-        </div>
+        </button>
 
         {puedeAuditar && (
           <button

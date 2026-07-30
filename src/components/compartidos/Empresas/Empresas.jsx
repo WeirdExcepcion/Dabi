@@ -1,14 +1,24 @@
 import { useState, useEffect } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
 import { PUEDE_CREAR_EMPRESAS, PUEDE_EDITAR_EMPRESAS, PUEDE_ELIMINAR_EMPRESAS } from '../../../constants/permisos'
 import Modal from '../Modal/Modal'
 import FormularioEmpresa from './FormularioEmpresa/FormularioEmpresa'
 import './Empresas.css'
 
+const CAMPOS = `
+  id, razon_social, nit, representante_legal, correo, telefono,
+  arl_id, sector_id, rut_path, activo, created_at, total_aprendices,
+  arls ( nombre ), sectores ( nombre )
+`
+
 function Empresas() {
   const { perfil } = useOutletContext()
+  const navegar = useNavigate()
+
   const [empresas, setEmpresas] = useState([])
+  const [arls, setArls] = useState([])
+  const [sectores, setSectores] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [mostrandoFormulario, setMostrandoFormulario] = useState(false)
@@ -17,14 +27,19 @@ function Empresas() {
   const [mensajeAccion, setMensajeAccion] = useState('')
   const [busqueda, setBusqueda] = useState('')
 
+  const [orden, setOrden] = useState('alfabetico')
+  const [filtroArl, setFiltroArl] = useState('')
+  const [filtroSector, setFiltroSector] = useState('')
+  const [minAprendices, setMinAprendices] = useState('')
+
   const puedeCrear = PUEDE_CREAR_EMPRESAS.includes(perfil.rol)
   const puedeEditar = PUEDE_EDITAR_EMPRESAS.includes(perfil.rol)
   const puedeEliminar = PUEDE_ELIMINAR_EMPRESAS.includes(perfil.rol)
 
   async function obtenerEmpresas() {
     const { data, error } = await supabase
-      .from('empresas')
-      .select('id, razon_social, nit, representante_legal, correo, telefono, arl_id, sector_id, rut_path, activo, arls ( nombre ), sectores ( nombre )')
+      .from('empresas_con_conteo')
+      .select(CAMPOS)
       .order('razon_social', { ascending: true })
 
     if (error) {
@@ -38,25 +53,27 @@ function Empresas() {
   }
 
   useEffect(() => {
+    async function cargarCatalogos() {
+      const [resArls, resSectores] = await Promise.all([
+        supabase.from('arls').select('id, nombre').eq('activo', true).order('nombre'),
+        supabase.from('sectores').select('id, nombre').eq('activo', true).order('nombre'),
+      ])
+      if (resArls.data) setArls(resArls.data)
+      if (resSectores.data) setSectores(resSectores.data)
+    }
+
     obtenerEmpresas()
+    cargarCatalogos()
   }, [])
 
-  function handleEmpresaCreada(nuevaEmpresa) {
-    setEmpresas((anteriores) =>
-      [...anteriores, nuevaEmpresa].sort((a, b) =>
-        a.razon_social.localeCompare(b.razon_social)
-      )
-    )
+  function handleEmpresaCreada() {
     setMostrandoFormulario(false)
+    obtenerEmpresas()
   }
 
-  function handleEmpresaEditada(empresaActualizada) {
-    setEmpresas((anteriores) =>
-      anteriores
-        .map((e) => (e.id === empresaActualizada.id ? empresaActualizada : e))
-        .sort((a, b) => a.razon_social.localeCompare(b.razon_social))
-    )
+  function handleEmpresaEditada() {
     setEmpresaEditando(null)
+    obtenerEmpresas()
   }
 
   async function eliminarEmpresa(empresa) {
@@ -99,6 +116,12 @@ function Empresas() {
     obtenerEmpresas()
   }
 
+  function limpiarFiltros() {
+    setFiltroArl('')
+    setFiltroSector('')
+    setMinAprendices('')
+  }
+
   if (cargando) {
     return <p className="empresas__mensaje">Cargando empresas...</p>
   }
@@ -109,17 +132,44 @@ function Empresas() {
 
   const activas = empresas.filter((e) => e.activo)
   const inactivas = empresas.filter((e) => !e.activo)
-  const base = verInactivas ? empresas : activas
+  let visibles = verInactivas ? empresas : activas
 
   const termino = busqueda.trim().toLowerCase()
-  const visibles = termino
-    ? base.filter(
-        (e) =>
-          e.razon_social.toLowerCase().includes(termino) ||
-          (e.nit || '').toLowerCase().includes(termino)
-      )
-    : base
-  
+  if (termino) {
+    visibles = visibles.filter(
+      (e) =>
+        e.razon_social.toLowerCase().includes(termino) ||
+        (e.nit || '').toLowerCase().includes(termino)
+    )
+  }
+
+  if (filtroArl) {
+    visibles = visibles.filter((e) => String(e.arl_id) === String(filtroArl))
+  }
+
+  if (filtroSector) {
+    visibles = visibles.filter((e) => String(e.sector_id) === String(filtroSector))
+  }
+
+  if (minAprendices) {
+    visibles = visibles.filter((e) => (e.total_aprendices || 0) >= Number(minAprendices))
+  }
+
+  visibles = [...visibles].sort((a, b) => {
+    if (orden === 'recientes') {
+      return new Date(b.created_at) - new Date(a.created_at)
+    }
+    if (orden === 'antiguas') {
+      return new Date(a.created_at) - new Date(b.created_at)
+    }
+    if (orden === 'aprendices') {
+      return (b.total_aprendices || 0) - (a.total_aprendices || 0)
+    }
+    return a.razon_social.localeCompare(b.razon_social)
+  })
+
+  const hayFiltros = filtroArl || filtroSector || minAprendices
+
   return (
     <section className="empresas">
       <header className="empresas__header">
@@ -177,6 +227,72 @@ function Empresas() {
         )}
       </div>
 
+      <div className="empresas__filtros">
+        <div className="empresas__filtro">
+          <label className="empresas__filtro-label" htmlFor="orden">Ordenar por</label>
+          <select
+            id="orden"
+            className="empresas__filtro-select"
+            value={orden}
+            onChange={(e) => setOrden(e.target.value)}
+          >
+            <option value="alfabetico">Orden alfabético</option>
+            <option value="recientes">Más recientes</option>
+            <option value="antiguas">Más antiguas</option>
+            <option value="aprendices">Más aprendices</option>
+          </select>
+        </div>
+
+        <div className="empresas__filtro">
+          <label className="empresas__filtro-label" htmlFor="f_sector">Sector</label>
+          <select
+            id="f_sector"
+            className="empresas__filtro-select"
+            value={filtroSector}
+            onChange={(e) => setFiltroSector(e.target.value)}
+          >
+            <option value="">Todos</option>
+            {sectores.map((s) => (
+              <option key={s.id} value={s.id}>{s.nombre}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="empresas__filtro">
+          <label className="empresas__filtro-label" htmlFor="f_arl">ARL</label>
+          <select
+            id="f_arl"
+            className="empresas__filtro-select"
+            value={filtroArl}
+            onChange={(e) => setFiltroArl(e.target.value)}
+          >
+            <option value="">Todas</option>
+            {arls.map((a) => (
+              <option key={a.id} value={a.id}>{a.nombre}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="empresas__filtro empresas__filtro_corto">
+          <label className="empresas__filtro-label" htmlFor="f_min">Mín. aprendices</label>
+          <input
+            id="f_min"
+            type="number"
+            min="0"
+            className="empresas__filtro-input"
+            value={minAprendices}
+            onChange={(e) => setMinAprendices(e.target.value)}
+            placeholder="0"
+          />
+        </div>
+
+        {hayFiltros && (
+          <button className="empresas__limpiar" onClick={limpiarFiltros}>
+            Limpiar
+          </button>
+        )}
+      </div>
+
       {mensajeAccion && (
         <p className="empresas__mensaje-accion">{mensajeAccion}</p>
       )}
@@ -193,7 +309,7 @@ function Empresas() {
       {empresas.length === 0 ? (
         <p className="empresas__mensaje">Aún no hay empresas registradas.</p>
       ) : visibles.length === 0 ? (
-        <p className="empresas__mensaje">Ninguna empresa coincide con la búsqueda.</p>
+        <p className="empresas__mensaje">Ninguna empresa coincide con los filtros.</p>
       ) : (
         <div className="empresas__tabla-wrap">
           <table className="empresas__tabla">
@@ -202,28 +318,37 @@ function Empresas() {
                 <th className="empresas__th">Razón social</th>
                 <th className="empresas__th">NIT</th>
                 <th className="empresas__th">Representante legal</th>
-                <th className="empresas__th">Correo</th>
                 <th className="empresas__th">Teléfono</th>
                 <th className="empresas__th">ARL</th>
                 <th className="empresas__th">Sector</th>
+                <th className="empresas__th">Aprendices</th>
                 <th className="empresas__th"></th>
               </tr>
             </thead>
             <tbody>
               {visibles.map((empresa) => (
-                <tr key={empresa.id}>
+                <tr
+                  key={empresa.id}
+                  className="empresas__fila"
+                  onClick={() => navegar(`/alturas/empresas/${empresa.id}`)}
+                >
                   <td className="empresas__td empresas__td_principal">{empresa.razon_social}</td>
                   <td className="empresas__td">{empresa.nit || '—'}</td>
                   <td className="empresas__td">{empresa.representante_legal || '—'}</td>
-                  <td className="empresas__td">{empresa.correo || '—'}</td>
                   <td className="empresas__td">{empresa.telefono || '—'}</td>
                   <td className="empresas__td">{empresa.arls?.nombre || '—'}</td>
                   <td className="empresas__td">{empresa.sectores?.nombre || '—'}</td>
+                  <td className="empresas__td empresas__td_conteo">
+                    {empresa.total_aprendices || 0}
+                  </td>
                   <td className="empresas__td empresas__td_acciones">
                     {puedeEditar && (
                       <button
                         className="empresas__boton-editar"
-                        onClick={() => setEmpresaEditando(empresa)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setEmpresaEditando(empresa)
+                        }}
                       >
                         Editar
                       </button>
@@ -231,7 +356,8 @@ function Empresas() {
                     {puedeEliminar && empresa.activo && (
                       <button
                         className="empresas__boton-eliminar"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation()
                           if (window.confirm(`¿Eliminar ${empresa.razon_social}? Si tiene matrículas registradas, se desactivará en lugar de borrarse.`)) {
                             eliminarEmpresa(empresa)
                           }
@@ -243,7 +369,10 @@ function Empresas() {
                     {puedeEliminar && !empresa.activo && (
                       <button
                         className="empresas__boton-reactivar"
-                        onClick={() => reactivarEmpresa(empresa)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          reactivarEmpresa(empresa)
+                        }}
                       >
                         Reactivar
                       </button>

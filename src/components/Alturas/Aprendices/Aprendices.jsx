@@ -110,7 +110,7 @@ function Aprendices() {
                   <tr
                     key={aprendiz.id}
                     className="aprendices__fila"
-                    onClick={() => navegar(`/aprendices/${aprendiz.id}`)}
+                    onClick={() => navegar(`/alturas/aprendices/${aprendiz.id}`)}
                   >
                     <td className="aprendices__td aprendices__td_doc">
                       {aprendiz.tipo_documento} {aprendiz.numero_documento}

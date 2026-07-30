@@ -113,7 +113,7 @@ function FichaAprendiz() {
     return (
       <section>
         <p className="ficha__mensaje">{error}</p>
-        <button className="ficha__volver" onClick={() => navegar('/aprendices')}>
+        <button className="ficha__volver" onClick={() => navegar('/alturas/aprendices')}>
           Volver a aprendices
         </button>
       </section>
@@ -125,7 +125,7 @@ function FichaAprendiz() {
 
   return (
     <section className="ficha">
-      <button className="ficha__volver" onClick={() => navegar('/aprendices')}>
+      <button className="ficha__volver" onClick={() => navegar('/alturas/aprendices')}>
         ← Aprendices
       </button>
 
@@ -250,7 +250,7 @@ function FichaAprendiz() {
                         rol={perfil.rol}
                         compacto
                       />
-                      <Link to={`/grupos/${matricula.grupos.id}`} className="ficha__enlace">
+                      <Link to={`/alturas/grupos/${matricula.grupos.id}`} className="ficha__enlace">
                         Ver grupo
                       </Link>
                     </td>

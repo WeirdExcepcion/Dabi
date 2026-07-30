@@ -31,7 +31,7 @@ export async function obtenerDatosCertificado(codigo) {
       matriculas (
         arls ( nombre ),
         aprendices ( tipo_documento, numero_documento, nombres, apellidos ),
-        empresas ( razon_social, nit, representante_legal ),
+        empresas ( razon_social, nit, representante_legal, es_independiente ),
         grupos (
           fecha_inicio,
           fecha_fin,
@@ -74,9 +74,15 @@ export async function obtenerDatosCertificado(codigo) {
     documento: a.numero_documento,
     curso: g.cursos.nombre_certificado || g.cursos.nombre,
     horas: g.cursos.duracion_horas ? `${g.cursos.duracion_horas} horas` : '—',
-    empresa: m.empresas?.razon_social || '—',
-    empresaNit: m.empresas?.nit || '—',
-    repLegal: m.empresas?.representante_legal || '—',
+    empresa: m.empresas?.es_independiente
+      ? `${a.nombres} ${a.apellidos}`
+      : m.empresas?.razon_social || '—',
+    empresaNit: m.empresas?.es_independiente
+      ? a.numero_documento
+      : m.empresas?.nit || '—',
+    repLegal: m.empresas?.es_independiente
+      ? `${a.nombres} ${a.apellidos}`
+      : m.empresas?.representante_legal || '—',
     arl: m.arls?.nombre || '—',
     diaInicio: inicio.dia, mesInicio: inicio.mes, anioInicio: inicio.anio,
     diaFin: fin.dia, mesFin: fin.mes, anioFin: fin.anio,

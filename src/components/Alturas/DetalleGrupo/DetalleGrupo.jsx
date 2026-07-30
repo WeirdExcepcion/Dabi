@@ -125,7 +125,7 @@ function DetalleGrupo() {
       return
     }
 
-    navegar('/grupos')
+    navegar('/alturas/grupos')
   }
 
   async function cargarDatos() {
@@ -167,7 +167,7 @@ function DetalleGrupo() {
     return (
       <section>
         <p className="det-grupo__mensaje">{error}</p>
-        <button className="det-grupo__volver" onClick={() => navegar('/grupos')}>
+        <button className="det-grupo__volver" onClick={() => navegar('/alturas/grupos')}>
           Volver a grupos
         </button>
       </section>
@@ -176,7 +176,7 @@ function DetalleGrupo() {
 
   return (
     <section className="det-grupo">
-      <button className="det-grupo__volver" onClick={() => navegar('/grupos')}>
+      <button className="det-grupo__volver" onClick={() => navegar('/alturas/grupos')}>
         ← Grupos
       </button>
 

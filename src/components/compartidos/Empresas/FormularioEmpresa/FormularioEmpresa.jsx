@@ -4,7 +4,7 @@ import { PUEDE_GESTIONAR_RUT, PUEDE_VER_RUT } from '../../../../constants/permis
 import SubirRut from '../../SubirRut/SubirRut'
 import './FormularioEmpresa.css'
 
-function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar }) {
+function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar, onUsarExistente = null }) {
   const esEdicion = empresa !== null
 
   const [razonSocial, setRazonSocial] = useState(empresa?.razon_social || '')
@@ -19,6 +19,8 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar }) {
   const [sectores, setSectores] = useState([])
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [similares, setSimilares] = useState([])
+  const [buscandoSimilares, setBuscandoSimilares] = useState(false)
   const [rutPath, setRutPath] = useState(empresa?.rut_path || null)
 
   const puedeGestionarRut = PUEDE_GESTIONAR_RUT.includes(rol)
@@ -35,6 +37,42 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar }) {
     }
     cargarCatalogos()
   }, [])
+
+  useEffect(() => {
+    if (esEdicion) return
+
+    const temporizador = setTimeout(async () => {
+      const nitLimpio = nit.trim()
+      const nombreLimpio = razonSocial.trim()
+
+      if (!nitLimpio && nombreLimpio.length < 4) {
+        setSimilares([])
+        return
+      }
+
+      setBuscandoSimilares(true)
+
+      const { data, error } = await supabase.rpc('buscar_empresas_similares', {
+        p_nit: nitLimpio || null,
+        p_razon_social: nombreLimpio || null,
+      })
+
+      setBuscandoSimilares(false)
+
+      if (error) {
+        console.error(error.message)
+        return
+      }
+
+      setSimilares(data || [])
+    }, 500)
+
+    return () => clearTimeout(temporizador)
+  }, [nit, razonSocial, esEdicion])
+
+  const bloqueante = similares.find(
+    (s) => s.coincidencia === 'nit_exacto' || s.coincidencia === 'nombre_exacto'
+  )
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -191,6 +229,56 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar }) {
         </>
       )}
       
+      {!esEdicion && similares.length > 0 && (
+        <div className={bloqueante ? 'form-empresa__dup form-empresa__dup_bloqueo' : 'form-empresa__dup'}>
+          <p className="form-empresa__dup-titulo">
+            {bloqueante
+              ? 'Esta empresa ya está registrada'
+              : 'Encontramos empresas parecidas'}
+          </p>
+
+          {bloqueante && (
+            <p className="form-empresa__dup-texto">
+              No puedes crearla de nuevo. Usa la que ya existe.
+            </p>
+          )}
+
+          <div className="form-empresa__dup-lista">
+            {similares.map((s) => (
+              <div key={s.id} className="form-empresa__dup-item">
+                <div>
+                  <p className="form-empresa__dup-nombre">
+                    {s.razon_social}
+                    {!s.activo && <span className="form-empresa__dup-inactiva"> · inactiva</span>}
+                  </p>
+                  <p className="form-empresa__dup-nit">
+                    {s.nit || 'sin NIT'}
+                    {s.coincidencia === 'nit_exacto' && ' · mismo NIT'}
+                    {s.coincidencia === 'nombre_exacto' && ' · mismo nombre'}
+                    {s.coincidencia === 'nit_parecido' && ' · NIT muy parecido'}
+                  </p>
+                </div>
+                {onUsarExistente && (
+                  <button
+                    type="button"
+                    className="form-empresa__dup-usar"
+                    onClick={() => onUsarExistente(s.id)}
+                  >
+                    Usar esta
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {!bloqueante && (
+            <p className="form-empresa__dup-nota">
+              Si de verdad es una empresa distinta, puedes continuar.
+            </p>
+          )}
+        </div>
+      )}
+
       {error && <p className="form-empresa__error">{error}</p>}
 
       <div className="form-empresa__acciones">
@@ -204,7 +292,7 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar }) {
         <button
           type="submit"
           className="form-empresa__boton"
-          disabled={guardando}
+          disabled={guardando || Boolean(bloqueante)}
         >
           {guardando ? 'Guardando…' : esEdicion ? 'Guardar cambios' : 'Guardar empresa'}
         </button>

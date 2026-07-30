@@ -471,6 +471,14 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
                     }
                   }}
                 />
+
+                {catalogos.empresas.find((e) => String(e.id) === String(empresaId))?.es_independiente && (
+                  <p className="form-matricula__nota-independiente">
+                    Aprendiz independiente. En su certificado aparecerán sus propios datos
+                    como empresa. Recuerda seleccionar su ARL.
+                  </p>
+                )}
+                
               </div>
             </div>
 

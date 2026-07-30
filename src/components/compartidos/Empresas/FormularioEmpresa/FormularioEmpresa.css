@@ -99,3 +99,97 @@
   color: var(--texto-secundario);
   margin: -12px 0 18px;
 }
+
+.form-empresa__dup {
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background-color: rgba(234, 145, 12, 0.1);
+  border-left: 3px solid #EF9F27;
+}
+
+.form-empresa__dup_bloqueo {
+  background-color: rgba(179, 38, 30, 0.08);
+  border-left-color: #B3261E;
+}
+
+.form-empresa__dup-titulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 600;
+  color: #B36A00;
+  margin: 0 0 6px;
+}
+
+.form-empresa__dup_bloqueo .form-empresa__dup-titulo {
+  color: #B3261E;
+}
+
+.form-empresa__dup-texto {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--azul-medianoche);
+  margin: 0 0 10px;
+}
+
+.form-empresa__dup-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-empresa__dup-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background-color: var(--blanco);
+  border-radius: 6px;
+}
+
+.form-empresa__dup-nombre {
+  font-family: var(--font-brand);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.form-empresa__dup-inactiva {
+  font-weight: 400;
+  color: var(--texto-secundario);
+}
+
+.form-empresa__dup-nit {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  color: var(--texto-secundario);
+  margin: 2px 0 0;
+}
+
+.form-empresa__dup-usar {
+  padding: 6px 13px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.form-empresa__dup-usar:hover {
+  background-color: var(--gris-niebla);
+}
+
+.form-empresa__dup-nota {
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--texto-secundario);
+  margin: 10px 0 0;
+}

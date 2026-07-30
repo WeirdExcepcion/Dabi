@@ -270,7 +270,7 @@ function Grupos() {
             <article
               key={grupo.id}
               className="grupos__tarjeta"
-              onClick={() => navegar(`/grupos/${grupo.id}`)}
+              onClick={() => navegar(`/alturas/grupos/${grupo.id}`)}
             >
               <div className="grupos__tarjeta-info">
                 <p className="grupos__tarjeta-curso">

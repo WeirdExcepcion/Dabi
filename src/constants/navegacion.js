@@ -1,33 +1,32 @@
 export const SECCIONES = [
   {
-    ruta: '/registro',
+    ruta: '/alturas/registro',
     etiqueta: 'Registro diario',
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
   },
   {
-    ruta: '/aprobacion',
+    ruta: '/alturas/aprobacion',
     etiqueta: 'Aprobación',
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor'],
   },
   {
-    ruta: '/grupos',
+    ruta: '/alturas/grupos',
     etiqueta: 'Grupos',
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
   },
   {
-    ruta: '/empresas',
+    ruta: '/alturas/empresas',
     etiqueta: 'Empresas',
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
   },
   {
-    ruta: '/aprendices',
+    ruta: '/alturas/aprendices',
     etiqueta: 'Aprendices',
     roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
   },
   {
-    ruta: '/personal',
+    ruta: '/alturas/personal',
     etiqueta: 'Personal',
     roles: ['admin', 'gerente-general', 'director-operaciones', 'coordinador-procesos'],
   },
 ]
-
