@@ -47,6 +47,7 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar }) {
       representante_legal: representanteLegal || null,
       correo: correo || null,
       telefono: telefono || null,
+      arl_id: arlId ? Number(arlId) : null,
       sector_id: sectorId ? Number(sectorId) : null,
     }
 
