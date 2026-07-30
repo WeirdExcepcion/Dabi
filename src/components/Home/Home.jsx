@@ -6,6 +6,9 @@ import { PUEDE_APROBAR } from '../../constants/permisos'
 import { AuditoriaProvider } from '../../context/AuditoriaContext'
 import PanelLateral from '../compartidos/PanelLateral/PanelLateral'
 import Auditoria from '../Alturas/Auditoria/Auditoria'
+import Novedades from '../Novedades/Novedades'
+import Modal from '../compartidos/Modal/Modal'
+import { VERSION_ACTUAL } from '../../constants/novedades'
 import logoSS from '../../assets/isotipo-ss-p.png'
 import './Home.css'
 
@@ -13,6 +16,8 @@ function Home({ session }) {
   const [perfil, setPerfil] = useState(null)
   const [cargandoPerfil, setCargandoPerfil] = useState(true)
   const [auditoriaAbierta, setAuditoriaAbierta] = useState(false)
+  const [novedadesAbiertas, setNovedadesAbiertas] = useState(false)
+  const [hayNovedades, setHayNovedades] = useState(false)
   const navegar = useNavigate()
 
   useEffect(() => {
@@ -34,6 +39,20 @@ function Home({ session }) {
 
     obtenerPerfil()
   }, [session.user.id])
+
+  useEffect(() => {
+    const vista = localStorage.getItem('dabi_version_vista')
+    if (vista !== VERSION_ACTUAL) {
+      setHayNovedades(true)
+      setNovedadesAbiertas(true)
+    }
+  }, [])
+
+  function cerrarNovedades() {
+    localStorage.setItem('dabi_version_vista', VERSION_ACTUAL)
+    setNovedadesAbiertas(false)
+    setHayNovedades(false)
+  }
 
   async function handleLogout() {
     await supabase.auth.signOut()
@@ -76,20 +95,28 @@ function Home({ session }) {
           <span className="home__wordmark">DABI</span>
         </button>
 
-        {puedeAuditar && (
-          <button
-            className="home__auditoria"
-            onClick={() => setAuditoriaAbierta(true)}
-            title="Registro de auditoría"
-            aria-label="Registro de auditoría"
-          >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 7v5l3 2" />
-            </svg>
-          </button>
-        )}
+        <div className="home__header-acciones">
+          {puedeAuditar && (
+            <button
+              className="home__auditoria"
+              onClick={() => setAuditoriaAbierta(true)}
+              title="Registro de auditoría"
+              aria-label="Registro de auditoría"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+            </button>
+          )}
+        </div>
       </header>
+
+        {novedadesAbiertas && (
+        <Modal onCerrar={cerrarNovedades}>
+          <Novedades onCerrar={cerrarNovedades} />
+        </Modal>
+      )}
 
         {auditoriaAbierta && (
         <PanelLateral onCerrar={() => setAuditoriaAbierta(false)}>
@@ -121,9 +148,25 @@ function Home({ session }) {
 
           <div className="home__nav-pie">
             <p className="home__email">{session.user.email}</p>
-            <button className="home__logout" onClick={handleLogout}>
-              Cerrar sesión
-            </button>
+            <div className="home__pie-acciones">
+              <button className="home__logout" onClick={handleLogout}>
+                Cerrar sesión
+              </button>
+
+              <button
+                className={hayNovedades ? 'home__novedades home__novedades_nuevo' : 'home__novedades'}
+                onClick={() => setNovedadesAbiertas(true)}
+                title="Novedades"
+                aria-label="Novedades"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 11v5" />
+                  <circle cx="12" cy="8" r="0.5" fill="currentColor" />
+                </svg>
+              </button>
+            </div>
+
           </div>
         </nav>
 
