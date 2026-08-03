@@ -21,6 +21,7 @@ function RegistrarCargue({ grupo, onRegistrado, onCancelar }) {
   const [fechaCargue, setFechaCargue] = useState(
     grupo.mintrabajo_fecha_cargue || hoyISO()
   )
+  const [observaciones, setObservaciones] = useState(grupo.observaciones || '')
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
@@ -36,6 +37,11 @@ function RegistrarCargue({ grupo, onRegistrado, onCancelar }) {
     }
 
     setGuardando(true)
+
+    await supabase
+      .from('grupos')
+      .update({ observaciones: observaciones.trim() || null })
+      .eq('id', grupo.id)
 
     const { error } = await supabase.rpc('registrar_cargue_mintrabajo', {
       p_grupo_id: grupo.id,
@@ -107,6 +113,18 @@ function RegistrarCargue({ grupo, onRegistrado, onCancelar }) {
         onChange={(e) => setFechaCargue(e.target.value)}
       />
 
+      <label className="cargue__label" htmlFor="observaciones">
+        Observaciones
+      </label>
+      <textarea
+        id="observaciones"
+        className="cargue__textarea"
+        value={observaciones}
+        onChange={(e) => setObservaciones(e.target.value)}
+        rows="3"
+        placeholder="Notas sobre este cargue…"
+      />
+      
       {esReemplazo && (
         <div className="cargue__aviso">
           <p className="cargue__aviso-titulo">Estás reemplazando un cargue</p>

@@ -17,6 +17,7 @@ function Home({ session }) {
   const [cargandoPerfil, setCargandoPerfil] = useState(true)
   const [auditoriaAbierta, setAuditoriaAbierta] = useState(false)
   const [novedadesAbiertas, setNovedadesAbiertas] = useState(false)
+  const [menuPlegado, setMenuPlegado] = useState(false)
   const [hayNovedades, setHayNovedades] = useState(false)
   const navegar = useNavigate()
 
@@ -125,9 +126,21 @@ function Home({ session }) {
       )}
       
       <div className="home__body">
-        <nav className="home__nav">
+        <nav className={menuPlegado ? 'home__nav home__nav_plegado' : 'home__nav'}>
           <div className="home__nav-superior">
-            <p className="home__nav-eyebrow">{perfil.rol}</p>
+            <div className="home__nav-cabecera">
+              <p className="home__nav-eyebrow">{perfil.rol}</p>
+              <button
+                className="home__plegar"
+                onClick={() => setMenuPlegado((v) => !v)}
+                title={menuPlegado ? 'Mostrar menú' : 'Ocultar menú'}
+                aria-label={menuPlegado ? 'Mostrar menú' : 'Ocultar menú'}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 6l-6 6 6 6" />
+                </svg>
+              </button>
+            </div>
             <p className="home__nav-nombre">{perfil.nombre_completo}</p>
 
             <ul className="home__nav-lista">

@@ -89,6 +89,7 @@
 }
 
 .home__nav {
+  position: relative;
   flex: 0 0 240px;
   display: flex;
   flex-direction: column;
@@ -96,6 +97,7 @@
   padding: 28px 20px 20px;
   background-color: var(--blanco);
   border-right: 1px solid rgba(2, 17, 60, 0.08);
+  transition: flex-basis 0.22s ease, padding 0.22s ease;
 }
 
 .home__nav-eyebrow {
@@ -240,12 +242,6 @@
   border-top: 1px solid rgba(2, 17, 60, 0.08);
 }
 
-
-
-.home__novedades:hover {
-  color: var(--azul-primario);
-}
-
 .home__header-acciones {
   display: flex;
   align-items: center;
@@ -293,4 +289,55 @@
   border-radius: 50%;
   background-color: #EF9F27;
   border: 2px solid var(--blanco);
+}
+
+.home__nav_plegado {
+  flex-basis: 54px;
+  padding-left: 8px;
+  padding-right: 8px;
+  overflow: hidden;
+}
+
+.home__nav_plegado .home__nav-eyebrow,
+.home__nav_plegado .home__nav-nombre,
+.home__nav_plegado .home__nav-lista,
+.home__nav_plegado .home__nav-pie {
+  display: none;
+}
+
+.home__nav_plegado .home__plegar svg {
+  transform: rotate(180deg);
+}
+
+.home__nav-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.home__plegar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  padding: 0;
+  margin-top: -4px;
+  border: none;
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.home__plegar:hover {
+  background-color: var(--gris-niebla);
+  color: var(--ceruleo);
+}
+
+.home__plegar svg {
+  transition: transform 0.22s ease;
 }

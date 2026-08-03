@@ -6,6 +6,7 @@ function AsignarPersonal({ grupo, onAsignado, onCancelar }) {
   const [personal, setPersonal] = useState([])
   const [entrenadorId, setEntrenadorId] = useState(grupo.entrenador_id || '')
   const [supervisorId, setSupervisorId] = useState(grupo.supervisor_id || '')
+  const [coordinadorId, setCoordinadorId] = useState(grupo.coordinador_id || '')
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
@@ -13,8 +14,8 @@ function AsignarPersonal({ grupo, onAsignado, onCancelar }) {
     async function cargar() {
       const { data } = await supabase
         .from('entrenadores')
-        .select('id, nombre_completo, puede_entrenar, puede_supervisar')
-        .or('puede_entrenar.eq.true,puede_supervisar.eq.true')
+        .select('id, nombre_completo, puede_entrenar, puede_supervisar, puede_coordinar')
+        .or('puede_entrenar.eq.true,puede_supervisar.eq.true,puede_coordinar.eq.true')
         .order('nombre_completo')
       if (data) setPersonal(data)
     }
@@ -30,6 +31,7 @@ function AsignarPersonal({ grupo, onAsignado, onCancelar }) {
       .update({
         entrenador_id: entrenadorId ? Number(entrenadorId) : null,
         supervisor_id: supervisorId ? Number(supervisorId) : null,
+        coordinador_id: coordinadorId ? Number(coordinadorId) : null,
       })
       .eq('id', grupo.id)
 
@@ -84,7 +86,22 @@ function AsignarPersonal({ grupo, onAsignado, onCancelar }) {
             <option key={p.id} value={p.id}>{p.nombre_completo}</option>
           ))}
       </select>
-
+      
+      <label className="asig__label" htmlFor="asig_coord">Coordinador</label>
+      <select
+        id="asig_coord"
+        className="asig__select"
+        value={coordinadorId}
+        onChange={(e) => setCoordinadorId(e.target.value)}
+      >
+        <option value="">Sin asignar</option>
+        {personal
+          .filter((p) => p.puede_coordinar)
+          .map((p) => (
+            <option key={p.id} value={p.id}>{p.nombre_completo}</option>
+          ))}
+      </select>
+      
       <p className="asig__nota">
         El entrenador y el supervisor no pueden ser la misma persona, ni estar en otro
         grupo cuyas fechas se crucen con este.

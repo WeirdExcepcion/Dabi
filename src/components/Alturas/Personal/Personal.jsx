@@ -17,6 +17,7 @@ const CAMPOS = `
   firma_path,
   puede_entrenar,
   puede_supervisar,
+  puede_coordinar,
   profile_id
 `
 
@@ -71,8 +72,8 @@ function Personal() {
     return <p className="personal__mensaje">Tu rol no tiene acceso a esta sección.</p>
   }
 
-  const activos = personal.filter((p) => p.puede_entrenar || p.puede_supervisar)
-  const inactivos = personal.filter((p) => !p.puede_entrenar && !p.puede_supervisar)
+  const activos = personal.filter((p) => p.puede_entrenar || p.puede_supervisar || p.puede_coordinar)
+  const inactivos = personal.filter((p) => !p.puede_entrenar && !p.puede_supervisar && !p.puede_coordinar)
   const visibles = verInactivos ? personal : activos
 
   const listos = activos.filter(estaListo).length

@@ -23,7 +23,7 @@ function FichaPersonal({ persona, onActualizado }) {
   const [aviso, setAviso] = useState('')
   const [vistaPrevia, setVistaPrevia] = useState(null)
 
-  const activo = persona.puede_entrenar || persona.puede_supervisar
+  const activo = persona.puede_entrenar || persona.puede_supervisar || persona.puede_coordinar
 
   const hayCambios =
     documento !== (persona.numero_documento || '') ||
@@ -43,10 +43,12 @@ function FichaPersonal({ persona, onActualizado }) {
   }
 
   function etiquetaCapacidad() {
-    if (persona.puede_entrenar && persona.puede_supervisar) return 'Entrenador y supervisor'
-    if (persona.puede_entrenar) return 'Entrenador'
-    if (persona.puede_supervisar) return 'Supervisor'
-    return 'Desactivado'
+    const roles = []
+    if (persona.puede_entrenar) roles.push('Entrenador')
+    if (persona.puede_supervisar) roles.push('Supervisor')
+    if (persona.puede_coordinar) roles.push('Coordinador')
+    if (roles.length === 0) return 'Desactivado'
+    return roles.join(' · ')
   }
 
   async function cambiarCapacidad(valor) {
@@ -54,11 +56,11 @@ function FichaPersonal({ persona, onActualizado }) {
     setAviso('')
     setCambiandoCap(true)
 
-    let cambios
-    if (valor === 'entrenador') cambios = { puede_entrenar: true, puede_supervisar: false }
-    else if (valor === 'supervisor') cambios = { puede_entrenar: false, puede_supervisar: true }
-    else if (valor === 'ambos') cambios = { puede_entrenar: true, puede_supervisar: true }
-    else cambios = { puede_entrenar: false, puede_supervisar: false }
+    const cambios = {
+      puede_entrenar: valor.includes('entrenador'),
+      puede_supervisar: valor.includes('supervisor'),
+      puede_coordinar: valor.includes('coordinador'),
+    }
 
     const { error } = await supabase
       .from('entrenadores')
@@ -178,11 +180,13 @@ function FichaPersonal({ persona, onActualizado }) {
 
   const valorSelector = !activo
     ? 'desactivado'
-    : persona.puede_entrenar && persona.puede_supervisar
-    ? 'ambos'
-    : persona.puede_entrenar
-    ? 'entrenador'
-    : 'supervisor'
+    : [
+        persona.puede_entrenar && 'entrenador',
+        persona.puede_supervisar && 'supervisor',
+        persona.puede_coordinar && 'coordinador',
+      ]
+        .filter(Boolean)
+        .join('-')
 
   return (
     <article className={claseTarjeta()}>
@@ -219,7 +223,11 @@ function FichaPersonal({ persona, onActualizado }) {
           >
             <option value="entrenador">Entrenador</option>
             <option value="supervisor">Supervisor</option>
-            <option value="ambos">Ambas</option>
+            <option value="coordinador">Coordinador</option>
+            <option value="entrenador-supervisor">Entrenador y supervisor</option>
+            <option value="entrenador-coordinador">Entrenador y coordinador</option>
+            <option value="supervisor-coordinador">Supervisor y coordinador</option>
+            <option value="entrenador-supervisor-coordinador">Las tres</option>
             <option value="desactivado">Desactivado</option>
           </select>
         </div>

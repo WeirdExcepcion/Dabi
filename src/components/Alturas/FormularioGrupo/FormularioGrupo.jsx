@@ -39,6 +39,7 @@ function FormularioGrupo({ onCreado, onCancelar }) {
   const [fechaInicio, setFechaInicio] = useState(hoyISO())
   const [entrenadorId, setEntrenadorId] = useState('')
   const [supervisorId, setSupervisorId] = useState('')
+  const [coordinadorId, setCoordinadorId] = useState('')
   const [identificador, setIdentificador] = useState('')
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -49,8 +50,8 @@ function FormularioGrupo({ onCreado, onCancelar }) {
         supabase.from('cursos').select('id, nombre, duracion_dias').eq('activo', true).order('nombre'),
         supabase
           .from('entrenadores')
-          .select('id, nombre_completo, puede_entrenar, puede_supervisar')
-          .or('puede_entrenar.eq.true,puede_supervisar.eq.true')
+          .select('id, nombre_completo, puede_entrenar, puede_supervisar, puede_coordinar')
+          .or('puede_entrenar.eq.true,puede_supervisar.eq.true,puede_coordinar.eq.true')
           .order('nombre_completo'),
       ])
 
@@ -82,6 +83,7 @@ function FormularioGrupo({ onCreado, onCancelar }) {
         curso_id: Number(cursoId),
         entrenador_id: entrenadorId ? Number(entrenadorId) : null,
         supervisor_id: supervisorId ? Number(supervisorId) : null,
+        coordinador_id: coordinadorId ? Number(coordinadorId) : null,
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFinCalculada,
         identificador: identificador.trim() || null,
@@ -114,30 +116,31 @@ function FormularioGrupo({ onCreado, onCancelar }) {
 
       <div className="form-grupo__fila">
         <div className="form-grupo__campo">
-          <label className="form-grupo__label" htmlFor="fg_curso">Curso *</label>
+          <label className="form-grupo__label" htmlFor="fg_coordinador">Coordinador</label>
           <select
-            id="fg_curso"
+            id="fg_coordinador"
             className="form-grupo__select"
-            value={cursoId}
-            onChange={(e) => setCursoId(e.target.value)}
+            value={coordinadorId}
+            onChange={(e) => setCoordinadorId(e.target.value)}
           >
-            <option value="">Selecciona…</option>
-            {cursos.map((curso) => (
-              <option key={curso.id} value={curso.id}>
-                {curso.nombre} ({curso.duracion_dias} {curso.duracion_dias === 1 ? 'día' : 'días'})
-              </option>
-            ))}
+            <option value="">Sin asignar</option>
+            {entrenadores
+              .filter((p) => p.puede_coordinar)
+              .map((c) => (
+                <option key={c.id} value={c.id}>{c.nombre_completo}</option>
+              ))}
           </select>
         </div>
 
         <div className="form-grupo__campo">
-          <label className="form-grupo__label" htmlFor="fg_inicio">Fecha de inicio *</label>
+          <label className="form-grupo__label" htmlFor="fg_identificador">Identificador</label>
           <input
-            id="fg_inicio"
-            type="date"
+            id="fg_identificador"
+            type="text"
             className="form-grupo__input"
-            value={fechaInicio}
-            onChange={(e) => setFechaInicio(e.target.value)}
+            value={identificador}
+            onChange={(e) => setIdentificador(e.target.value)}
+            placeholder="A, Mañana…"
           />
         </div>
       </div>

@@ -184,3 +184,22 @@
 .cargue__boton_sec:hover {
   background-color: var(--gris-niebla);
 }
+
+.cargue__textarea {
+  padding: 11px 13px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  margin-bottom: 16px;
+  resize: vertical;
+  min-height: 70px;
+}
+
+.cargue__textarea:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}

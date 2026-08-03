@@ -15,6 +15,12 @@ function hoyISO() {
   return `${yyyy}-${mm}-${dd}`
 }
 
+function conVarios(principal, total) {
+  if (!principal) return '—'
+  if (total > 1) return `${principal} +${total - 1}`
+  return principal
+}
+
 function formatearFecha(iso) {
   if (!iso) return '—'
   const [anio, mes, dia] = iso.split('-')
@@ -115,12 +121,22 @@ function ListadoGeneral() {
           {grupo.identificador && (
             <span className="listado__id"> ({grupo.identificador})</span>
           )}
+          {grupo.observaciones && (
+            <span className="listado__obs" title={grupo.observaciones}>obs.</span>
+          )}
         </td>
         <td className="listado__td listado__td_fechas">
           {formatearFecha(grupo.fecha_inicio)} – {formatearFecha(grupo.fecha_fin)}
         </td>
+        <td className="listado__td listado__td_empresa" title={grupo.empresa_principal || ''}>
+          {conVarios(grupo.empresa_principal, grupo.total_empresas)}
+        </td>
+        <td className="listado__td listado__td_sector">
+          {conVarios(grupo.sector_principal, grupo.total_sectores)}
+        </td>
         <td className="listado__td">{grupo.entrenador || '—'}</td>
         <td className="listado__td">{grupo.supervisor || '—'}</td>
+        <td className="listado__td">{grupo.coordinador || '—'}</td>
         <td className="listado__td listado__td_centro">{grupo.total_aprendices}</td>
         <td className="listado__td listado__td_limite">
           {formatearFecha(grupo.mintrabajo_fecha_limite)}
@@ -191,8 +207,11 @@ function ListadoGeneral() {
               <tr>
                 <th className="listado__th">Curso</th>
                 <th className="listado__th">Fechas</th>
+                <th className="listado__th">Empresa</th>
+                <th className="listado__th">Sector</th>
                 <th className="listado__th">Entrenador</th>
                 <th className="listado__th">Supervisor</th>
+                <th className="listado__th">Coordinador</th>
                 <th className="listado__th">Aprendices</th>
                 <th className="listado__th">Fecha límite</th>
                 <th className="listado__th">ID curso</th>
@@ -298,13 +317,16 @@ function ListadoGeneral() {
                 <thead>
                   <tr>
                     <th className="listado__th">Curso</th>
-                    <th className="listado__th">Fechas</th>
-                    <th className="listado__th">Entrenador</th>
-                    <th className="listado__th">Supervisor</th>
-                    <th className="listado__th">Aprendices</th>
-                    <th className="listado__th">Fecha límite</th>
-                    <th className="listado__th">ID curso</th>
-                    <th className="listado__th"></th>
+                <th className="listado__th">Fechas</th>
+                <th className="listado__th">Empresa</th>
+                <th className="listado__th">Sector</th>
+                <th className="listado__th">Entrenador</th>
+                <th className="listado__th">Supervisor</th>
+                <th className="listado__th">Coordinador</th>
+                <th className="listado__th">Aprendices</th>
+                <th className="listado__th">Fecha límite</th>
+                <th className="listado__th">ID curso</th>
+                <th className="listado__th"></th>
                   </tr>
                 </thead>
                 <tbody>

@@ -310,6 +310,29 @@
   color: var(--azul-medianoche);
 }
 
+.listado__obs {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 2px 7px;
+  border-radius: 8px;
+  background-color: rgba(3, 120, 168, 0.12);
+  color: var(--ceruleo);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: help;
+}
+
+.listado__td_empresa {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listado__td_sector {
+  white-space: nowrap;
+}
+
 @media (max-width: 720px) {
   .listado__header {
     flex-direction: column;

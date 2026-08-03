@@ -30,9 +30,11 @@ const CAMPOS_GRUPO = `
   identificador,
   entrenador_id,
   supervisor_id,
+  coordinador_id,
   cursos ( nombre, duracion_dias ),
   entrenador:entrenadores!grupos_entrenador_id_fkey ( nombre_completo ),
-          supervisor:entrenadores!grupos_supervisor_id_fkey ( nombre_completo )
+          supervisor:entrenadores!grupos_supervisor_id_fkey ( nombre_completo ),
+          coordinador:entrenadores!grupos_coordinador_id_fkey ( nombre_completo )
 `
 
 const CAMPOS_MATRICULA = `
@@ -200,6 +202,10 @@ function DetalleGrupo() {
             <span className="det-grupo__personal-item">
               <span className="det-grupo__personal-rol">Supervisor:</span>{' '}
               {grupo.supervisor?.nombre_completo || <em>sin asignar</em>}
+            </span>
+            <span className="det-grupo__personal-item">
+              <span className="det-grupo__personal-rol">Coordinador:</span>{' '}
+              {grupo.coordinador?.nombre_completo || <em>sin asignar</em>}
             </span>
             {puedeCertificar && (
               <button className="det-grupo__asignar" onClick={() => setAsignando(true)}>
