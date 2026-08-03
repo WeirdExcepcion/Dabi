@@ -33,6 +33,7 @@ function App() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+        console.log('AUTH:', _event)
         setSession(session)
       }
     )
@@ -60,7 +61,7 @@ function App() {
     }
 
     cargarPerfil()
-  }, [session])
+  }, [session?.user?.id])
 
   if (loading || (session && cargandoPerfil)) {
     return <p className="app__loading">Cargando...</p>

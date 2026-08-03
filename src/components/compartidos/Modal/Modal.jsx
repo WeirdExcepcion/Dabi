@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import './Modal.css'
 
-function Modal({ children, onCerrar }) {
+function Modal({ children, onCerrar, bloquearCierre = false }) {
   useEffect(() => {
     function manejarEscape(e) {
-      if (e.key === 'Escape') onCerrar()
+      if (e.key === 'Escape' && !bloquearCierre) onCerrar()
     }
 
     document.addEventListener('keydown', manejarEscape)
@@ -14,9 +14,10 @@ function Modal({ children, onCerrar }) {
       document.removeEventListener('keydown', manejarEscape)
       document.body.style.overflow = ''
     }
-  }, [onCerrar])
+  }, [onCerrar, bloquearCierre])
 
   function manejarClicFondo(e) {
+    if (bloquearCierre) return
     if (e.target === e.currentTarget) onCerrar()
   }
 

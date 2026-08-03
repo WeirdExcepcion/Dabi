@@ -38,7 +38,7 @@ function AsignarPersonal({ grupo, onAsignado, onCancelar }) {
     setGuardando(false)
 
     if (error) {
-      if (error.message.includes('ya está comprometida')) {
+      if (error.message.includes('ya está entrenando')) {
         setError('Esa persona ya está en otro grupo con fechas que se cruzan')
       } else if (error.message.includes('entrenador_distinto_supervisor')) {
         setError('El entrenador y el supervisor no pueden ser la misma persona')

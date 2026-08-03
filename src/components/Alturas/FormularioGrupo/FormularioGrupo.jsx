@@ -39,7 +39,6 @@ function FormularioGrupo({ onCreado, onCancelar }) {
   const [fechaInicio, setFechaInicio] = useState(hoyISO())
   const [entrenadorId, setEntrenadorId] = useState('')
   const [supervisorId, setSupervisorId] = useState('')
-  const [coordinadorId, setCoordinadorId] = useState('')
   const [identificador, setIdentificador] = useState('')
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -83,7 +82,6 @@ function FormularioGrupo({ onCreado, onCancelar }) {
         curso_id: Number(cursoId),
         entrenador_id: entrenadorId ? Number(entrenadorId) : null,
         supervisor_id: supervisorId ? Number(supervisorId) : null,
-        coordinador_id: coordinadorId ? Number(coordinadorId) : null,
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFinCalculada,
         identificador: identificador.trim() || null,
@@ -94,7 +92,7 @@ function FormularioGrupo({ onCreado, onCancelar }) {
     setGuardando(false)
 
     if (error) {
-      if (error.message.includes('ya está comprometida')) {
+      if (error.message.includes('ya está entrenando')) {
         setError('Esa persona ya está en otro grupo con fechas que se cruzan')
       } else if (error.message.includes('entrenador_distinto_supervisor')) {
         setError('El entrenador y el supervisor no pueden ser la misma persona')
@@ -115,23 +113,6 @@ function FormularioGrupo({ onCreado, onCancelar }) {
       <p className="form-grupo__titulo">Nuevo grupo</p>
 
       <div className="form-grupo__fila">
-        <div className="form-grupo__campo">
-          <label className="form-grupo__label" htmlFor="fg_coordinador">Coordinador</label>
-          <select
-            id="fg_coordinador"
-            className="form-grupo__select"
-            value={coordinadorId}
-            onChange={(e) => setCoordinadorId(e.target.value)}
-          >
-            <option value="">Sin asignar</option>
-            {entrenadores
-              .filter((p) => p.puede_coordinar)
-              .map((c) => (
-                <option key={c.id} value={c.id}>{c.nombre_completo}</option>
-              ))}
-          </select>
-        </div>
-
         <div className="form-grupo__campo">
           <label className="form-grupo__label" htmlFor="fg_identificador">Identificador</label>
           <input

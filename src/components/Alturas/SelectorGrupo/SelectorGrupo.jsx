@@ -60,6 +60,7 @@ function SelectorGrupo({ valor, onCambio }) {
   const [cursoId, setCursoId] = useState('')
   const [fechaInicio, setFechaInicio] = useState(hoyISO())
   const [entrenadorId, setEntrenadorId] = useState('')
+  const [supervisorId, setSupervisorId] = useState('')
   const [identificador, setIdentificador] = useState('')
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -71,7 +72,7 @@ function SelectorGrupo({ valor, onCambio }) {
         
         supabase.from('cursos').select('id, nombre, duracion_dias').eq('activo', true).order('nombre'),
 
-        supabase.from('entrenadores').select('id, nombre_completo, puede_entrenar, puede_supervisar').or('puede_entrenar.eq.true,puede_supervisar.eq.true').order('nombre_completo'),
+        supabase.from('entrenadores').select('id, nombre_completo, puede_entrenar, puede_supervisar, puede_coordinar').or('puede_entrenar.eq.true,puede_supervisar.eq.true,puede_coordinar.eq.true').order('nombre_completo'),
       ])
 
       if (resGrupos.error) console.error(resGrupos.error.message)
@@ -108,6 +109,7 @@ function SelectorGrupo({ valor, onCambio }) {
     setError('')
     setCursoId('')
     setEntrenadorId('')
+    setSupervisorId('')
     setIdentificador('')
     setFechaInicio(hoyISO())
   }
@@ -126,7 +128,8 @@ function SelectorGrupo({ valor, onCambio }) {
       .from('grupos')
       .insert({
         curso_id: Number(cursoId),
-        entrenador_id: entrenadorId || null,
+        entrenador_id: entrenadorId ? Number(entrenadorId) : null,
+        supervisor_id: supervisorId ? Number(supervisorId) : null,
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFinCalculada,
         identificador: identificador.trim() || null,
@@ -137,8 +140,10 @@ function SelectorGrupo({ valor, onCambio }) {
     setGuardando(false)
 
     if (error) {
-      if (error.message.includes('ya está comprometida')) {
-        setError('Esa persona ya está en otro grupo con fechas que se cruzan')
+      if (error.message.includes('ya está entrenando')) {
+        setError('Esa persona ya está entrenando en otro grupo con fechas que se cruzan')
+      } else if (error.message.includes('entrenador_distinto_supervisor')) {
+        setError('El entrenador y el supervisor no pueden ser la misma persona')
       } else {
         setError('No se pudo crear el grupo')
       }
@@ -200,11 +205,97 @@ function SelectorGrupo({ valor, onCambio }) {
               onChange={(e) => setEntrenadorId(e.target.value)}
             >
               <option value="">Sin asignar</option>
-              {entrenadores.map((entrenador) => (
-                <option key={entrenador.id} value={entrenador.id}>
-                  {entrenador.nombre_completo}
+              {entrenadores
+                .filter((p) => p.puede_entrenar)
+                .map((entrenador) => (
+                  <option key={entrenador.id} value={entrenador.id}>
+                    {entrenador.nombre_completo}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="selector-grupo__campo">
+            <label className="selector-grupo__label" htmlFor="grupo_supervisor">Supervisor</label>
+            <select
+              id="grupo_supervisor"
+              className="selector-grupo__select"
+              value={supervisorId}
+              onChange={(e) => setSupervisorId(e.target.value)}
+            >
+              <option value="">Sin asignar</option>
+              {entrenadores
+                .filter((p) => p.puede_supervisar && String(p.id) !== String(entrenadorId))
+                .map((s) => (
+                  <option key={s.id} value={s.id}>{s.nombre_completo}</option>
+                ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="selector-grupo__fila">
+          <div className="selector-grupo__campo">
+            <label className="selector-grupo__label" htmlFor="grupo_identificador">
+              Identificador
+            </label>
+            <input
+              id="grupo_identificador"
+              type="text"
+              className="selector-grupo__input"
+              value={identificador}
+              onChange={(e) => setIdentificador(e.target.value)}
+              placeholder="A, Mañana…"
+            />
+          </div>
+        </div>
+
+        <div className="selector-grupo__fila">
+          <div className="selector-grupo__campo">
+            <label className="selector-grupo__label" htmlFor="grupo_curso">Curso *</label>
+            <select
+              id="grupo_curso"
+              className="selector-grupo__select"
+              value={cursoId}
+              onChange={(e) => setCursoId(e.target.value)}
+            >
+              <option value="">Selecciona…</option>
+              {cursos.map((curso) => (
+                <option key={curso.id} value={curso.id}>
+                  {curso.nombre} ({curso.duracion_dias} {curso.duracion_dias === 1 ? 'día' : 'días'})
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div className="selector-grupo__campo">
+            <label className="selector-grupo__label" htmlFor="grupo_inicio">Fecha de inicio *</label>
+            <input
+              id="grupo_inicio"
+              type="date"
+              className="selector-grupo__input"
+              value={fechaInicio}
+              onChange={(e) => setFechaInicio(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="selector-grupo__fila">
+          <div className="selector-grupo__campo">
+            <label className="selector-grupo__label" htmlFor="grupo_entrenador">Entrenador</label>
+            <select
+              id="grupo_entrenador"
+              className="selector-grupo__select"
+              value={entrenadorId}
+              onChange={(e) => setEntrenadorId(e.target.value)}
+            >
+              <option value="">Sin asignar</option>
+              {entrenadores
+                .filter((p) => p.puede_entrenar)
+                .map((entrenador) => (
+                  <option key={entrenador.id} value={entrenador.id}>
+                    {entrenador.nombre_completo}
+                  </option>
+                ))}
             </select>
           </div>
 

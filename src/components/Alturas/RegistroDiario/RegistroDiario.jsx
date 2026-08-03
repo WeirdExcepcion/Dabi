@@ -150,7 +150,7 @@ function RegistroDiario() {
       </header>
 
       {mostrandoFormulario && (
-        <Modal onCerrar={() => setMostrandoFormulario(false)}>
+        <Modal onCerrar={() => setMostrandoFormulario(false)} bloquearCierre>
           <FormularioMatricula
             onGuardada={() => {
               setMostrandoFormulario(false)
@@ -171,7 +171,7 @@ function RegistroDiario() {
       )}
 
       {matriculaEditando && (
-        <Modal onCerrar={() => setMatriculaEditando(null)}>
+        <Modal onCerrar={() => setMatriculaEditando(null)} bloquearCierre>
           <EditarMatricula
             matricula={matriculaEditando}
             rol={perfil.rol}

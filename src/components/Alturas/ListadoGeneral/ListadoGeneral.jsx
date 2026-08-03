@@ -5,6 +5,7 @@ import { PUEDE_GESTIONAR_MINTRABAJO } from '../../../constants/permisos'
 import Modal from '../../compartidos/Modal/Modal'
 import RegistrarCargue from './RegistrarCargue/RegistrarCargue'
 import PreviaCsv from './PreviaCsv/PreviaCsv'
+import SelectorCoordinador from './SelectorCoordinador/SelectorCoordinador'
 import './ListadoGeneral.css'
 
 function hoyISO() {
@@ -47,6 +48,7 @@ function ListadoGeneral() {
   const [grupoCargando, setGrupoCargando] = useState(null)
   const [verCargados, setVerCargados] = useState(false)
   const [grupoCsv, setGrupoCsv] = useState(null)
+  const [coordinadores, setCoordinadores] = useState([])
 
   const puedeGestionar = PUEDE_GESTIONAR_MINTRABAJO.includes(perfil.rol)
 
@@ -70,7 +72,17 @@ function ListadoGeneral() {
   }
 
   useEffect(() => {
+    async function cargarCoordinadores() {
+      const { data } = await supabase
+        .from('entrenadores')
+        .select('id, nombre_completo')
+        .eq('puede_coordinar', true)
+        .order('nombre_completo')
+      if (data) setCoordinadores(data)
+    }
+
     cargar()
+    cargarCoordinadores()
   }, [])
 
   if (!puedeGestionar) {
@@ -136,7 +148,14 @@ function ListadoGeneral() {
         </td>
         <td className="listado__td">{grupo.entrenador || '—'}</td>
         <td className="listado__td">{grupo.supervisor || '—'}</td>
-        <td className="listado__td">{grupo.coordinador || '—'}</td>
+        <td className="listado__td">
+          <SelectorCoordinador
+            grupoId={grupo.id}
+            valor={grupo.coordinador_id}
+            opciones={coordinadores}
+            onCambiado={() => cargar()}
+          />
+        </td>
         <td className="listado__td listado__td_centro">{grupo.total_aprendices}</td>
         <td className="listado__td listado__td_limite">
           {formatearFecha(grupo.mintrabajo_fecha_limite)}
