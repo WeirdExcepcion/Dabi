@@ -29,4 +29,9 @@ export const SECCIONES = [
     etiqueta: 'Personal',
     roles: ['admin', 'gerente-general', 'director-operaciones', 'coordinador-procesos'],
   },
+  {
+    ruta: '/alturas/listado',
+    etiqueta: 'Listado General',
+    roles: ['admin', 'gerente-general', 'director-operaciones', 'coordinador-procesos', 'coordinador', 'supervisor'],
+  },
 ]

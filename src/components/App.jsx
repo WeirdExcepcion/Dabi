@@ -10,6 +10,7 @@ import Aprendices from './Alturas/Aprendices/Aprendices'
 import FichaAprendiz from './Alturas/FichaAprendiz/FichaAprendiz'
 import RegistroDiario from './Alturas/RegistroDiario/RegistroDiario'
 import Aprobacion from './Alturas/Aprobacion/Aprobacion'
+import ListadoGeneral from './Alturas/ListadoGeneral/ListadoGeneral'
 import Personal from './Alturas/Personal/Personal'
 import Grupos from './Alturas/Grupos/Grupos'
 import DetalleGrupo from './Alturas/DetalleGrupo/DetalleGrupo'
@@ -91,6 +92,7 @@ function App() {
           <Route path="registro" element={<RegistroDiario />} />
           <Route path="aprobacion" element={<Aprobacion />} />
           <Route path="personal" element={<Personal />} />
+          <Route path="listado" element={<ListadoGeneral />} />
           <Route path="grupos" element={<Grupos />} />
           <Route path="grupos/:grupoId" element={<DetalleGrupo />} />
         </Route>

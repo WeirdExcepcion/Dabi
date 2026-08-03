@@ -35,7 +35,8 @@ function etiquetaGrupo(grupo) {
   const rango = formatearRango(grupo.fecha_inicio, grupo.fecha_fin)
   const entrenador = grupo.entrenador?.nombre_completo || 'Sin entrenador'
   const id = grupo.identificador ? ` (${grupo.identificador})` : ''
-  return `${grupo.cursos.nombre}${id} · ${rango} · ${entrenador}`
+  const cerrado = grupo.mintrabajo_id_curso?.trim() ? ' · CERRADO (reportado a MinTrabajo)' : ''
+  return `${grupo.cursos.nombre}${id} · ${rango} · ${entrenador}${cerrado}`
 }
 
 const CAMPOS_GRUPO = `
@@ -43,6 +44,8 @@ const CAMPOS_GRUPO = `
   fecha_inicio,
   fecha_fin,
   identificador,
+  cursos ( id, nombre, duracion_dias ),
+  mintrabajo_id_curso,
   cursos ( id, nombre, duracion_dias ),
   entrenador:entrenador_id ( nombre_completo )
 `
@@ -64,7 +67,7 @@ function SelectorGrupo({ valor, onCambio }) {
   useEffect(() => {
     async function cargarDatos() {
       const [resGrupos, resCursos, resEntrenadores] = await Promise.all([
-        supabase.from('grupos').select(CAMPOS_GRUPO).gte('fecha_fin', hoyISO()).order('fecha_inicio', { ascending: true }),
+        supabase.from('grupos').select(CAMPOS_GRUPO).order('fecha_inicio', { ascending: false }),
         
         supabase.from('cursos').select('id, nombre, duracion_dias').eq('activo', true).order('nombre'),
 
@@ -134,8 +137,8 @@ function SelectorGrupo({ valor, onCambio }) {
     setGuardando(false)
 
     if (error) {
-      if (error.code === '23P01') {
-        setError('Ese entrenador ya dicta otro grupo en fechas que se cruzan')
+      if (error.message.includes('ya está comprometida')) {
+        setError('Esa persona ya está en otro grupo con fechas que se cruzan')
       } else {
         setError('No se pudo crear el grupo')
       }
@@ -257,10 +260,14 @@ function SelectorGrupo({ valor, onCambio }) {
     >
       <option value="">Selecciona un grupo…</option>
       {grupos.map((grupo) => (
-        <option key={grupo.id} value={grupo.id}>
-          {etiquetaGrupo(grupo)}
-        </option>
-      ))}
+          <option
+            key={grupo.id}
+            value={grupo.id}
+            disabled={Boolean(grupo.mintrabajo_id_curso?.trim())}
+          >
+            {etiquetaGrupo(grupo)}
+          </option>
+        ))}
       <option value="__nuevo__">+ Nuevo grupo</option>
     </select>
   )

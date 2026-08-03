@@ -1,0 +1,318 @@
+.listado__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.listado__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 6px;
+}
+
+.listado__titulo {
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.listado__subtitulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.listado__resumen {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.listado__chip {
+  padding: 6px 13px;
+  border-radius: 14px;
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: var(--gris-niebla);
+  color: var(--texto-secundario);
+}
+
+.listado__chip_vencido {
+  background-color: rgba(179, 38, 30, 0.12);
+  color: #B3261E;
+  font-weight: 600;
+}
+
+.listado__chip_urgente {
+  background-color: rgba(234, 145, 12, 0.16);
+  color: #B36A00;
+  font-weight: 600;
+}
+
+.listado__buscador {
+  margin-bottom: 20px;
+}
+
+.listado__input-busqueda {
+  width: 100%;
+  max-width: 460px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+}
+
+.listado__input-busqueda:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.listado__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.listado__bloque {
+  margin-bottom: 30px;
+}
+
+.listado__bloque-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 9px;
+  margin-bottom: 6px;
+  border-bottom: 2px solid rgba(2, 17, 60, 0.1);
+}
+
+.listado__bloque-cabecera_vencido {
+  border-bottom-color: #B3261E;
+}
+
+.listado__bloque-cabecera_urgente {
+  border-bottom-color: #EF9F27;
+}
+
+.listado__bloque-titulo {
+  font-family: var(--font-brand);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.listado__bloque-conteo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  white-space: nowrap;
+}
+
+.listado__bloque-nota {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin: 0 0 12px;
+}
+
+.listado__tabla-wrap {
+  background-color: var(--blanco);
+  border-radius: 8px;
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  overflow-x: auto;
+}
+
+.listado__tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listado__th {
+  padding: 12px 12px;
+  text-align: left;
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+  border-bottom: 1px solid rgba(2, 17, 60, 0.08);
+  white-space: nowrap;
+}
+
+.listado__td {
+  padding: 12px 12px;
+  font-family: var(--font-brand);
+  font-size: 13.5px;
+  color: var(--azul-medianoche);
+  border-bottom: 1px solid rgba(2, 17, 60, 0.05);
+  vertical-align: middle;
+}
+
+.listado__tabla tbody tr:last-child .listado__td {
+  border-bottom: none;
+}
+
+.listado__fila_vencido {
+  background-color: rgba(179, 38, 30, 0.04);
+}
+
+.listado__fila_urgente {
+  background-color: rgba(234, 145, 12, 0.05);
+}
+
+.listado__fila:hover {
+  background-color: var(--gris-niebla);
+}
+
+.listado__td_principal {
+  font-weight: 500;
+}
+
+.listado__id {
+  font-weight: 400;
+  color: var(--texto-secundario);
+}
+
+.listado__td_fechas {
+  white-space: nowrap;
+  color: var(--texto-secundario);
+}
+
+.listado__td_centro {
+  text-align: center;
+  font-weight: 600;
+  color: var(--azul-primario);
+}
+
+.listado__td_limite {
+  white-space: nowrap;
+}
+
+.listado__dias {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.listado__dias_vencido {
+  color: #B3261E;
+}
+
+.listado__dias_urgente {
+  color: #B36A00;
+}
+
+.listado__dias_normal {
+  color: var(--texto-secundario);
+  font-weight: 400;
+}
+
+.listado__td_cargue {
+  white-space: nowrap;
+}
+
+.listado__codigo {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0F6E56;
+  background-color: rgba(29, 158, 117, 0.14);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+
+.listado__cargue-fecha {
+  display: block;
+  font-size: 11px;
+  color: var(--texto-secundario);
+  margin-top: 3px;
+}
+
+.listado__sin-cargue {
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--texto-secundario);
+}
+
+.listado__td_acciones {
+  text-align: right;
+  white-space: nowrap;
+  width: 230px;
+}
+
+.listado__boton {
+  padding: 6px 12px;
+  margin-left: 6px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.listado__boton:hover {
+  background-color: var(--gris-niebla);
+}
+
+.listado__boton_principal {
+  border-color: var(--azul-primario);
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-weight: 600;
+}
+
+.listado__boton_principal:hover {
+  background-color: var(--ceruleo);
+  border-color: var(--ceruleo);
+}
+
+.listado__toggle {
+  padding: 8px 15px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--texto-secundario);
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.listado__toggle:hover {
+  border-color: var(--ceruleo);
+  color: var(--azul-medianoche);
+}
+
+@media (max-width: 720px) {
+  .listado__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

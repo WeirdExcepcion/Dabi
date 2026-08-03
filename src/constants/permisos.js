@@ -109,3 +109,12 @@ export const PUEDE_VER_RUT = [
   'contable',
   'auxiliar-cont',
 ]
+
+export const PUEDE_GESTIONAR_MINTRABAJO = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'coordinador',
+  'supervisor',
+]

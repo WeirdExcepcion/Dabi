@@ -122,3 +122,8 @@
     flex-direction: column;
   }
 }
+
+.selector-grupo__select option:disabled {
+  color: rgba(2, 17, 60, 0.4);
+  font-style: italic;
+}
