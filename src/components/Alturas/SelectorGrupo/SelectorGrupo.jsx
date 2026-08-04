@@ -44,7 +44,6 @@ const CAMPOS_GRUPO = `
   fecha_inicio,
   fecha_fin,
   identificador,
-  cursos ( id, nombre, duracion_dias ),
   mintrabajo_id_curso,
   cursos ( id, nombre, duracion_dias ),
   entrenador:entrenador_id ( nombre_completo )
