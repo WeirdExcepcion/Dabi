@@ -1,11 +1,11 @@
 export const PUEDE_CREAR_EMPRESAS = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
   'contable',
-  'auxiliar-admin',
-  'auxiliar-cont',
 ]
 
 export const PUEDE_CREAR_APRENDICES = [
@@ -49,6 +49,8 @@ export const PUEDE_CORREGIR_DOCUMENTO = [
 export const PUEDE_EDITAR_EMPRESAS = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
 ]
@@ -111,6 +113,14 @@ export const PUEDE_VER_RUT = [
 ]
 
 export const PUEDE_GESTIONAR_MINTRABAJO = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'supervisor',
+]
+
+export const PUEDE_CREAR_GRUPOS = [
   'admin',
   'gerente-general',
   'director-operaciones',

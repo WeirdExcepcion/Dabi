@@ -103,7 +103,7 @@ function Personal() {
       </header>
 
       {creando && (
-        <Modal onCerrar={() => setCreando(false)}>
+        <Modal onCerrar={() => setCreando(false)} bloquearCierre>
           <FormularioPersonal
             onCreado={() => {
               setCreando(false)

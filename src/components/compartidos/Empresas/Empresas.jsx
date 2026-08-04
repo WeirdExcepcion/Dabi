@@ -192,7 +192,7 @@ function Empresas() {
       </header>
 
       {mostrandoFormulario && (
-        <Modal onCerrar={() => setMostrandoFormulario(false)}>
+        <Modal onCerrar={() => setMostrandoFormulario(false)} bloquearCierre>
           <FormularioEmpresa
             rol={perfil.rol}
             onGuardada={handleEmpresaCreada}
@@ -202,7 +202,7 @@ function Empresas() {
       )}
 
       {empresaEditando && (
-        <Modal onCerrar={() => setEmpresaEditando(null)}>
+        <Modal onCerrar={() => setEmpresaEditando(null)} bloquearCierre>
           <FormularioEmpresa
             empresa={empresaEditando}
             rol={perfil.rol}

@@ -4,7 +4,7 @@ import './Grupos.css'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import Modal from '../../compartidos/Modal/Modal'
 import FormularioGrupo from '../FormularioGrupo/FormularioGrupo'
-import { PUEDE_CREAR_MATRICULAS } from '../../../constants/permisos'
+import { PUEDE_CREAR_GRUPOS } from '../../../constants/permisos'
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 
@@ -40,7 +40,7 @@ function Grupos() {
     const [filtroDesde, setFiltroDesde] = useState('')
     const [filtroHasta, setFiltroHasta] = useState('')
     const [fechasExactas, setFechasExactas] = useState(false)
-    const puedeCrearGrupos = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
+    const puedeCrearGrupos = PUEDE_CREAR_GRUPOS.includes(perfil.rol)
 
   useEffect(() => {
     async function cargarCatalogos() {

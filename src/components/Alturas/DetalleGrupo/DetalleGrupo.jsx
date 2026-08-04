@@ -271,7 +271,7 @@ function DetalleGrupo() {
       )}
 
       {asignando && (
-        <Modal onCerrar={() => setAsignando(false)}>
+        <Modal onCerrar={() => setAsignando(false)} bloquearCierre>
           <AsignarPersonal
             grupo={grupo}
             onAsignado={() => {
@@ -298,7 +298,7 @@ function DetalleGrupo() {
       )}
 
       {agregando && (
-        <Modal onCerrar={() => setAgregando(false)}>
+        <Modal onCerrar={() => setAgregando(false)} bloquearCierre>
           <FormularioMatricula
             grupoFijo={grupo}
             onGuardada={() => {

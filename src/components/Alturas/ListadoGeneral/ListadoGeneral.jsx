@@ -281,7 +281,7 @@ function ListadoGeneral() {
       )}
 
       {grupoCargando && (
-        <Modal onCerrar={() => setGrupoCargando(null)}>
+        <Modal onCerrar={() => setGrupoCargando(null)} bloquearCierre>
           <RegistrarCargue
             grupo={grupoCargando}
             onRegistrado={() => {

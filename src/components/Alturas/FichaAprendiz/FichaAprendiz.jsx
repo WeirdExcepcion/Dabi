@@ -130,7 +130,7 @@ function FichaAprendiz() {
       </button>
 
       {corrigiendo && (
-        <Modal onCerrar={() => setCorrigiendo(false)}>
+        <Modal onCerrar={() => setCorrigiendo(false)} bloquearCierre>
           <CorregirDocumento
             aprendiz={aprendiz}
             totalMatriculas={historial.length}
