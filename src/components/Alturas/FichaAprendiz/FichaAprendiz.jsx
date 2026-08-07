@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useOutletContext, Link } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
-import { PUEDE_CORREGIR_DOCUMENTO } from '../../../constants/permisos'
+import { PUEDE_CORREGIR_DOCUMENTO, PUEDE_EDITAR_APRENDIZ } from '../../../constants/permisos'
 import Modal from '../../compartidos/Modal/Modal'
 import CorregirDocumento from './CorregirDocumento/CorregirDocumento'
+import EditarAprendiz from './EditarAprendiz/EditarAprendiz'
 import './FichaAprendiz.css'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../../constants/estados'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
@@ -68,6 +69,7 @@ function FichaAprendiz() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [corrigiendo, setCorrigiendo] = useState(false)
+  const [editando, setEditando] = useState(false)
   const { cargarFaltantes } = useFaltantes()
 
   
@@ -122,12 +124,26 @@ function FichaAprendiz() {
 
   const certificados = historial.filter((m) => m.estado === 'certificado').length
   const puedeCorregir = PUEDE_CORREGIR_DOCUMENTO.includes(perfil.rol)
+  const puedeEditarDatos = PUEDE_EDITAR_APRENDIZ.includes(perfil.rol)
 
   return (
     <section className="ficha">
       <button className="ficha__volver" onClick={() => navegar('/alturas/aprendices')}>
         ← Aprendices
       </button>
+
+      {editando && (
+        <Modal onCerrar={() => setEditando(false)} bloquearCierre>
+          <EditarAprendiz
+            aprendiz={aprendiz}
+            onGuardado={() => {
+              setEditando(false)
+              cargarDatos()
+            }}
+            onCancelar={() => setEditando(false)}
+          />
+        </Modal>
+      )}
 
       {corrigiendo && (
         <Modal onCerrar={() => setCorrigiendo(false)} bloquearCierre>
@@ -176,7 +192,14 @@ function FichaAprendiz() {
       </header>
 
       <div className="ficha__panel">
-        <p className="ficha__panel-titulo">Datos personales</p>
+        <div className="ficha__panel-cabecera">
+          <p className="ficha__panel-titulo">Datos personales</p>
+          {puedeEditarDatos && (
+            <button className="ficha__editar-datos" onClick={() => setEditando(true)}>
+              Editar
+            </button>
+          )}
+        </div>
         <div className="ficha__grilla">
           <Dato etiqueta="Sexo" valor={aprendiz.sexo} />
           <Dato etiqueta="RH" valor={aprendiz.rh} />

@@ -4,6 +4,7 @@ import { useCatalogos } from '../../../../hooks/useCatalogos'
 import SelectorGrupo from '../../SelectorGrupo/SelectorGrupo'
 import './FormularioMatricula.css'
 import SelectorBuscable from '../../../compartidos/SelectorBuscable/SelectorBuscable'
+import SelectorCargo from '../../../compartidos/SelectorCargo/SelectorCargo'
 
 const DATOS_PERSONA_VACIOS = {
   nombres: '',
@@ -34,6 +35,7 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
   const [areaId, setAreaId] = useState('')
   const [cargoId, setCargoId] = useState('')
   const [sectorId, setSectorId] = useState('')
+  const [cargosLocales, setCargosLocales] = useState([])
   const [fechaArl, setFechaArl] = useState('')
   const [fechaExamen, setFechaExamen] = useState('')
 
@@ -496,12 +498,19 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
 
               <div className="form-matricula__campo">
                 <label className="form-matricula__label" htmlFor="cargo">Cargo</label>
-                <SelectorBuscable
+                <SelectorCargo
                   id="cargo"
-                  opciones={catalogos.cargos}
+                  cargos={[...catalogos.cargos, ...cargosLocales]}
                   valor={cargoId}
                   onCambio={setCargoId}
-                  placeholder="Buscar cargo…"
+                  onCargoCreado={(nuevo) =>
+                    setCargosLocales((antes) => {
+                      const yaEsta =
+                        antes.some((c) => c.id === nuevo.id) ||
+                        catalogos.cargos.some((c) => c.id === nuevo.id)
+                      return yaEsta ? antes : [...antes, nuevo]
+                    })
+                  }
                 />
               </div>
             </div>

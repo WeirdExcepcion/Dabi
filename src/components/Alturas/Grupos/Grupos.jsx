@@ -4,7 +4,7 @@ import './Grupos.css'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import Modal from '../../compartidos/Modal/Modal'
 import FormularioGrupo from '../FormularioGrupo/FormularioGrupo'
-import { PUEDE_CREAR_GRUPOS } from '../../../constants/permisos'
+import { PUEDE_CREAR_GRUPOS, ROLES_SOLO_LECTURA } from '../../../constants/permisos'
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 
@@ -41,6 +41,7 @@ function Grupos() {
     const [filtroHasta, setFiltroHasta] = useState('')
     const [fechasExactas, setFechasExactas] = useState(false)
     const puedeCrearGrupos = PUEDE_CREAR_GRUPOS.includes(perfil.rol)
+    const soloLectura = ROLES_SOLO_LECTURA.includes(perfil.rol)
 
   useEffect(() => {
     async function cargarCatalogos() {
@@ -73,7 +74,9 @@ function Grupos() {
           matriculas ( count )
         `)
 
-      if (filtroEstado === 'activos') {
+      if (soloLectura) {
+        consulta = consulta.is('mintrabajo_id_curso', null)
+      } else if (filtroEstado === 'activos') {
         consulta = consulta.gte('fecha_fin', hoyISO())
       } else if (filtroEstado === 'cerrados') {
         consulta = consulta.lt('fecha_fin', hoyISO())
@@ -116,7 +119,7 @@ function Grupos() {
 
   useEffect(() => {
     obtenerGrupos()
-  }, [filtroEstado, filtroCurso, filtroEntrenador, filtroDesde, filtroHasta, fechasExactas])
+  }, [filtroEstado, filtroCurso, filtroEntrenador, filtroDesde, filtroHasta, fechasExactas, soloLectura])
 
   const hayFiltrosAvanzados = filtroCurso || filtroEntrenador || filtroDesde || filtroHasta
   
@@ -137,6 +140,7 @@ function Grupos() {
           <h1 className="grupos__titulo">Grupos</h1>
         </div>
 
+        {!soloLectura && (
         <div className="grupos__filtros">
           <button
             className={`grupos__filtro ${filtroEstado === 'activos' ? 'grupos__filtro_activo' : ''}`}
@@ -157,6 +161,7 @@ function Grupos() {
             Todos
           </button>
         </div>
+        )}
             {puedeCrearGrupos && (
           <button
             className="grupos__boton-nuevo"

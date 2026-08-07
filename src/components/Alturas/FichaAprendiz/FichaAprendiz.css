@@ -305,3 +305,32 @@
 .ficha__td_accion .btn-cert {
   margin-right: 10px;
 }
+
+.ficha__panel-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ficha__panel-cabecera .ficha__panel-titulo {
+  margin: 0;
+}
+
+.ficha__editar-datos {
+  padding: 5px 13px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ficha__editar-datos:hover {
+  background-color: var(--gris-niebla);
+}

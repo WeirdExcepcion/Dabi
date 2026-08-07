@@ -128,3 +128,15 @@ export const PUEDE_CREAR_GRUPOS = [
   'coordinador',
   'supervisor',
 ]
+
+export const PUEDE_EDITAR_APRENDIZ = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'coordinador',
+  'supervisor',
+  'auxiliar-admin',
+]
+
+export const ROLES_SOLO_LECTURA = ['entrenador', 'espectador']

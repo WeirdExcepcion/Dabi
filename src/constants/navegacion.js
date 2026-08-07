@@ -17,12 +17,12 @@ export const SECCIONES = [
   {
     ruta: '/alturas/empresas',
     etiqueta: 'Empresas',
-    roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
+    roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont','espectador'],
   },
   {
     ruta: '/alturas/aprendices',
     etiqueta: 'Aprendices',
-    roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'entrenador', 'espectador'],
+    roles: ['admin', 'gerente-general', 'coordinador', 'supervisor', 'contable', 'auxiliar-admin', 'auxiliar-cont', 'espectador'],
   },
   {
     ruta: '/alturas/personal',

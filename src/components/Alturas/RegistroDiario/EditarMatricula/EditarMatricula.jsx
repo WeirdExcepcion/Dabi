@@ -4,9 +4,11 @@ import { useCatalogos } from '../../../../hooks/useCatalogos'
 import { PUEDE_CAMBIAR_ESTADO_GRUPO } from '../../../../constants/permisos'
 import SelectorGrupo from '../../SelectorGrupo/SelectorGrupo'
 import SelectorBuscable from "../../../compartidos/SelectorBuscable/SelectorBuscable";
+import SelectorCargo from '../../../compartidos/SelectorCargo/SelectorCargo'
 import './EditarMatricula.css'
 import { ESTADOS_MATRICULA, ESTADOS_APROBACION } from '../../../../constants/estados'
 import DocumentosMatricula from '../../DocumentosMatricula/DocumentosMatricula'
+
 
 function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const { catalogos, cargando: cargandoCatalogos } = useCatalogos()
@@ -18,6 +20,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const [areaId, setAreaId] = useState(matricula.area_id || '')
   const [cargoId, setCargoId] = useState(matricula.cargo_id || '')
   const [sectorId, setSectorId] = useState(matricula.sector_id || '')
+  const [cargosLocales, setCargosLocales] = useState([])
   const [fechaArl, setFechaArl] = useState(matricula.fecha_arl || '')
   const [fechaExamen, setFechaExamen] = useState(matricula.fecha_examen || '')
   const [estado, setEstado] = useState(matricula.estado)
@@ -270,12 +273,19 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
 
           <div className="editar-mat__campo">
             <label className="editar-mat__label" htmlFor="edit_cargo">Cargo</label>
-            <SelectorBuscable
+            <SelectorCargo
               id="edit_cargo"
-              opciones={catalogos.cargos}
+              cargos={[...catalogos.cargos, ...cargosLocales]}
               valor={cargoId}
               onCambio={setCargoId}
-              placeholder="Buscar cargo…"
+              onCargoCreado={(nuevo) =>
+                    setCargosLocales((antes) => {
+                      const yaEsta =
+                        antes.some((c) => c.id === nuevo.id) ||
+                        catalogos.cargos.some((c) => c.id === nuevo.id)
+                      return yaEsta ? antes : [...antes, nuevo]
+                    })
+                  }
             />
           </div>
         </div>

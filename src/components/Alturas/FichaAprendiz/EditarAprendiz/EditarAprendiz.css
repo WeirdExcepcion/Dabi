@@ -1,0 +1,139 @@
+.edit-apr {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  background-color: var(--blanco);
+  border-radius: 8px;
+}
+
+.edit-apr__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 7px;
+}
+
+.edit-apr__titulo {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0 0 3px;
+}
+
+.edit-apr__doc {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin: 0 0 20px;
+}
+
+.edit-apr__doc-nota {
+  font-style: italic;
+}
+
+.edit-apr__fila {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.edit-apr__campo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.edit-apr__campo_corto {
+  flex: 0 0 90px;
+}
+
+.edit-apr__label {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.edit-apr__input {
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  min-width: 0;
+}
+
+.edit-apr__input:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.edit-apr__nota {
+  font-family: var(--font-brand);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--texto-secundario);
+  margin: 6px 0 18px;
+  padding: 12px 14px;
+  background-color: var(--gris-niebla);
+  border-radius: 6px;
+}
+
+.edit-apr__error {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+  margin: 0 0 14px;
+}
+
+.edit-apr__acciones {
+  display: flex;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+}
+
+.edit-apr__boton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.edit-apr__boton:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.edit-apr__boton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.edit-apr__boton_sec {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+  font-weight: 500;
+}
+
+.edit-apr__boton_sec:hover {
+  background-color: var(--gris-niebla);
+}
