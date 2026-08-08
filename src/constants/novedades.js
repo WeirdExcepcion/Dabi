@@ -1,6 +1,22 @@
-export const VERSION_ACTUAL = '2026.08.02'
+export const VERSION_ACTUAL = '2026.08.08'
 
 export const NOVEDADES = [
+  {
+    version: '2026.08.08',
+    fecha: '5 de agosto de 2026',
+    titulo: 'Permisos por rol y cargos',
+    cambios: [
+      { tipo: 'nuevo', texto: 'Cada rol ve solo las secciones y los botones que necesita para su trabajo.' },
+      { tipo: 'nuevo', texto: 'Ahora puedes crear un cargo nuevo desde el mismo formulario de matrícula, sin salir a otra pantalla.' },
+      { tipo: 'nuevo', texto: 'Si escribes un cargo parecido a uno que ya existe, el sistema te lo muestra antes de crear uno repetido.' },
+      { tipo: 'nuevo', texto: 'Desde la ficha del aprendiz puedes corregir sus datos personales: nombres, sexo, RH, fecha de nacimiento, país y nivel educativo.' },
+      { tipo: 'nuevo', texto: 'Se agregaron 10 EPS que faltaban en la lista.' },
+      { tipo: 'mejora', texto: 'Un entrenador ahora solo ve los grupos pendientes de reportar, sin las secciones administrativas.' },
+      { tipo: 'arreglo', texto: 'El nivel educativo ya aparece correctamente al editar un aprendiz.' },
+      { tipo: 'arreglo', texto: 'El formulario para crear un grupo desde la matrícula ya no aparece duplicado y permite elegir supervisor.' },
+      { tipo: 'arreglo', texto: 'Se corrigieron permisos internos que permitían acciones desde fuera del sistema.' },
+    ],
+  },
   {
     version: '2026.08.02',
     fecha: '2 de agosto de 2026',

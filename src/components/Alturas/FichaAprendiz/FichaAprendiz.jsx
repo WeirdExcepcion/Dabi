@@ -37,6 +37,7 @@ const CAMPOS_APRENDIZ = `
   pais,
   fecha_nacimiento,
   rh,
+  nivel_educativo_id,
   created_at,
   niveles_educativos ( nombre )
 `
@@ -70,6 +71,7 @@ function FichaAprendiz() {
   const [error, setError] = useState('')
   const [corrigiendo, setCorrigiendo] = useState(false)
   const [editando, setEditando] = useState(false)
+  const [niveles, setNiveles] = useState([])
   const { cargarFaltantes } = useFaltantes()
 
   
@@ -77,13 +79,14 @@ function FichaAprendiz() {
       setCargando(true)
       setError('')
 
-      const [resAprendiz, resHistorial] = await Promise.all([
+      const [resAprendiz, resHistorial, resNiveles] = await Promise.all([
         supabase.from('aprendices').select(CAMPOS_APRENDIZ).eq('id', aprendizId).maybeSingle(),
         supabase
           .from('matriculas')
           .select(CAMPOS_HISTORIAL)
           .eq('aprendiz_id', aprendizId)
           .order('id', { ascending: false }),
+        supabase.from('niveles_educativos').select('id, nombre').order('id'),
       ])
 
       if (resAprendiz.error || !resAprendiz.data) {
@@ -93,6 +96,7 @@ function FichaAprendiz() {
       }
 
       setAprendiz(resAprendiz.data)
+      if (resNiveles.data) setNiveles(resNiveles.data)
 
       if (resHistorial.error) {
         console.error(resHistorial.error.message)
@@ -135,6 +139,7 @@ function FichaAprendiz() {
       {editando && (
         <Modal onCerrar={() => setEditando(false)} bloquearCierre>
           <EditarAprendiz
+            niveles={niveles}
             aprendiz={aprendiz}
             onGuardado={() => {
               setEditando(false)

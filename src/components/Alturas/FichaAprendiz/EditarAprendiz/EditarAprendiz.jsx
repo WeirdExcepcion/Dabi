@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../../../lib/supabaseClient'
 import './EditarAprendiz.css'
 
-function EditarAprendiz({ aprendiz, onGuardado, onCancelar }) {
+function EditarAprendiz({ aprendiz, niveles = [], onGuardado, onCancelar }) {
   const [nombres, setNombres] = useState(aprendiz.nombres || '')
   const [apellidos, setApellidos] = useState(aprendiz.apellidos || '')
   const [sexo, setSexo] = useState(aprendiz.sexo || '')
@@ -10,21 +10,8 @@ function EditarAprendiz({ aprendiz, onGuardado, onCancelar }) {
   const [fechaNacimiento, setFechaNacimiento] = useState(aprendiz.fecha_nacimiento || '')
   const [pais, setPais] = useState(aprendiz.pais || 'Colombia')
   const [nivelId, setNivelId] = useState(aprendiz.nivel_educativo_id || '')
-
-  const [niveles, setNiveles] = useState([])
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
-
-  useEffect(() => {
-    async function cargarNiveles() {
-      const { data } = await supabase
-        .from('niveles_educativos')
-        .select('id, nombre')
-        .order('id')
-      if (data) setNiveles(data)
-    }
-    cargarNiveles()
-  }, [])
 
   async function guardar(e) {
     e.preventDefault()
