@@ -3,7 +3,7 @@ export const VERSION_ACTUAL = '2026.08.08'
 export const NOVEDADES = [
   {
     version: '2026.08.08',
-    fecha: '5 de agosto de 2026',
+    fecha: '8 de agosto de 2026',
     titulo: 'Permisos por rol y cargos',
     cambios: [
       { tipo: 'nuevo', texto: 'Cada rol ve solo las secciones y los botones que necesita para su trabajo.' },
