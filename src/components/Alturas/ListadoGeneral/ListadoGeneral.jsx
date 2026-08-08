@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
-import { PUEDE_GESTIONAR_MINTRABAJO } from '../../../constants/permisos'
+import { PUEDE_GESTIONAR_MINTRABAJO, ROLES_SOLO_LECTURA } from '../../../constants/permisos'
 import Modal from '../../compartidos/Modal/Modal'
 import RegistrarCargue from './RegistrarCargue/RegistrarCargue'
 import PreviaCsv from './PreviaCsv/PreviaCsv'
@@ -51,6 +51,7 @@ function ListadoGeneral() {
   const [coordinadores, setCoordinadores] = useState([])
 
   const puedeGestionar = PUEDE_GESTIONAR_MINTRABAJO.includes(perfil.rol)
+  const soloLectura = ROLES_SOLO_LECTURA.includes(perfil.rol)
 
   async function cargar() {
     setCargando(true)
@@ -85,7 +86,7 @@ function ListadoGeneral() {
     cargarCoordinadores()
   }, [])
 
-  if (!puedeGestionar) {
+  if (!puedeGestionar && !soloLectura) {
     return <p className="listado__mensaje">Tu rol no tiene acceso a esta sección.</p>
   }
 
@@ -149,12 +150,16 @@ function ListadoGeneral() {
         <td className="listado__td">{grupo.entrenador || '—'}</td>
         <td className="listado__td">{grupo.supervisor || '—'}</td>
         <td className="listado__td">
-          <SelectorCoordinador
-            grupoId={grupo.id}
-            valor={grupo.coordinador_id}
-            opciones={coordinadores}
-            onCambiado={() => cargar()}
-          />
+          {soloLectura ? (
+            grupo.coordinador || '—'
+          ) : (
+            <SelectorCoordinador
+              grupoId={grupo.id}
+              valor={grupo.coordinador_id}
+              opciones={coordinadores}
+              onCambiado={() => cargar()}
+            />
+          )}
         </td>
         <td className="listado__td listado__td_centro">{grupo.total_aprendices}</td>
         <td className="listado__td listado__td_limite">
@@ -188,19 +193,23 @@ function ListadoGeneral() {
           >
             Ver
           </button>
-          <button
-            className="listado__boton listado__boton_principal"
-            onClick={() => setGrupoCargando(grupo)}
-          >
-            {grupo.cargado ? 'Editar cargue' : 'Registrar'}
-          </button>
-          <button
-            className="listado__boton"
-            onClick={() => setGrupoCsv(grupo)}
-            title="Descargar archivo para MinTrabajo"
-          >
-            CSV
-          </button>
+          {puedeGestionar && (
+            <button
+              className="listado__boton listado__boton_principal"
+              onClick={() => setGrupoCargando(grupo)}
+            >
+              {grupo.cargado ? 'Editar cargue' : 'Registrar'}
+            </button>
+          )}
+          {puedeGestionar && (
+            <button
+              className="listado__boton"
+              onClick={() => setGrupoCsv(grupo)}
+              title="Descargar archivo para MinTrabajo"
+            >
+              CSV
+            </button>
+          )}
         </td>
       </tr>
     )

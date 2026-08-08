@@ -7,7 +7,7 @@ export const SECCIONES = [
   {
     ruta: '/alturas/aprobacion',
     etiqueta: 'Aprobación',
-    roles: ['admin', 'gerente-general','director-operaciones','coordinador-procesos', 'coordinador', 'supervisor'],
+    roles: ['admin', 'gerente-general','director-operaciones','coordinador-procesos', 'coordinador', 'supervisor','espectador'],
   },
   {
     ruta: '/alturas/grupos',
@@ -27,11 +27,11 @@ export const SECCIONES = [
   {
     ruta: '/alturas/personal',
     etiqueta: 'Personal',
-    roles: ['admin', 'gerente-general','director-operaciones','coordinador-procesos', 'director-operaciones', 'coordinador-procesos'],
+    roles: ['admin', 'gerente-general','director-operaciones','coordinador-procesos', 'director-operaciones', 'coordinador-procesos','espectador'],
   },
   {
     ruta: '/alturas/listado',
     etiqueta: 'Listado General',
-    roles: ['admin', 'gerente-general','director-operaciones','coordinador-procesos', 'director-operaciones', 'coordinador-procesos', 'coordinador', 'supervisor'],
+    roles: ['admin', 'gerente-general','director-operaciones','coordinador-procesos', 'director-operaciones', 'coordinador-procesos', 'coordinador', 'supervisor','espectador'],
   },
 ]

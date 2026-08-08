@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
-import { PUEDE_GESTIONAR_PERSONAL } from '../../../constants/permisos'
+import { PUEDE_GESTIONAR_PERSONAL, ROLES_SOLO_LECTURA } from '../../../constants/permisos'
 import Modal from '../../compartidos/Modal/Modal'
 import FichaPersonal from './FichaPersonal/FichaPersonal'
 import FormularioPersonal from './FormularioPersonal/FormularioPersonal'
@@ -38,6 +38,7 @@ function Personal() {
   const [verInactivos, setVerInactivos] = useState(false)
 
   const puedeGestionar = PUEDE_GESTIONAR_PERSONAL.includes(perfil.rol)
+  const soloLectura = ROLES_SOLO_LECTURA.includes(perfil.rol)
 
   async function cargar() {
     setCargando(true)
@@ -68,7 +69,7 @@ function Personal() {
     )
   }
 
-  if (!puedeGestionar) {
+  if (!puedeGestionar && !soloLectura) {
     return <p className="personal__mensaje">Tu rol no tiene acceso a esta sección.</p>
   }
 
@@ -96,9 +97,11 @@ function Personal() {
               {listos} de {activos.length} listos
             </span>
           )}
-          <button className="personal__boton-nuevo" onClick={() => setCreando(true)}>
-            Nuevo
-          </button>
+          {puedeGestionar && (
+            <button className="personal__boton-nuevo" onClick={() => setCreando(true)}>
+              Nuevo
+            </button>
+          )}
         </div>
       </header>
 
@@ -136,6 +139,7 @@ function Personal() {
       <div className="personal__lista">
         {visibles.map((persona) => (
           <FichaPersonal
+            soloLectura={soloLectura}
             key={persona.id}
             persona={persona}
             onActualizado={(cambios) => actualizarLocal(persona.id, cambios)}

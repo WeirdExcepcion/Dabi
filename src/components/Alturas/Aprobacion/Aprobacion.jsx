@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
-import { PUEDE_APROBAR } from '../../../constants/permisos'
+import { PUEDE_APROBAR, ROLES_SOLO_LECTURA } from '../../../constants/permisos'
 import Modal from '../../compartidos/Modal/Modal'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
 import CambioPendiente from './CambioPendiente/CambioPendiente'
@@ -69,6 +69,7 @@ function Aprobacion() {
   const [cambios, setCambios] = useState([])
   const { catalogos } = useCatalogos()
 
+  const soloLectura = ROLES_SOLO_LECTURA.includes(perfil.rol)
   const puedeAprobar = PUEDE_APROBAR.includes(perfil.rol)
 
   async function cargar() {
@@ -153,7 +154,7 @@ function Aprobacion() {
     return lista
   }
 
-  if (!puedeAprobar) {
+  if (!puedeAprobar && !soloLectura) {
     return (
       <section>
         <p className="aprob__mensaje">Tu rol no tiene acceso a esta sección.</p>
@@ -196,6 +197,7 @@ function Aprobacion() {
           <div className="aprob__lista">
             {cambios.map((cambio) => (
               <CambioPendiente
+                soloLectura={soloLectura}
                 key={cambio.id}
                 cambio={cambio}
                 catalogos={catalogos}
@@ -257,7 +259,7 @@ function Aprobacion() {
                   )}
                 </div>
 
-                <div className="aprob__acciones">
+                {puedeAprobar && <div className="aprob__acciones">
                   <button
                     className="aprob__boton aprob__boton_ver"
                     onClick={() => setViendo(matricula)}
@@ -278,7 +280,7 @@ function Aprobacion() {
                   >
                     {ocupado ? '…' : 'Aprobar'}
                   </button>
-                </div>
+                </div>}
               </article>
             )
           })}

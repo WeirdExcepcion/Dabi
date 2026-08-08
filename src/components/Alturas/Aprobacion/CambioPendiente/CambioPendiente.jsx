@@ -19,7 +19,7 @@ function formatearValor(valor) {
   return String(valor)
 }
 
-function CambioPendiente({ cambio, catalogos, onResuelto }) {
+function CambioPendiente({ cambio, catalogos, onResuelto, soloLectura = false }) {
   const [procesando, setProcesando] = useState(false)
   const [rechazando, setRechazando] = useState(false)
   const [motivo, setMotivo] = useState('')
@@ -131,7 +131,7 @@ function CambioPendiente({ cambio, catalogos, onResuelto }) {
 
       {error && <p className="cambio__error">{error}</p>}
 
-      {rechazando ? (
+      {!soloLectura && (rechazando ? (
         <div className="cambio__rechazo">
           <input
             type="text"
@@ -171,7 +171,7 @@ function CambioPendiente({ cambio, catalogos, onResuelto }) {
             {procesando ? '…' : 'Autorizar cambio'}
           </button>
         </div>
-      )}
+      ))}
     </article>
   )
 }

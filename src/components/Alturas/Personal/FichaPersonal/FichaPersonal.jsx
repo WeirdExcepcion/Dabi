@@ -11,7 +11,7 @@ function formatearFecha(iso) {
   return `${dia}/${mes}/${anio}`
 }
 
-function FichaPersonal({ persona, onActualizado }) {
+function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
   const [documento, setDocumento] = useState(persona.numero_documento || '')
   const [formacion, setFormacion] = useState(persona.formacion || '')
   const [numero, setNumero] = useState(persona.licencia_numero || '')
@@ -215,25 +215,29 @@ function FichaPersonal({ persona, onActualizado }) {
                 : 'f-per__punto'
             }
           />
-          <select
-            className="f-per__capacidad"
-            value={valorSelector}
-            onChange={(e) => cambiarCapacidad(e.target.value)}
-            disabled={cambiandoCap}
-          >
-            <option value="entrenador">Entrenador</option>
-            <option value="supervisor">Supervisor</option>
-            <option value="coordinador">Coordinador</option>
-            <option value="entrenador-supervisor">Entrenador y supervisor</option>
-            <option value="entrenador-coordinador">Entrenador y coordinador</option>
-            <option value="supervisor-coordinador">Supervisor y coordinador</option>
-            <option value="entrenador-supervisor-coordinador">Las tres</option>
-            <option value="desactivado">Desactivado</option>
-          </select>
+          {soloLectura ? (
+            <span className="f-per__estado">{etiquetaCapacidad()}</span>
+          ) : (
+            <select
+              className="f-per__capacidad"
+              value={valorSelector}
+              onChange={(e) => cambiarCapacidad(e.target.value)}
+              disabled={cambiandoCap}
+            >
+              <option value="entrenador">Entrenador</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="coordinador">Coordinador</option>
+              <option value="entrenador-supervisor">Entrenador y supervisor</option>
+              <option value="entrenador-coordinador">Entrenador y coordinador</option>
+              <option value="supervisor-coordinador">Supervisor y coordinador</option>
+              <option value="entrenador-supervisor-coordinador">Las tres</option>
+              <option value="desactivado">Desactivado</option>
+            </select>
+          )}
         </div>
       </div>
 
-      {activo && (
+      {activo && !soloLectura && (
         <div className="f-per__cuerpo">
           <div className="f-per__bloque">
             <p className="f-per__bloque-titulo">Datos y licencia</p>
