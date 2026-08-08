@@ -11,6 +11,8 @@ export const PUEDE_CREAR_EMPRESAS = [
 export const PUEDE_CREAR_APRENDICES = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
   'auxiliar-admin',
@@ -19,6 +21,8 @@ export const PUEDE_CREAR_APRENDICES = [
 export const PUEDE_CREAR_MATRICULAS = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
   'auxiliar-admin',
@@ -27,6 +31,8 @@ export const PUEDE_CREAR_MATRICULAS = [
 export const PUEDE_EDITAR_MATRICULAS = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
   'auxiliar-admin',
@@ -35,6 +41,8 @@ export const PUEDE_EDITAR_MATRICULAS = [
 export const PUEDE_CAMBIAR_ESTADO_GRUPO = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
 ]
@@ -42,6 +50,8 @@ export const PUEDE_CAMBIAR_ESTADO_GRUPO = [
 export const PUEDE_CORREGIR_DOCUMENTO = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
 ]
@@ -58,6 +68,8 @@ export const PUEDE_EDITAR_EMPRESAS = [
 export const PUEDE_APROBAR = [
   'admin',
   'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
   'coordinador',
   'supervisor',
 ]
