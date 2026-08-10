@@ -27,12 +27,33 @@ export function FaltantesProvider({ children }) {
     setFaltantes((anteriores) => ({ ...anteriores, ...mapa }))
   }, [])
 
+  const refrescarUna = useCallback(async (matriculaId) => {
+    const { data, error } = await supabase.rpc('faltantes_matriculas', {
+      p_ids: [matriculaId],
+    })
+
+    if (error) {
+      console.error('Error al refrescar faltantes:', error.message)
+      return
+    }
+
+    setFaltantes((anteriores) => {
+      const copia = { ...anteriores }
+      if (data && data.length > 0) {
+        copia[matriculaId] = data[0].faltantes
+      } else {
+        delete copia[matriculaId]
+      }
+      return copia
+    })
+  }, [])
+
   const ignorar = useCallback((matriculaId) => {
     setIgnoradas((anteriores) => new Set(anteriores).add(matriculaId))
   }, [])
 
   return (
-    <FaltantesContext.Provider value={{ faltantes, ignoradas, cargarFaltantes, ignorar }}>
+    <FaltantesContext.Provider value={{ faltantes, ignoradas, cargarFaltantes, refrescarUna, ignorar }}>
       {children}
     </FaltantesContext.Provider>
   )
@@ -41,7 +62,13 @@ export function FaltantesProvider({ children }) {
 export function useFaltantes() {
   const contexto = useContext(FaltantesContext)
   if (!contexto) {
-    return { faltantes: {}, ignoradas: new Set(), cargarFaltantes: () => {}, ignorar: () => {} }
+    return {
+      faltantes: {},
+      ignoradas: new Set(),
+      cargarFaltantes: () => {},
+      refrescarUna: () => {},
+      ignorar: () => {},
+    }
   }
   return contexto
 }

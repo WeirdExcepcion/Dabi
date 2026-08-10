@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../../../../lib/supabaseClient'
+import Modal from '../../../compartidos/Modal/Modal'
 import './FichaPersonal.css'
 
 const MAX_BYTES = 2 * 1024 * 1024
@@ -22,6 +23,7 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
   const [error, setError] = useState('')
   const [aviso, setAviso] = useState('')
   const [vistaPrevia, setVistaPrevia] = useState(null)
+  const [confirmarDesactivar, setConfirmarDesactivar] = useState(null)
 
   const activo = persona.puede_entrenar || persona.puede_supervisar || persona.puede_coordinar
 
@@ -32,10 +34,17 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
     fecha !== (persona.licencia_fecha || '')
 
   const tieneFirma = Boolean(persona.firma_path)
-  const baseCompleta =
-    persona.numero_documento && persona.licencia_numero && persona.licencia_fecha && persona.formacion
+  const tieneDocumento = Boolean(persona.numero_documento)
+  const tieneLicencia = Boolean(persona.licencia_numero && persona.licencia_fecha)
+  const tieneTitulo = Boolean(persona.formacion)
+
+  const necesitaLicencia = persona.puede_entrenar || persona.puede_supervisar
   const firmaNecesaria = persona.puede_entrenar
-  const listo = baseCompleta && (!firmaNecesaria || tieneFirma)
+
+  const listo =
+    tieneDocumento &&
+    (!necesitaLicencia || (tieneLicencia && tieneTitulo)) &&
+    (!firmaNecesaria || tieneFirma)
 
   function claseTarjeta() {
     if (!activo) return 'f-per f-per_inactivo'
@@ -51,20 +60,14 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
     return roles.join(' · ')
   }
 
-  async function cambiarCapacidad(valor) {
+  async function aplicarCapacidad(campo, valor) {
     setError('')
     setAviso('')
     setCambiandoCap(true)
 
-    const cambios = {
-      puede_entrenar: valor.includes('entrenador'),
-      puede_supervisar: valor.includes('supervisor'),
-      puede_coordinar: valor.includes('coordinador'),
-    }
-
     const { error } = await supabase
       .from('entrenadores')
-      .update(cambios)
+      .update({ [campo]: valor })
       .eq('id', persona.id)
 
     setCambiandoCap(false)
@@ -75,7 +78,26 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
       return
     }
 
-    onActualizado(cambios)
+    onActualizado({ [campo]: valor })
+  }
+
+  function cambiarCapacidad(campo, valor) {
+    const quedaria = {
+      puede_entrenar: persona.puede_entrenar,
+      puede_supervisar: persona.puede_supervisar,
+      puede_coordinar: persona.puede_coordinar,
+      [campo]: valor,
+    }
+
+    const quedaSinFunciones =
+      !quedaria.puede_entrenar && !quedaria.puede_supervisar && !quedaria.puede_coordinar
+
+    if (quedaSinFunciones) {
+      setConfirmarDesactivar({ campo, valor })
+      return
+    }
+
+    aplicarCapacidad(campo, valor)
   }
 
   async function guardarDatos() {
@@ -178,18 +200,44 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
     setVistaPrevia(data.signedUrl)
   }
 
-  const valorSelector = !activo
-    ? 'desactivado'
-    : [
-        persona.puede_entrenar && 'entrenador',
-        persona.puede_supervisar && 'supervisor',
-        persona.puede_coordinar && 'coordinador',
-      ]
-        .filter(Boolean)
-        .join('-')
-
   return (
     <article className={claseTarjeta()}>
+      {confirmarDesactivar && (
+        <Modal onCerrar={() => setConfirmarDesactivar(null)}>
+          <div className="f-per__confirm">
+            <p className="f-per__confirm-eyebrow">Desactivar</p>
+            <h2 className="f-per__confirm-titulo">{persona.nombre_completo}</h2>
+
+            <p className="f-per__confirm-texto">
+              Al quitarle todas sus funciones, esta persona quedará desactivada y
+              dejará de aparecer al crear grupos.
+            </p>
+            <p className="f-per__confirm-texto">
+              No se pierde nada: sus datos, licencia y firma se conservan, y los grupos
+              donde ya participó siguen intactos. Pasará al final de la lista, en
+              <strong> "Ver desactivados"</strong>, para reactivarla cuando quieras.
+            </p>
+
+            <div className="f-per__confirm-acciones">
+              <button
+                className="f-per__boton f-per__boton_sec"
+                onClick={() => setConfirmarDesactivar(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="f-per__boton f-per__boton_peligro"
+                onClick={() => {
+                  aplicarCapacidad(confirmarDesactivar.campo, confirmarDesactivar.valor)
+                  setConfirmarDesactivar(null)
+                }}
+              >
+                Desactivar
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
       <div className="f-per__cabecera">
         <div>
           <p className="f-per__nombre">
@@ -201,7 +249,14 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
               ? 'Desactivado · no aparece al crear grupos'
               : listo
               ? `${etiquetaCapacidad()} · listo`
-              : `${etiquetaCapacidad()} · faltan datos`}
+              : `${etiquetaCapacidad()} · falta ${[
+                  !tieneDocumento && 'el documento',
+                  necesitaLicencia && !tieneLicencia && 'la licencia',
+                  necesitaLicencia && !tieneTitulo && 'el título',
+                  firmaNecesaria && !tieneFirma && 'la firma',
+                ]
+                  .filter(Boolean)
+                  .join(', ')}`}
           </p>
         </div>
 
@@ -218,21 +273,42 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
           {soloLectura ? (
             <span className="f-per__estado">{etiquetaCapacidad()}</span>
           ) : (
-            <select
-              className="f-per__capacidad"
-              value={valorSelector}
-              onChange={(e) => cambiarCapacidad(e.target.value)}
-              disabled={cambiandoCap}
-            >
-              <option value="entrenador">Entrenador</option>
-              <option value="supervisor">Supervisor</option>
-              <option value="coordinador">Coordinador</option>
-              <option value="entrenador-supervisor">Entrenador y supervisor</option>
-              <option value="entrenador-coordinador">Entrenador y coordinador</option>
-              <option value="supervisor-coordinador">Supervisor y coordinador</option>
-              <option value="entrenador-supervisor-coordinador">Las tres</option>
-              <option value="desactivado">Desactivado</option>
-            </select>
+            <div className="f-per__checks">
+              <label className="f-per__check">
+                <input
+                  type="checkbox"
+                  checked={persona.puede_entrenar}
+                  onChange={(e) => cambiarCapacidad('puede_entrenar', e.target.checked)}
+                  disabled={cambiandoCap}
+                />
+                Entrenador
+              </label>
+
+              <label className="f-per__check">
+                <input
+                  type="checkbox"
+                  checked={persona.puede_supervisar}
+                  onChange={(e) => cambiarCapacidad('puede_supervisar', e.target.checked)}
+                  disabled={cambiandoCap}
+                />
+                Supervisor
+              </label>
+
+              <label className="f-per__check">
+                <input
+                  type="checkbox"
+                  checked={persona.puede_coordinar}
+                  onChange={(e) => cambiarCapacidad('puede_coordinar', e.target.checked)}
+                  disabled={cambiandoCap}
+                />
+                Coordinador
+              </label>
+              {activo && (
+                <p className="f-per__nota-checks">
+                  Sin ninguna función marcada, la persona se desactiva.
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -241,6 +317,13 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
         <div className="f-per__cuerpo">
           <div className="f-per__bloque">
             <p className="f-per__bloque-titulo">Datos y licencia</p>
+           
+            {!necesitaLicencia && (
+              <p className="f-per__nota-firma">
+                Como coordinador, solo hacen falta su nombre y documento. La licencia
+                y el título son opcionales.
+              </p>
+            )}
 
             <div className="f-per__campos">
               <div className="f-per__campo">
@@ -320,8 +403,8 @@ function FichaPersonal({ persona, onActualizado, soloLectura = false }) {
 
             {!firmaNecesaria && (
               <p className="f-per__nota-firma">
-                Como supervisor, su firma no se estampa en el certificado. Puedes
-                subirla igual por si más adelante también entrena.
+                Su firma solo se estampa en el certificado si entrena. Puedes
+                subirla igual por si más adelante lo hace.
               </p>
             )}
 

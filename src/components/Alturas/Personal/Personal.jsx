@@ -22,10 +22,15 @@ const CAMPOS = `
 `
 
 function estaListo(p) {
-  const base =
-    p.numero_documento && p.licencia_numero && p.licencia_fecha && p.formacion
-  if (!base) return false
+  if (!p.numero_documento) return false
+
+  const necesitaLicencia = p.puede_entrenar || p.puede_supervisar
+  if (necesitaLicencia && !(p.licencia_numero && p.licencia_fecha && p.formacion)) {
+    return false
+  }
+
   if (p.puede_entrenar && !p.firma_path) return false
+
   return true
 }
 

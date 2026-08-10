@@ -8,7 +8,9 @@ function FormularioPersonal({ onCreado, onCancelar }) {
   const [formacion, setFormacion] = useState('')
   const [numero, setNumero] = useState('')
   const [fecha, setFecha] = useState('')
-  const [capacidad, setCapacidad] = useState('entrenador')
+  const [puedeEntrenar, setPuedeEntrenar] = useState(true)
+  const [puedeSupervisar, setPuedeSupervisar] = useState(false)
+  const [puedeCoordinar, setPuedeCoordinar] = useState(false)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
@@ -23,12 +25,11 @@ function FormularioPersonal({ onCreado, onCancelar }) {
 
     setGuardando(true)
 
-    const caps =
-      capacidad === 'ambos'
-        ? { puede_entrenar: true, puede_supervisar: true }
-        : capacidad === 'supervisor'
-        ? { puede_entrenar: false, puede_supervisar: true }
-        : { puede_entrenar: true, puede_supervisar: false }
+    const caps = {
+      puede_entrenar: puedeEntrenar,
+      puede_supervisar: puedeSupervisar,
+      puede_coordinar: puedeCoordinar,
+    }
 
     const { error } = await supabase.from('entrenadores').insert({
       nombre_completo: nombre.trim(),
@@ -66,17 +67,35 @@ function FormularioPersonal({ onCreado, onCancelar }) {
         required
       />
 
-      <label className="form-per__label" htmlFor="per_cap">Función</label>
-      <select
-        id="per_cap"
-        className="form-per__input"
-        value={capacidad}
-        onChange={(e) => setCapacidad(e.target.value)}
-      >
-        <option value="entrenador">Entrenador</option>
-        <option value="supervisor">Supervisor</option>
-        <option value="ambos">Entrenador y supervisor</option>
-      </select>
+      <p className="form-per__label">Función</p>
+      <div className="form-per__checks">
+        <label className="form-per__check">
+          <input
+            type="checkbox"
+            checked={puedeEntrenar}
+            onChange={(e) => setPuedeEntrenar(e.target.checked)}
+          />
+          Entrenador
+        </label>
+
+        <label className="form-per__check">
+          <input
+            type="checkbox"
+            checked={puedeSupervisar}
+            onChange={(e) => setPuedeSupervisar(e.target.checked)}
+          />
+          Supervisor
+        </label>
+
+        <label className="form-per__check">
+          <input
+            type="checkbox"
+            checked={puedeCoordinar}
+            onChange={(e) => setPuedeCoordinar(e.target.checked)}
+          />
+          Coordinador
+        </label>
+      </div>
 
       <label className="form-per__label" htmlFor="per_doc">Documento</label>
       <input

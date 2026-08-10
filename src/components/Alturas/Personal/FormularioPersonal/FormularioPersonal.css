@@ -122,3 +122,34 @@
 .form-per__boton_sec:hover {
   background-color: var(--gris-niebla);
 }
+
+.form-per__checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.form-per__check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 13.5px;
+  color: var(--azul-medianoche);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.form-per__check:hover {
+  border-color: var(--ceruleo);
+  background-color: var(--gris-niebla);
+}
+
+.form-per__check input {
+  cursor: pointer;
+  accent-color: var(--ceruleo);
+}

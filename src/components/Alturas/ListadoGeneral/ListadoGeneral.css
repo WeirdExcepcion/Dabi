@@ -138,10 +138,12 @@
   border-radius: 8px;
   border: 1px solid rgba(2, 17, 60, 0.08);
   overflow-x: auto;
+  max-width: 100%;
 }
 
 .listado__tabla {
   width: 100%;
+  min-width: 1100px;
   border-collapse: collapse;
 }
 
@@ -338,4 +340,9 @@
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+.listado {
+  max-width: 100%;
+  overflow-x: hidden;
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabaseClient'
+import { useFaltantes } from '../../../context/FaltantesContext'
 import './DocumentosMatricula.css'
 import { comprimirImagen } from '../../../lib/comprimirImagen'
 
@@ -24,6 +25,7 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
   const [cargando, setCargando] = useState(true)
   const [subiendo, setSubiendo] = useState(null)
   const [error, setError] = useState('')
+  const { refrescarUna } = useFaltantes()
 
   async function cargar() {
     setCargando(true)
@@ -32,13 +34,13 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
       aprendizId
         ? supabase
             .from('documentos_aprendiz')
-            .select('tipo, archivo_path, matricula_respaldo_id, subido_en')
+            .select('tipo, archivo_path, matricula_respaldo_id, subido_en, es_sena')
             .eq('aprendiz_id', aprendizId)
         : Promise.resolve({ data: [] }),
       matriculaId
         ? supabase
             .from('documentos_matricula')
-            .select('tipo, archivo_path, subido_en')
+            .select('tipo, archivo_path, subido_en, es_planilla')
             .eq('matricula_id', matriculaId)
         : Promise.resolve({ data: [] }),
     ]
@@ -118,6 +120,7 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
     }
 
     cargar()
+    if (matriculaId) refrescarUna(matriculaId)
   }
 
   async function subirDeAprendiz(tipo, archivo) {
@@ -168,6 +171,24 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
     }
 
     cargar()
+    if (matriculaId) refrescarUna(matriculaId)
+  }
+
+  async function cambiarMarca(tabla, filtro, campo, valor) {
+    setError('')
+
+    const { error } = await supabase
+      .from(tabla)
+      .update({ [campo]: valor })
+      .match(filtro)
+
+    if (error) {
+      setError('No se pudo guardar la marca')
+      console.error(error.message)
+      return
+    }
+
+    cargar()
   }
 
   async function verArchivo(ruta) {
@@ -186,7 +207,7 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
     window.open(data.signedUrl, '_blank')
   }
 
-  function Fila({ tipo, etiqueta, doc, alSubir, deshabilitado, nota }) {
+  function Fila({ tipo, etiqueta, doc, alSubir, deshabilitado, nota, marca }) {
     const tiene = Boolean(doc?.archivo_path)
     const ocupado = subiendo === tipo
 
@@ -198,6 +219,17 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
             <span className="doc-fila__estado doc-fila__estado_ok">Cargado</span>
           ) : (
             <span className="doc-fila__estado">Sin cargar</span>
+          )}
+          {marca && tiene && (
+            <label className="doc-fila__marca">
+              <input
+                type="checkbox"
+                checked={Boolean(doc[marca.campo])}
+                onChange={(e) => marca.alCambiar(e.target.checked)}
+                disabled={soloLectura}
+              />
+              {marca.etiqueta}
+            </label>
           )}
           {nota && <span className="doc-fila__nota">{nota}</span>}
         </div>
@@ -263,6 +295,17 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
             alSubir={subirDeAprendiz}
             deshabilitado={!aprendizId}
             nota="Avanzado o trabajador autorizado"
+            marca={{
+              campo: 'es_sena',
+              etiqueta: 'SENA',
+              alCambiar: (v) =>
+                cambiarMarca(
+                  'documentos_aprendiz',
+                  { aprendiz_id: aprendizId, tipo: 'certificado_previo' },
+                  'es_sena',
+                  v
+                ),
+            }}
           />
         )}
       </div>
@@ -287,6 +330,21 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
             doc={docsMatricula[d.tipo]}
             alSubir={subirDeMatricula}
             deshabilitado={!matriculaId}
+            marca={
+              d.tipo === 'arl'
+                ? {
+                    campo: 'es_planilla',
+                    etiqueta: 'Planilla',
+                    alCambiar: (v) =>
+                      cambiarMarca(
+                        'documentos_matricula',
+                        { matricula_id: matriculaId, tipo: 'arl' },
+                        'es_planilla',
+                        v
+                      ),
+                  }
+                : null
+            }
           />
         ))}
       </div>

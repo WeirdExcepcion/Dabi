@@ -82,7 +82,7 @@ function RegistroDiario() {
 
   const puedeCrear = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const puedeEliminar = PUEDE_ELIMINAR_MATRICULAS.includes(perfil.rol)
-  const { cargarFaltantes } = useFaltantes()
+  const { cargarFaltantes, refrescarUna } = useFaltantes()
   const esHoy = fecha === hoyISO()
 
   function actualizarEstadoLocal(matriculaId, nuevoEstado) {
@@ -176,6 +176,7 @@ function RegistroDiario() {
             matricula={matriculaEditando}
             rol={perfil.rol}
             onGuardada={() => {
+              refrescarUna(matriculaEditando.id)
               setMatriculaEditando(null)
               obtenerMatriculas()
             }}

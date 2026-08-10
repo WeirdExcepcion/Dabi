@@ -96,7 +96,7 @@ function DetalleGrupo() {
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
   const puedeCertificar = PUEDE_APROBAR.includes(perfil.rol)
   const puedeEliminar = PUEDE_ELIMINAR_MATRICULAS.includes(perfil.rol)
-  const { cargarFaltantes } = useFaltantes()
+  const { cargarFaltantes, refrescarUna } = useFaltantes()
   const puedeEliminarGrupo = PUEDE_ELIMINAR_GRUPOS.includes(perfil.rol) && matriculas.length === 0
   const hayAprobados = matriculas.some((m) => m.estado === 'aprobado')
   const listoParaCertificar = grupo?.entrenador_id && grupo?.supervisor_id
@@ -325,8 +325,9 @@ function DetalleGrupo() {
             matricula={matriculaEditando}
             rol={perfil.rol}
             onGuardada={() => {
+              refrescarUna(matriculaEditando.id)
               setMatriculaEditando(null)
-              cargarDatos()
+              obtenerMatriculas()
             }}
             onCancelar={() => setMatriculaEditando(null)}
           />
