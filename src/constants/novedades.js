@@ -1,6 +1,21 @@
-export const VERSION_ACTUAL = '2026.08.08'
+export const VERSION_ACTUAL = '2026.08.11'
 
 export const NOVEDADES = [
+  {
+    version: '2026.08.11',
+    fecha: '11 de agosto de 2026',
+    titulo: 'Documentos y personal',
+    cambios: [
+      { tipo: 'nuevo', texto: 'Al subir la ARL puedes marcar si es una planilla, y en el certificado previo si es del SENA.' },
+      { tipo: 'nuevo', texto: 'En Personal ahora eliges las funciones con casillas: entrenador, supervisor y coordinador, marcando las que apliquen.' },
+      { tipo: 'nuevo', texto: 'Un coordinador solo necesita nombre y documento; la licencia y el título son opcionales para esa función.' },
+      { tipo: 'mejora', texto: 'La bolita amarilla de datos faltantes se actualiza al instante cuando completas la información, sin recargar la página.' },
+      { tipo: 'mejora', texto: 'Al desactivar a alguien en Personal, el sistema explica qué va a pasar antes de confirmarlo.' },
+      { tipo: 'arreglo', texto: 'La fecha límite para reportar al ministerio ahora se calcula sola al crear cada grupo.' },
+      { tipo: 'arreglo', texto: 'El nivel educativo ya aparece completo al abrir la edición de un aprendiz.' },
+      { tipo: 'arreglo', texto: 'Las tablas anchas ya no descuadran el encabezado de la página.' },
+    ],
+  },
   {
     version: '2026.08.08',
     fecha: '8 de agosto de 2026',
