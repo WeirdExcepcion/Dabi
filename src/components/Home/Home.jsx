@@ -9,6 +9,7 @@ import Auditoria from '../Alturas/Auditoria/Auditoria'
 import Novedades from '../Novedades/Novedades'
 import Modal from '../compartidos/Modal/Modal'
 import { VERSION_ACTUAL } from '../../constants/novedades'
+import VeloEntrada from '../compartidos/VeloEntrada/VeloEntrada'
 import logoSS from '../../assets/isotipo-ss-p.png'
 import './Home.css'
 
@@ -61,7 +62,12 @@ function Home({ session }) {
   }
 
   if (cargandoPerfil) {
-    return <p className="app__loading">Cargando perfil...</p>
+    return (
+      <>
+        <VeloEntrada />
+        <p className="app__loading">Cargando…</p>
+      </>
+    )
   }
 
   if (!perfil) {
@@ -85,6 +91,7 @@ function Home({ session }) {
 
   return (
     <AuditoriaProvider>
+    <VeloEntrada />
     <div className="home">
       <header className="home__header">
         <button

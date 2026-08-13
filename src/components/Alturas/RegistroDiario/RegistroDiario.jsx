@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
-import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_ELIMINAR_MATRICULAS } from '../../../constants/permisos'
+import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_ELIMINAR_MATRICULAS, PUEDE_TRASLADAR } from '../../../constants/permisos'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
 import { useFaltantes } from '../../../context/FaltantesContext'
@@ -14,6 +14,8 @@ import { ESTADOS_MATRICULA as ESTADOS } from '../../../constants/estados'
 import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
+import TrasladarMatricula from '../TrasladarMatricula/TrasladarMatricula'
+import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
@@ -78,10 +80,12 @@ function RegistroDiario() {
   const [matriculaEditando, setMatriculaEditando] = useState(null)
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
   const [matriculaEliminando, setMatriculaEliminando] = useState(null)
+  const [matriculaTrasladando, setMatriculaTrasladando] = useState(null)
   
 
   const puedeCrear = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const puedeEliminar = PUEDE_ELIMINAR_MATRICULAS.includes(perfil.rol)
+  const puedeTrasladar = PUEDE_TRASLADAR.includes(perfil.rol)
   const { cargarFaltantes, refrescarUna } = useFaltantes()
   const esHoy = fecha === hoyISO()
 
@@ -185,6 +189,19 @@ function RegistroDiario() {
         </Modal>
       )}
 
+      {matriculaTrasladando && (
+        <Modal onCerrar={() => setMatriculaTrasladando(null)} bloquearCierre>
+          <TrasladarMatricula
+            matricula={matriculaTrasladando}
+            onTrasladada={() => {
+              setMatriculaTrasladando(null)
+              obtenerMatriculas()
+            }}
+            onCancelar={() => setMatriculaTrasladando(null)}
+          />
+        </Modal>
+      )}
+
       {matriculaEliminando && (
         <Modal onCerrar={() => setMatriculaEliminando(null)}>
           <EliminarMatricula
@@ -198,7 +215,7 @@ function RegistroDiario() {
         </Modal>
       )}
 
-      {cargando && <p className="matriculas__mensaje">Cargando registro...</p>}
+      {cargando && <EsqueletoTabla filas={5} columnas={7} />}
 
       {error && <p className="matriculas__mensaje">{error}</p>}
 
@@ -269,6 +286,17 @@ function RegistroDiario() {
                       Editar
                     </button>
                   )}
+
+                  {puedeTrasladar && (
+                          <button
+                            className="matriculas__boton-ver"
+                            onClick={() => setMatriculaTrasladando(matricula)}
+                            title="Trasladar a otro grupo"
+                          >
+                            Trasladar
+                          </button>
+                        )}
+                        
                   <BotonCertificado matricula={matricula} rol={perfil.rol} compacto />
                         {puedeEliminar && (
                           <button

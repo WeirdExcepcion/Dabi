@@ -114,14 +114,30 @@ function FormularioGrupo({ onCreado, onCancelar }) {
 
       <div className="form-grupo__fila">
         <div className="form-grupo__campo">
-          <label className="form-grupo__label" htmlFor="fg_identificador">Identificador</label>
+          <label className="form-grupo__label" htmlFor="fg_curso">Curso *</label>
+          <select
+            id="fg_curso"
+            className="form-grupo__select"
+            value={cursoId}
+            onChange={(e) => setCursoId(e.target.value)}
+          >
+            <option value="">Selecciona…</option>
+            {cursos.map((curso) => (
+              <option key={curso.id} value={curso.id}>
+                {curso.nombre} ({curso.duracion_dias} {curso.duracion_dias === 1 ? 'día' : 'días'})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-grupo__campo">
+          <label className="form-grupo__label" htmlFor="fg_inicio">Fecha de inicio *</label>
           <input
-            id="fg_identificador"
-            type="text"
+            id="fg_inicio"
+            type="date"
             className="form-grupo__input"
-            value={identificador}
-            onChange={(e) => setIdentificador(e.target.value)}
-            placeholder="A, Mañana…"
+            value={fechaInicio}
+            onChange={(e) => setFechaInicio(e.target.value)}
           />
         </div>
       </div>
@@ -179,7 +195,7 @@ function FormularioGrupo({ onCreado, onCancelar }) {
           />
         </div>
       </div>
-
+      
       {fechaFinCalculada && (
         <p className="form-grupo__calculo">
           Termina el {fechaFinCalculada.split('-').reverse().join('/')}

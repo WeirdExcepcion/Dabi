@@ -8,22 +8,33 @@
   padding: 40px 20px;
   background-color: rgba(2, 17, 60, 0.55);
   overflow-y: auto;
+  animation: modal-fondo 0.16s ease-out;
 }
 
 .modal__contenido {
   width: 100%;
   max-width: 720px;
-  animation: modal-aparecer 0.18s ease-out;
+  animation: modal-aparecer 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+@keyframes modal-fondo {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modal-aparecer {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 

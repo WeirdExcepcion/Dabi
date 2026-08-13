@@ -68,6 +68,7 @@ function Grupos() {
           fecha_inicio,
           fecha_fin,
           identificador,
+          mintrabajo_id_curso,
           cursos ( nombre ),
           entrenador:entrenadores!grupos_entrenador_id_fkey ( nombre_completo ),
           supervisor:entrenadores!grupos_supervisor_id_fkey ( nombre_completo ),
@@ -77,9 +78,9 @@ function Grupos() {
       if (soloLectura) {
         consulta = consulta.is('mintrabajo_id_curso', null)
       } else if (filtroEstado === 'activos') {
-        consulta = consulta.gte('fecha_fin', hoyISO())
+        consulta = consulta.is('mintrabajo_id_curso', null)
       } else if (filtroEstado === 'cerrados') {
-        consulta = consulta.lt('fecha_fin', hoyISO())
+        consulta = consulta.not('mintrabajo_id_curso', 'is', null)
       }
 
       if (filtroCurso) {
@@ -102,7 +103,7 @@ function Grupos() {
           : consulta.lte('fecha_fin', filtroHasta)
       }
 
-      const ordenAscendente = filtroEstado === 'activos'
+      const ordenAscendente = false
       consulta = consulta.order('fecha_inicio', { ascending: ordenAscendente })
 
       const { data, error } = await consulta
@@ -262,9 +263,9 @@ function Grupos() {
           {hayFiltrosAvanzados
             ? 'Ningún grupo coincide con los filtros.'
             : filtroEstado === 'activos'
-              ? 'No hay grupos activos en este momento.'
+              ? 'No hay grupos abiertos en este momento.'
               : filtroEstado === 'cerrados'
-                ? 'No hay grupos cerrados todavía.'
+                ? 'Ningún grupo se ha reportado al ministerio todavía.'
                 : 'No hay grupos registrados.'}
         </p>
       )}
@@ -288,6 +289,11 @@ function Grupos() {
                   {formatearRango(grupo.fecha_inicio, grupo.fecha_fin)}
                   {' · '}
                   {grupo.entrenador?.nombre_completo || 'Sin entrenador'}
+                  {grupo.mintrabajo_id_curso && (
+                    <span className="grupos__tarjeta-cerrado">
+                      · reportado a MinTrabajo
+                    </span>
+                  )}
               {' · '}
               {grupo.supervisor?.nombre_completo || 'Sin supervisor'}
                 </p>

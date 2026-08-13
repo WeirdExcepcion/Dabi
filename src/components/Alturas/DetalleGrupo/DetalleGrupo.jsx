@@ -2,7 +2,7 @@ import './DetalleGrupo.css'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
-import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_APROBAR, PUEDE_ELIMINAR_MATRICULAS, PUEDE_ELIMINAR_GRUPOS } from '../../../constants/permisos'
+import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_APROBAR, PUEDE_ELIMINAR_MATRICULAS, PUEDE_ELIMINAR_GRUPOS,PUEDE_TRASLADAR } from '../../../constants/permisos'
 import Modal from '../../compartidos/Modal/Modal'
 import FormularioMatricula from '../RegistroDiario/FormularioMatricula/FormularioMatricula'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
@@ -15,6 +15,7 @@ import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
 import { useFaltantes } from '../../../context/FaltantesContext'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
+import TrasladarMatricula from '../TrasladarMatricula/TrasladarMatricula'
 
 
 function formatearFecha(iso) {
@@ -89,6 +90,7 @@ function DetalleGrupo() {
   const [certificando, setCertificando] = useState(false)
   const [asignando, setAsignando] = useState(false)
   const [matriculaEliminando, setMatriculaEliminando] = useState(null)
+  const [matriculaTrasladando, setMatriculaTrasladando] = useState(null)
   const [eliminandoGrupo, setEliminandoGrupo] = useState(false)
   const [errorEliminar, setErrorEliminar] = useState('')
 
@@ -96,6 +98,7 @@ function DetalleGrupo() {
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
   const puedeCertificar = PUEDE_APROBAR.includes(perfil.rol)
   const puedeEliminar = PUEDE_ELIMINAR_MATRICULAS.includes(perfil.rol)
+  const puedeTrasladar = PUEDE_TRASLADAR.includes(perfil.rol)
   const { cargarFaltantes, refrescarUna } = useFaltantes()
   const puedeEliminarGrupo = PUEDE_ELIMINAR_GRUPOS.includes(perfil.rol) && matriculas.length === 0
   const hayAprobados = matriculas.some((m) => m.estado === 'aprobado')
@@ -257,6 +260,19 @@ function DetalleGrupo() {
       )}
       {errorEliminar && <p className="det-grupo__error">{errorEliminar}</p>}
       
+      {matriculaTrasladando && (
+        <Modal onCerrar={() => setMatriculaTrasladando(null)} bloquearCierre>
+          <TrasladarMatricula
+            matricula={matriculaTrasladando}
+            onTrasladada={() => {
+              setMatriculaTrasladando(null)
+              obtenerMatriculas()
+            }}
+            onCancelar={() => setMatriculaTrasladando(null)}
+          />
+        </Modal>
+      )}
+
       {matriculaEliminando && (
         <Modal onCerrar={() => setMatriculaEliminando(null)}>
           <EliminarMatricula
@@ -392,6 +408,17 @@ function DetalleGrupo() {
                         Editar
                       </button>
                     )}
+
+                    {puedeTrasladar && (
+                          <button
+                            className="det-grupo__boton-accion"
+                            onClick={() => setMatriculaTrasladando(matricula)}
+                            title="Trasladar a otro grupo"
+                          >
+                            Trasladar
+                          </button>
+                        )}
+
                     <BotonCertificado matricula={matricula} rol={perfil.rol} compacto />
                     {puedeEliminar && (
                       <button

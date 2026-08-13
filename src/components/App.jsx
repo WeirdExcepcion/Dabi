@@ -15,6 +15,7 @@ import Personal from './Alturas/Personal/Personal'
 import Grupos from './Alturas/Grupos/Grupos'
 import DetalleGrupo from './Alturas/DetalleGrupo/DetalleGrupo'
 import Verificar from './Verificar/Verificar'
+import RutaModulo from './RutaModulo/RutaModulo'
 import { FaltantesProvider } from '../context/FaltantesContext'
 
 import './App.css'
@@ -84,7 +85,16 @@ function App() {
 
       {/* Privado — requiere sesión */}
       {session ? (
-        <Route path="/alturas" element={<FaltantesProvider><Home session={session} /></FaltantesProvider>}>
+        <Route
+          path="/alturas"
+          element={
+            <RutaModulo perfil={perfil} modulo="alturas">
+              <FaltantesProvider>
+                <Home session={session} />
+              </FaltantesProvider>
+            </RutaModulo>
+          }
+        >
           <Route index element={<Navigate to="/alturas/registro" replace />} />
           <Route path="empresas" element={<Empresas />} />
           <Route path="empresas/:empresaId" element={<AprendicesEmpresa />} />

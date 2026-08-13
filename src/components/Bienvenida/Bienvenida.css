@@ -180,3 +180,69 @@
     grid-template-columns: 1fr;
   }
 }
+
+.bienv_saliendo .bienv__contenido {
+  pointer-events: none;
+}
+
+.bienv__modulo_apagada {
+  opacity: 0 !important;
+  transform: scale(0.96) !important;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bienv__modulo_elegida {
+  opacity: 0 !important;
+  transition: opacity 0.35s ease 0.12s;
+}
+
+.bienv_saliendo .bienv__logo,
+.bienv_saliendo .bienv__saludo,
+.bienv_saliendo .bienv__titulo,
+.bienv_saliendo .bienv__pie {
+  opacity: 0 !important;
+  transform: translateY(-6px) scale(0.98);
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bienv__velo {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(150deg, #023170 0%, #02113C 55%, #020814 100%);
+  transition: clip-path 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: clip-path;
+}
+
+.bienv__velo_lleno {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+
+.bienv__velo-texto {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--blanco);
+  opacity: 0;
+  animation: velo-texto 0.5s ease-out 0.34s forwards;
+}
+
+@keyframes velo-texto {
+  from {
+    opacity: 0;
+    letter-spacing: 0.22em;
+  }
+  to {
+    opacity: 0.9;
+    letter-spacing: 0.38em;
+  }
+}

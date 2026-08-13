@@ -152,3 +152,12 @@ export const PUEDE_EDITAR_APRENDIZ = [
 ]
 
 export const ROLES_SOLO_LECTURA = ['entrenador', 'espectador']
+
+export const PUEDE_TRASLADAR = [
+  'admin',
+  'gerente-general',
+  'director-operaciones',
+  'coordinador-procesos',
+  'coordinador',
+  'supervisor',
+]

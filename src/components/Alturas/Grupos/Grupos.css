@@ -217,3 +217,8 @@
 .grupos__boton-nuevo:hover {
   background-color: var(--ceruleo);
 }
+
+.grupos__tarjeta-cerrado {
+  color: #0F6E56;
+  font-weight: 500;
+}

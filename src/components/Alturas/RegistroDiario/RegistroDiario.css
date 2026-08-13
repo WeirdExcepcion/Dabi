@@ -204,8 +204,9 @@
 }
 
 .matriculas__td_acciones {
-  width: 60px;
+  width: 330px;
   text-align: right;
+  white-space: nowrap;
 }
 
 .matriculas__boton-ver {

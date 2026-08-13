@@ -1,6 +1,19 @@
-export const VERSION_ACTUAL = '2026.08.11'
+export const VERSION_ACTUAL = '2026.08.12'
 
 export const NOVEDADES = [
+  {
+    version: '2026.08.12',
+    fecha: '12 de agosto de 2026',
+    titulo: 'Traslados y detalles',
+    cambios: [
+      { tipo: 'nuevo', texto: 'Ahora puedes trasladar a un aprendiz de un grupo a otro con el botón "Trasladar". Si ya tiene certificado, el sistema te avisa que sus datos van a cambiar y te pide confirmarlo.' },
+      { tipo: 'nuevo', texto: 'Entrar a un módulo desde la pantalla de inicio ahora tiene una transición más fluida.' },
+      { tipo: 'mejora', texto: 'En Grupos, "Activos" y "Cerrados" ahora dependen de si el grupo ya se reportó al ministerio, no de la fecha. Un grupo de días pasados sigue abierto hasta que lo reportas.' },
+      { tipo: 'mejora', texto: 'El grupo ya no se cambia desde "Editar": ahora es su propia acción, para no mezclarla con la corrección de datos.' },
+      { tipo: 'arreglo', texto: 'El formulario para crear un grupo ya no aparece incompleto ni con campos repetidos.' },
+      { tipo: 'arreglo', texto: 'Cada módulo verifica que tu rol tenga acceso antes de abrirse.' },
+    ],
+  },
   {
     version: '2026.08.11',
     fecha: '11 de agosto de 2026',

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { supabase } from '../../../../lib/supabaseClient'
 import { useCatalogos } from '../../../../hooks/useCatalogos'
 import { PUEDE_CAMBIAR_ESTADO_GRUPO } from '../../../../constants/permisos'
-import SelectorGrupo from '../../SelectorGrupo/SelectorGrupo'
 import SelectorBuscable from "../../../compartidos/SelectorBuscable/SelectorBuscable";
 import SelectorCargo from '../../../compartidos/SelectorCargo/SelectorCargo'
 import './EditarMatricula.css'
@@ -24,7 +23,6 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const [fechaArl, setFechaArl] = useState(matricula.fecha_arl || '')
   const [fechaExamen, setFechaExamen] = useState(matricula.fecha_examen || '')
   const [estado, setEstado] = useState(matricula.estado)
-  const [grupoId, setGrupoId] = useState(matricula.grupo_id)
 
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -46,10 +44,6 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
       setError('Selecciona una empresa')
       return
     }
-    if (!grupoId) {
-      setError('Selecciona un grupo')
-      return
-    }
 
     setGuardando(true)
 
@@ -66,7 +60,6 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
 
     if (puedeEstadoGrupo) {
       cambios.estado = estado
-      cambios.grupo_id = grupoId
     }
 
     const { data, error } = await supabase.rpc('editar_matricula', {
@@ -209,11 +202,6 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
                 ))}
               </select>
             </div>
-          </div>
-
-          <div className="editar-mat__campo">
-            <label className="editar-mat__label">Grupo</label>
-            <SelectorGrupo valor={grupoId} onCambio={setGrupoId} />
           </div>
         </fieldset>
       )}
