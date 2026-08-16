@@ -1,40 +1,32 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './VeloEntrada.css'
 
-function leerMarca() {
-  const hay = sessionStorage.getItem('dabi_entrada_modulo') === '1'
-  return hay
-}
-
 function VeloEntrada() {
-  const [activo, setActivo] = useState(leerMarca)
+  const [nombre] = useState(() => sessionStorage.getItem('dabi_entrada_modulo'))
+  const [activo, setActivo] = useState(() => Boolean(nombre))
   const [contrayendo, setContrayendo] = useState(false)
+  const yaCorrio = useRef(false)
 
   useEffect(() => {
-    if (!activo) return
+    if (!activo || yaCorrio.current) return
 
-    let t1 = null
-    let t2 = null
+    yaCorrio.current = true
 
-    const raf = requestAnimationFrame(() => {
-      t1 = setTimeout(() => setContrayendo(true), 150)
-      t2 = setTimeout(() => {
-        setActivo(false)
-        sessionStorage.removeItem('dabi_entrada_modulo')
-      }, 1000)
-    })
+    setTimeout(() => setContrayendo(true), 300)
 
-    return () => {
-      cancelAnimationFrame(raf)
-      if (t1) clearTimeout(t1)
-      if (t2) clearTimeout(t2)
-    }
+    setTimeout(() => {
+      setActivo(false)
+      sessionStorage.removeItem('dabi_entrada_modulo')
+    }, 1150)
   }, [activo])
 
+  console.log('VELO texto:', nombre, 'contrayendo:', contrayendo)
   if (!activo) return null
 
   return (
-    <div className={contrayendo ? 'velo-ent velo-ent_contrayendo' : 'velo-ent'} />
+    <div className={contrayendo ? 'velo-ent velo-ent_contrayendo' : 'velo-ent'}>
+      <span className="velo-ent__texto">{nombre}</span>
+    </div>
   )
 }
 

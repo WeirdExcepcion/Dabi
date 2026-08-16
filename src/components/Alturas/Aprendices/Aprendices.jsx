@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
-import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 import './Aprendices.css'
 
 function Aprendices() {
@@ -9,7 +8,6 @@ function Aprendices() {
   const [aprendices, setAprendices] = useState([])
   const [busqueda, setBusqueda] = useState('')
   const [cargando, setCargando] = useState(true)
-  const [primeraCarga, setPrimeraCarga] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -54,7 +52,6 @@ function Aprendices() {
     }
 
     setCargando(false)
-    setPrimeraCarga(false)
   }
 
   return (
@@ -76,10 +73,7 @@ function Aprendices() {
         />
       </div>
 
-      {cargando && primeraCarga && <EsqueletoTabla filas={5} columnas={4} />}
-      {cargando && !primeraCarga && (
-        <p className="aprendices__mensaje">Buscando…</p>
-      )}
+      {cargando && <p className="aprendices__mensaje">Buscando…</p>}
 
       {!cargando && !error && aprendices.length === 0 && (
         <p className="aprendices__mensaje">
@@ -99,8 +93,8 @@ function Aprendices() {
             </span>
           </div>
 
-          <div className="aprendices__tabla-wrap">
-            <table className="aprendices__tabla">
+          <div className="aprendices__tabla-wrap entra-bloque">
+            <table className="aprendices__tabla entra-tabla">
               <thead>
                 <tr>
                   <th className="aprendices__th">Documento</th>

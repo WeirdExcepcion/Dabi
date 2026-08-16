@@ -11,7 +11,6 @@ import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
 import { useFaltantes } from '../../../context/FaltantesContext'
-import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -112,13 +111,7 @@ function FichaAprendiz() {
         cargarDatos()
     }, [aprendizId])
 
-  if (cargando) {
-    return (
-      <section className="ficha">
-        <EsqueletoTabla filas={4} columnas={7} />
-      </section>
-    )
-  }
+  if (cargando) return null
 
   if (error) {
     return (
@@ -225,8 +218,8 @@ function FichaAprendiz() {
         {historial.length === 0 ? (
           <p className="ficha__mensaje">Este aprendiz no tiene cursos registrados.</p>
         ) : (
-          <div className="ficha__tabla-wrap">
-            <table className="ficha__tabla">
+          <div className="ficha__tabla-wrap entra-bloque">
+            <table className="ficha__tabla entra-tabla">
               <thead>
                 <tr>
                   <th className="ficha__th">Curso</th>

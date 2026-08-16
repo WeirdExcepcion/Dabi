@@ -226,23 +226,37 @@
 }
 
 .bienv__velo-texto {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-family: var(--font-brand);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.38em;
   text-transform: uppercase;
   color: var(--blanco);
+  white-space: nowrap;
   opacity: 0;
-  animation: velo-texto 0.5s ease-out 0.34s forwards;
+  animation: velo-texto 0.45s ease-out 0.3s forwards;
 }
 
 @keyframes velo-texto {
   from {
     opacity: 0;
-    letter-spacing: 0.22em;
   }
   to {
     opacity: 0.9;
+  }
+}
+
+@keyframes velo-texto-salida {
+  from {
+    opacity: 0.9;
     letter-spacing: 0.38em;
+  }
+  to {
+    opacity: 0;
+    letter-spacing: 0.5em;
   }
 }

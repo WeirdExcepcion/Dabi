@@ -5,7 +5,6 @@ import { PUEDE_GESTIONAR_PERSONAL, ROLES_SOLO_LECTURA } from '../../../constants
 import Modal from '../../compartidos/Modal/Modal'
 import FichaPersonal from './FichaPersonal/FichaPersonal'
 import FormularioPersonal from './FormularioPersonal/FormularioPersonal'
-import { EsqueletoTarjetas } from '../../compartidos/Esqueleto/Esqueleto'
 import './Personal.css'
 
 const CAMPOS = `
@@ -134,15 +133,13 @@ function Personal() {
         </div>
       )}
 
-      {cargando && <EsqueletoTarjetas cantidad={4} />}
-
       {error && <p className="personal__mensaje">{error}</p>}
 
       {!cargando && !error && visibles.length === 0 && (
         <p className="personal__mensaje">No hay personal registrado todavía.</p>
       )}
 
-      <div className="personal__lista">
+      <div className="personal__lista entra-lista">
         {visibles.map((persona) => (
           <FichaPersonal
             soloLectura={soloLectura}

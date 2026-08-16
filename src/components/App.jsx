@@ -90,7 +90,7 @@ function App() {
           element={
             <RutaModulo perfil={perfil} modulo="alturas">
               <FaltantesProvider>
-                <Home session={session} />
+                <Home session={session} perfil={perfil} />
               </FaltantesProvider>
             </RutaModulo>
           }

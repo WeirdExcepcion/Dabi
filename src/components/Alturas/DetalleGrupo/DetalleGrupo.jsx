@@ -16,7 +16,6 @@ import { useFaltantes } from '../../../context/FaltantesContext'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
 import TrasladarMatricula from '../TrasladarMatricula/TrasladarMatricula'
-import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 
 
 function formatearFecha(iso) {
@@ -165,13 +164,7 @@ function DetalleGrupo() {
     cargarDatos()
   }, [grupoId])
 
-  if (cargando) {
-    return (
-      <section className="det-grupo">
-        <EsqueletoTabla filas={5} columnas={7} />
-      </section>
-    )
-  }
+  if (cargando) return null
 
   if (error) {
     return (
@@ -364,8 +357,8 @@ function DetalleGrupo() {
       {matriculas.length === 0 ? (
         <p className="det-grupo__mensaje">Este grupo aún no tiene aprendices.</p>
       ) : (
-        <div className="det-grupo__tabla-wrap">
-          <table className="det-grupo__tabla">
+        <div className="det-grupo__tabla-wrap entra-bloque">
+          <table className="det-grupo__tabla entra-tabla">
             <thead>
               <tr>
                 <th className="det-grupo__th">#</th>

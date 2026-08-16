@@ -39,3 +39,68 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Animaciones de entrada para listas y tablas */
+
+@keyframes entrada-fila {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes entrada-bloque {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.entra-bloque {
+  opacity: 0;
+  animation: entrada-bloque 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.entra-tabla {
+  overflow: hidden;
+}
+
+.entra-tabla tbody tr {
+  opacity: 0;
+  animation: entrada-fila 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.entra-tabla tbody tr:nth-child(1) { animation-delay: 0.02s; }
+.entra-tabla tbody tr:nth-child(2) { animation-delay: 0.05s; }
+.entra-tabla tbody tr:nth-child(3) { animation-delay: 0.08s; }
+.entra-tabla tbody tr:nth-child(4) { animation-delay: 0.11s; }
+.entra-tabla tbody tr:nth-child(5) { animation-delay: 0.14s; }
+.entra-tabla tbody tr:nth-child(6) { animation-delay: 0.17s; }
+.entra-tabla tbody tr:nth-child(7) { animation-delay: 0.20s; }
+.entra-tabla tbody tr:nth-child(8) { animation-delay: 0.23s; }
+.entra-tabla tbody tr:nth-child(n + 9) { animation-delay: 0.26s; }
+
+.entra-lista {
+  overflow: hidden;
+}
+
+.entra-lista > * {
+  opacity: 0;
+  animation: entrada-fila 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.entra-lista > *:nth-child(1) { animation-delay: 0.02s; }
+.entra-lista > *:nth-child(2) { animation-delay: 0.06s; }
+.entra-lista > *:nth-child(3) { animation-delay: 0.10s; }
+.entra-lista > *:nth-child(4) { animation-delay: 0.14s; }
+.entra-lista > *:nth-child(5) { animation-delay: 0.18s; }
+.entra-lista > *:nth-child(6) { animation-delay: 0.22s; }
+.entra-lista > *:nth-child(n + 7) { animation-delay: 0.26s; }

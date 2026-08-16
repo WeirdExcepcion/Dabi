@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   background-color: var(--gris-niebla);
+  overflow-x: hidden;
 }
 
 .home__header {
@@ -347,22 +348,20 @@
 @keyframes home-entrar {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .home__header {
-  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
+  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
 }
 
 .home__nav {
-  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s backwards;
+  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s backwards;
 }
 
 .home__content {
-  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
+  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.7s backwards;
 }

@@ -13,34 +13,12 @@ import VeloEntrada from '../compartidos/VeloEntrada/VeloEntrada'
 import logoSS from '../../assets/isotipo-ss-p.png'
 import './Home.css'
 
-function Home({ session }) {
-  const [perfil, setPerfil] = useState(null)
-  const [cargandoPerfil, setCargandoPerfil] = useState(true)
+function Home({ session, perfil }) {
   const [auditoriaAbierta, setAuditoriaAbierta] = useState(false)
   const [novedadesAbiertas, setNovedadesAbiertas] = useState(false)
   const [menuPlegado, setMenuPlegado] = useState(false)
   const [hayNovedades, setHayNovedades] = useState(false)
   const navegar = useNavigate()
-
-  useEffect(() => {
-    async function obtenerPerfil() {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('nombre_completo, rol')
-        .eq('id', session.user.id)
-        .single()
-
-      if (error) {
-        console.error('Error al cargar el perfil:', error.message)
-      } else {
-        setPerfil(data)
-      }
-
-      setCargandoPerfil(false)
-    }
-
-    obtenerPerfil()
-  }, [session.user.id])
 
   useEffect(() => {
     const vista = localStorage.getItem('dabi_version_vista')
@@ -59,15 +37,6 @@ function Home({ session }) {
   async function handleLogout() {
     await supabase.auth.signOut()
     navegar('/login')
-  }
-
-  if (cargandoPerfil) {
-    return (
-      <>
-        <VeloEntrada />
-        <p className="app__loading">Cargando…</p>
-      </>
-    )
   }
 
   if (!perfil) {

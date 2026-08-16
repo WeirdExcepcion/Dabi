@@ -4,11 +4,32 @@
   z-index: 400;
   background: linear-gradient(150deg, #023170 0%, #02113C 55%, #020814 100%);
   pointer-events: none;
-  clip-path: circle(150% at 50% 45%);
+  clip-path: circle(2000px at 50% 45%);
   transition: clip-path 0.72s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: clip-path;
 }
 
 .velo-ent_contrayendo {
-  clip-path: circle(0% at 50% 45%);
+  clip-path: circle(0px at 50% 45%);
+}
+
+.velo-ent__texto {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 401;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--blanco);
+  white-space: nowrap;
+  opacity: 0.9;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.velo-ent_contrayendo .velo-ent__texto {
+  opacity: 0;
 }

@@ -6,7 +6,6 @@ import Modal from '../../compartidos/Modal/Modal'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
 import CambioPendiente from './CambioPendiente/CambioPendiente'
 import { useCatalogos } from '../../../hooks/useCatalogos'
-import { EsqueletoTarjetas } from '../../compartidos/Esqueleto/Esqueleto'
 import './Aprobacion.css'
 
 function hoyISO() {
@@ -195,7 +194,7 @@ function Aprobacion() {
             aplicará de inmediato y quedará registrado con tu nombre.
           </p>
 
-          <div className="aprob__lista">
+          <div className="aprob__lista entra-lista">
             {cambios.map((cambio) => (
               <CambioPendiente
                 soloLectura={soloLectura}
@@ -209,8 +208,7 @@ function Aprobacion() {
         </div>
       )}
 
-      {cargando && <EsqueletoTarjetas cantidad={3} />}
-
+    
       {error && <p className="aprob__mensaje">{error}</p>}
 
       {!cargando && !error && matriculas.length === 0 && (
@@ -226,7 +224,7 @@ function Aprobacion() {
             </span>
           </div>
 
-          <div className="aprob__lista">
+          <div className="aprob__lista entra-lista">
           {matriculas.map((matricula) => {
             const avisos = alertas(matricula)
             const ocupado = procesando === matricula.id

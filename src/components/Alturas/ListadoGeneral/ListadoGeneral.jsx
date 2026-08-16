@@ -6,8 +6,21 @@ import Modal from '../../compartidos/Modal/Modal'
 import RegistrarCargue from './RegistrarCargue/RegistrarCargue'
 import PreviaCsv from './PreviaCsv/PreviaCsv'
 import SelectorCoordinador from './SelectorCoordinador/SelectorCoordinador'
-import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 import './ListadoGeneral.css'
+
+const ENCABEZADOS = [
+  'Curso',
+  'Fechas',
+  'Empresa',
+  'Sector',
+  'Entrenador',
+  'Supervisor',
+  'Coordinador',
+  'Aprendices',
+  'Fecha límite',
+  'ID curso',
+  '',
+]
 
 function hoyISO() {
   const hoy = new Date()
@@ -38,18 +51,177 @@ function diasHasta(iso) {
   return Math.round((limite - hoy) / (1000 * 60 * 60 * 24))
 }
 
+function textoDias(dias) {
+  if (dias < 0) {
+    const abs = Math.abs(dias)
+    return `${abs} ${abs === 1 ? 'día' : 'días'} vencido`
+  }
+  if (dias === 0) return 'hoy'
+  return `en ${dias} ${dias === 1 ? 'día' : 'días'}`
+}
+
+function Encabezados() {
+  return (
+    <thead>
+      <tr>
+        {ENCABEZADOS.map((titulo, i) => (
+          <th key={i} className="listado__th">{titulo}</th>
+        ))}
+      </tr>
+    </thead>
+  )
+}
+
+function Fila({
+  grupo,
+  urgencia,
+  soloLectura,
+  puedeGestionar,
+  coordinadores,
+  onVerGrupo,
+  onRegistrar,
+  onCsv,
+  onCoordinadorCambiado,
+}) {
+  const dias = diasHasta(grupo.mintrabajo_fecha_limite)
+
+  return (
+    <tr className={`listado__fila listado__fila_${urgencia}`}>
+      <td className="listado__td listado__td_principal">
+        {grupo.curso}
+        {grupo.identificador && (
+          <span className="listado__id"> ({grupo.identificador})</span>
+        )}
+        {grupo.observaciones && (
+          <span className="listado__obs" title={grupo.observaciones}>obs.</span>
+        )}
+      </td>
+
+      <td className="listado__td listado__td_fechas">
+        {formatearFecha(grupo.fecha_inicio)} – {formatearFecha(grupo.fecha_fin)}
+      </td>
+
+      <td className="listado__td listado__td_empresa" title={grupo.empresa_principal || ''}>
+        {conVarios(grupo.empresa_principal, grupo.total_empresas)}
+      </td>
+
+      <td className="listado__td listado__td_sector">
+        {conVarios(grupo.sector_principal, grupo.total_sectores)}
+      </td>
+
+      <td className="listado__td">{grupo.entrenador || '—'}</td>
+      <td className="listado__td">{grupo.supervisor || '—'}</td>
+
+      <td className="listado__td">
+        {soloLectura ? (
+          grupo.coordinador || '—'
+        ) : (
+          <SelectorCoordinador
+            grupoId={grupo.id}
+            valor={grupo.coordinador_id}
+            opciones={coordinadores}
+            onCambiado={(nuevoId) => onCoordinadorCambiado(grupo.id, nuevoId)}
+          />
+        )}
+      </td>
+
+      <td className="listado__td listado__td_centro">{grupo.total_aprendices}</td>
+
+      <td className="listado__td listado__td_limite">
+        {formatearFecha(grupo.mintrabajo_fecha_limite)}
+        {!grupo.cargado && dias !== null && (
+          <span className={`listado__dias listado__dias_${urgencia}`}>
+            {textoDias(dias)}
+          </span>
+        )}
+      </td>
+
+      <td className="listado__td listado__td_cargue">
+        {grupo.cargado ? (
+          <>
+            <code className="listado__codigo">{grupo.mintrabajo_id_curso}</code>
+            <span className="listado__cargue-fecha">
+              {formatearFecha(grupo.mintrabajo_fecha_cargue)}
+            </span>
+          </>
+        ) : (
+          <span className="listado__sin-cargue">Sin cargar</span>
+        )}
+      </td>
+
+      <td className="listado__td listado__td_acciones">
+        <button className="listado__boton" onClick={() => onVerGrupo(grupo.id)}>
+          Ver
+        </button>
+
+        {puedeGestionar && (
+          <>
+            <button
+              className="listado__boton listado__boton_principal"
+              onClick={() => onRegistrar(grupo)}
+            >
+              {grupo.cargado ? 'Editar cargue' : 'Registrar'}
+            </button>
+            <button
+              className="listado__boton"
+              onClick={() => onCsv(grupo)}
+              title="Descargar archivo para MinTrabajo"
+            >
+              CSV
+            </button>
+          </>
+        )}
+      </td>
+    </tr>
+  )
+}
+
+function TablaGrupos({ lista, urgencia, ...propsFila }) {
+  return (
+    <div className="listado__tabla-wrap entra-bloque">
+      <table className="listado__tabla entra-tabla">
+        <Encabezados />
+        <tbody>
+          {lista.map((g) => (
+            <Fila key={g.id} grupo={g} urgencia={urgencia} {...propsFila} />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function Bloque({ titulo, lista, urgencia, nota, ...propsFila }) {
+  if (lista.length === 0) return null
+
+  return (
+    <div className="listado__bloque">
+      <div className={`listado__bloque-cabecera listado__bloque-cabecera_${urgencia}`}>
+        <h2 className="listado__bloque-titulo">{titulo}</h2>
+        <span className="listado__bloque-conteo">
+          {lista.length} {lista.length === 1 ? 'grupo' : 'grupos'}
+        </span>
+      </div>
+
+      {nota && <p className="listado__bloque-nota">{nota}</p>}
+
+      <TablaGrupos lista={lista} urgencia={urgencia} {...propsFila} />
+    </div>
+  )
+}
+
 function ListadoGeneral() {
   const { perfil } = useOutletContext()
   const navegar = useNavigate()
 
   const [grupos, setGrupos] = useState([])
+  const [coordinadores, setCoordinadores] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [busqueda, setBusqueda] = useState('')
   const [grupoCargando, setGrupoCargando] = useState(null)
-  const [verCargados, setVerCargados] = useState(false)
   const [grupoCsv, setGrupoCsv] = useState(null)
-  const [coordinadores, setCoordinadores] = useState([])
+  const [verCargados, setVerCargados] = useState(false)
 
   const puedeGestionar = PUEDE_GESTIONAR_MINTRABAJO.includes(perfil.rol)
   const soloLectura = ROLES_SOLO_LECTURA.includes(perfil.rol)
@@ -91,19 +263,7 @@ function ListadoGeneral() {
     return <p className="listado__mensaje">Tu rol no tiene acceso a esta sección.</p>
   }
 
-  if (cargando) {
-    return (
-      <section className="listado">
-        <header className="listado__header">
-          <div>
-            <p className="listado__eyebrow">Ministerio de Trabajo</p>
-            <h1 className="listado__titulo">Listado General</h1>
-          </div>
-        </header>
-        <EsqueletoTabla filas={5} columnas={11} />
-      </section>
-    )
-  }
+  if (cargando) return null
 
   if (error) {
     return <p className="listado__mensaje">{error}</p>
@@ -121,151 +281,42 @@ function ListadoGeneral() {
     : grupos
 
   const pendientes = filtrados.filter((g) => !g.cargado)
-  const vencidos = pendientes.filter((g) => {
-    const dias = diasHasta(g.mintrabajo_fecha_limite)
-    return dias !== null && dias < 0
-  })
-  const porVencer = pendientes.filter((g) => {
-    const dias = diasHasta(g.mintrabajo_fecha_limite)
-    return dias !== null && dias >= 0 && dias <= 3
-  })
-  const aTiempo = pendientes.filter((g) => {
-    const dias = diasHasta(g.mintrabajo_fecha_limite)
-    return dias === null || dias > 3
-  })
   const cargados = filtrados.filter((g) => g.cargado)
 
-  function Fila({ grupo, urgencia }) {
-    const dias = diasHasta(grupo.mintrabajo_fecha_limite)
+  const vencidos = pendientes.filter((g) => {
+    const d = diasHasta(g.mintrabajo_fecha_limite)
+    return d !== null && d < 0
+  })
+  const porVencer = pendientes.filter((g) => {
+    const d = diasHasta(g.mintrabajo_fecha_limite)
+    return d !== null && d >= 0 && d <= 3
+  })
+  const aTiempo = pendientes.filter((g) => {
+    const d = diasHasta(g.mintrabajo_fecha_limite)
+    return d === null || d > 3
+  })
 
-    return (
-      <tr className={`listado__fila listado__fila_${urgencia}`}>
-        <td className="listado__td listado__td_principal">
-          {grupo.curso}
-          {grupo.identificador && (
-            <span className="listado__id"> ({grupo.identificador})</span>
-          )}
-          {grupo.observaciones && (
-            <span className="listado__obs" title={grupo.observaciones}>obs.</span>
-          )}
-        </td>
-        <td className="listado__td listado__td_fechas">
-          {formatearFecha(grupo.fecha_inicio)} – {formatearFecha(grupo.fecha_fin)}
-        </td>
-        <td className="listado__td listado__td_empresa" title={grupo.empresa_principal || ''}>
-          {conVarios(grupo.empresa_principal, grupo.total_empresas)}
-        </td>
-        <td className="listado__td listado__td_sector">
-          {conVarios(grupo.sector_principal, grupo.total_sectores)}
-        </td>
-        <td className="listado__td">{grupo.entrenador || '—'}</td>
-        <td className="listado__td">{grupo.supervisor || '—'}</td>
-        <td className="listado__td">
-          {soloLectura ? (
-            grupo.coordinador || '—'
-          ) : (
-            <SelectorCoordinador
-              grupoId={grupo.id}
-              valor={grupo.coordinador_id}
-              opciones={coordinadores}
-              onCambiado={() => cargar()}
-            />
-          )}
-        </td>
-        <td className="listado__td listado__td_centro">{grupo.total_aprendices}</td>
-        <td className="listado__td listado__td_limite">
-          {formatearFecha(grupo.mintrabajo_fecha_limite)}
-          {!grupo.cargado && dias !== null && (
-            <span className={`listado__dias listado__dias_${urgencia}`}>
-              {dias < 0
-                ? `${Math.abs(dias)} ${Math.abs(dias) === 1 ? 'día' : 'días'} vencido`
-                : dias === 0
-                ? 'hoy'
-                : `en ${dias} ${dias === 1 ? 'día' : 'días'}`}
-            </span>
-          )}
-        </td>
-        <td className="listado__td listado__td_cargue">
-          {grupo.cargado ? (
-            <>
-              <code className="listado__codigo">{grupo.mintrabajo_id_curso}</code>
-              <span className="listado__cargue-fecha">
-                {formatearFecha(grupo.mintrabajo_fecha_cargue)}
-              </span>
-            </>
-          ) : (
-            <span className="listado__sin-cargue">Sin cargar</span>
-          )}
-        </td>
-        <td className="listado__td listado__td_acciones">
-          <button
-            className="listado__boton"
-            onClick={() => navegar(`/alturas/grupos/${grupo.id}`)}
-          >
-            Ver
-          </button>
-          {puedeGestionar && (
-            <button
-              className="listado__boton listado__boton_principal"
-              onClick={() => setGrupoCargando(grupo)}
-            >
-              {grupo.cargado ? 'Editar cargue' : 'Registrar'}
-            </button>
-          )}
-          {puedeGestionar && (
-            <button
-              className="listado__boton"
-              onClick={() => setGrupoCsv(grupo)}
-              title="Descargar archivo para MinTrabajo"
-            >
-              CSV
-            </button>
-          )}
-        </td>
-      </tr>
-    )
-  }
-
-  function Bloque({ titulo, lista, urgencia, nota }) {
-    if (lista.length === 0) return null
-
-    return (
-      <div className="listado__bloque">
-        <div className={`listado__bloque-cabecera listado__bloque-cabecera_${urgencia}`}>
-          <h2 className="listado__bloque-titulo">{titulo}</h2>
-          <span className="listado__bloque-conteo">
-            {lista.length} {lista.length === 1 ? 'grupo' : 'grupos'}
-          </span>
-        </div>
-
-        {nota && <p className="listado__bloque-nota">{nota}</p>}
-
-        <div className="listado__tabla-wrap">
-          <table className="listado__tabla">
-            <thead>
-              <tr>
-                <th className="listado__th">Curso</th>
-                <th className="listado__th">Fechas</th>
-                <th className="listado__th">Empresa</th>
-                <th className="listado__th">Sector</th>
-                <th className="listado__th">Entrenador</th>
-                <th className="listado__th">Supervisor</th>
-                <th className="listado__th">Coordinador</th>
-                <th className="listado__th">Aprendices</th>
-                <th className="listado__th">Fecha límite</th>
-                <th className="listado__th">ID curso</th>
-                <th className="listado__th"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {lista.map((g) => (
-                <Fila key={g.id} grupo={g} urgencia={urgencia} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    )
+  const propsFila = {
+    soloLectura,
+    puedeGestionar,
+    coordinadores,
+    onVerGrupo: (id) => navegar(`/alturas/grupos/${id}`),
+    onRegistrar: setGrupoCargando,
+    onCsv: setGrupoCsv,
+    onCoordinadorCambiado: (grupoId, nuevoId) => {
+      const coord = coordinadores.find((c) => String(c.id) === String(nuevoId))
+      setGrupos((antes) =>
+        antes.map((g) =>
+          g.id === grupoId
+            ? {
+                ...g,
+                coordinador_id: nuevoId ? Number(nuevoId) : null,
+                coordinador: coord ? coord.nombre_completo : null,
+              }
+            : g
+        )
+      )
+    },
   }
 
   return (
@@ -328,6 +379,7 @@ function ListadoGeneral() {
         lista={vencidos}
         urgencia="vencido"
         nota="Estos grupos pasaron su fecha límite. Cárgalos cuanto antes."
+        {...propsFila}
       />
 
       <Bloque
@@ -335,9 +387,10 @@ function ListadoGeneral() {
         lista={porVencer}
         urgencia="urgente"
         nota="Vencen en los próximos tres días."
+        {...propsFila}
       />
 
-      <Bloque titulo="Pendientes" lista={aTiempo} urgencia="normal" />
+      <Bloque titulo="Pendientes" lista={aTiempo} urgencia="normal" {...propsFila} />
 
       {cargados.length > 0 && (
         <div className="listado__bloque">
@@ -345,36 +398,11 @@ function ListadoGeneral() {
             className="listado__toggle"
             onClick={() => setVerCargados((v) => !v)}
           >
-            {verCargados
-              ? 'Ocultar cargados'
-              : `Ver cargados (${cargados.length})`}
+            {verCargados ? 'Ocultar cargados' : `Ver cargados (${cargados.length})`}
           </button>
 
           {verCargados && (
-            <div className="listado__tabla-wrap">
-              <table className="listado__tabla">
-                <thead>
-                  <tr>
-                    <th className="listado__th">Curso</th>
-                <th className="listado__th">Fechas</th>
-                <th className="listado__th">Empresa</th>
-                <th className="listado__th">Sector</th>
-                <th className="listado__th">Entrenador</th>
-                <th className="listado__th">Supervisor</th>
-                <th className="listado__th">Coordinador</th>
-                <th className="listado__th">Aprendices</th>
-                <th className="listado__th">Fecha límite</th>
-                <th className="listado__th">ID curso</th>
-                <th className="listado__th"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cargados.map((g) => (
-                    <Fila key={g.id} grupo={g} urgencia="cargado" />
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <TablaGrupos lista={cargados} urgencia="cargado" {...propsFila} />
           )}
         </div>
       )}

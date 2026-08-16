@@ -15,7 +15,6 @@ import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
 import TrasladarMatricula from '../TrasladarMatricula/TrasladarMatricula'
-import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
@@ -215,8 +214,6 @@ function RegistroDiario() {
         </Modal>
       )}
 
-      {cargando && <EsqueletoTabla filas={5} columnas={7} />}
-
       {error && <p className="matriculas__mensaje">{error}</p>}
 
       {!cargando && !error && (
@@ -234,8 +231,8 @@ function RegistroDiario() {
                 : 'No hubo registros este día.'}
             </p>
           ) : (
-            <div className="matriculas__tabla-wrap">
-              <table className="matriculas__tabla">
+            <div className="matriculas__tabla-wrap entra-bloque">
+              <table className="matriculas__tabla entra-tabla">
                 <thead>
                   <tr>
                     <th className="matriculas__th">#</th>

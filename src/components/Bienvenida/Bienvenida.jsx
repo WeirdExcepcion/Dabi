@@ -49,7 +49,7 @@ function Bienvenida({ perfil }) {
     })
 
     setTimeout(() => {
-      sessionStorage.setItem('dabi_entrada_modulo', '1')
+      sessionStorage.setItem('dabi_entrada_modulo', modulo.nombre)
       navegar(modulo.ruta)
     }, 700)
   }

@@ -5,7 +5,6 @@ import { PUEDE_CREAR_EMPRESAS, PUEDE_EDITAR_EMPRESAS, PUEDE_ELIMINAR_EMPRESAS } 
 import Modal from '../Modal/Modal'
 import FormularioEmpresa from './FormularioEmpresa/FormularioEmpresa'
 import './Empresas.css'
-import { EsqueletoTabla } from '../Esqueleto/Esqueleto'
 
 const CAMPOS = `
   id, razon_social, nit, representante_legal, correo, telefono,
@@ -123,19 +122,7 @@ function Empresas() {
     setMinAprendices('')
   }
 
-  if (cargando) {
-    return (
-      <section className="empresas">
-        <header className="empresas__header">
-          <div>
-            <p className="empresas__eyebrow">Administración</p>
-            <h1 className="empresas__titulo">Empresas</h1>
-          </div>
-        </header>
-        <EsqueletoTabla filas={6} columnas={8} />
-      </section>
-    )
-  }
+  if (cargando) return null
 
   if (error) {
     return <p className="empresas__mensaje">{error}</p>
@@ -322,8 +309,8 @@ function Empresas() {
       ) : visibles.length === 0 ? (
         <p className="empresas__mensaje">Ninguna empresa coincide con los filtros.</p>
       ) : (
-        <div className="empresas__tabla-wrap">
-          <table className="empresas__tabla">
+        <div className="empresas__tabla-wrap entra-bloque">
+          <table className="empresas__tabla entra-tabla">
             <thead>
               <tr>
                 <th className="empresas__th">Razón social</th>
