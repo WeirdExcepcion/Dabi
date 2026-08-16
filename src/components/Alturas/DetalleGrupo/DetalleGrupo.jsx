@@ -16,6 +16,7 @@ import { useFaltantes } from '../../../context/FaltantesContext'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
 import TrasladarMatricula from '../TrasladarMatricula/TrasladarMatricula'
+import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 
 
 function formatearFecha(iso) {
@@ -165,7 +166,11 @@ function DetalleGrupo() {
   }, [grupoId])
 
   if (cargando) {
-    return <p className="det-grupo__mensaje">Cargando grupo...</p>
+    return (
+      <section className="det-grupo">
+        <EsqueletoTabla filas={5} columnas={7} />
+      </section>
+    )
   }
 
   if (error) {
@@ -266,7 +271,7 @@ function DetalleGrupo() {
             matricula={matriculaTrasladando}
             onTrasladada={() => {
               setMatriculaTrasladando(null)
-              obtenerMatriculas()
+              cargarDatos()
             }}
             onCancelar={() => setMatriculaTrasladando(null)}
           />
@@ -343,7 +348,7 @@ function DetalleGrupo() {
             onGuardada={() => {
               refrescarUna(matriculaEditando.id)
               setMatriculaEditando(null)
-              obtenerMatriculas()
+              cargarDatos()
             }}
             onCancelar={() => setMatriculaEditando(null)}
           />

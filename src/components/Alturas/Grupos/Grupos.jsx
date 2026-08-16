@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabaseClient'
+import { EsqueletoTarjetas } from '../../compartidos/Esqueleto/Esqueleto'
 import './Grupos.css'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import Modal from '../../compartidos/Modal/Modal'
@@ -254,7 +255,7 @@ function Grupos() {
         )}
       </div>
 
-      {cargando && <p className="grupos__mensaje">Cargando grupos...</p>}
+      {cargando && <EsqueletoTarjetas cantidad={6} />}
 
       {error && <p className="grupos__mensaje">{error}</p>}
 

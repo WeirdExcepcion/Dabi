@@ -5,6 +5,7 @@ import { PUEDE_CREAR_EMPRESAS, PUEDE_EDITAR_EMPRESAS, PUEDE_ELIMINAR_EMPRESAS } 
 import Modal from '../Modal/Modal'
 import FormularioEmpresa from './FormularioEmpresa/FormularioEmpresa'
 import './Empresas.css'
+import { EsqueletoTabla } from '../Esqueleto/Esqueleto'
 
 const CAMPOS = `
   id, razon_social, nit, representante_legal, correo, telefono,
@@ -123,7 +124,17 @@ function Empresas() {
   }
 
   if (cargando) {
-    return <p className="empresas__mensaje">Cargando empresas...</p>
+    return (
+      <section className="empresas">
+        <header className="empresas__header">
+          <div>
+            <p className="empresas__eyebrow">Administración</p>
+            <h1 className="empresas__titulo">Empresas</h1>
+          </div>
+        </header>
+        <EsqueletoTabla filas={6} columnas={8} />
+      </section>
+    )
   }
 
   if (error) {

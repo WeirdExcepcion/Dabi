@@ -5,6 +5,7 @@ import { PUEDE_GESTIONAR_PERSONAL, ROLES_SOLO_LECTURA } from '../../../constants
 import Modal from '../../compartidos/Modal/Modal'
 import FichaPersonal from './FichaPersonal/FichaPersonal'
 import FormularioPersonal from './FormularioPersonal/FormularioPersonal'
+import { EsqueletoTarjetas } from '../../compartidos/Esqueleto/Esqueleto'
 import './Personal.css'
 
 const CAMPOS = `
@@ -133,7 +134,7 @@ function Personal() {
         </div>
       )}
 
-      {cargando && <p className="personal__mensaje">Cargando…</p>}
+      {cargando && <EsqueletoTarjetas cantidad={4} />}
 
       {error && <p className="personal__mensaje">{error}</p>}
 

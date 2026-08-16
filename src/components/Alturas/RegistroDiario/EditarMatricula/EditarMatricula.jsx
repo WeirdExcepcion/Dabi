@@ -236,7 +236,8 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
           </div>
         </div>
 
-        <div className="editar-mat__campo">
+        <div className="editar-mat__fila">
+          <div className="editar-mat__campo">
             <label className="editar-mat__label" htmlFor="edit_sector">Sector</label>
             <SelectorBuscable
               id="edit_sector"
@@ -246,6 +247,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
               placeholder="Buscar sector…"
             />
           </div>
+        </div>
 
         <div className="editar-mat__fila">
           <div className="editar-mat__campo">

@@ -11,6 +11,7 @@ import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
 import { useFaltantes } from '../../../context/FaltantesContext'
+import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 
 function formatearFecha(iso) {
   if (!iso) return '—'
@@ -112,7 +113,11 @@ function FichaAprendiz() {
     }, [aprendizId])
 
   if (cargando) {
-    return <p className="ficha__mensaje">Cargando ficha...</p>
+    return (
+      <section className="ficha">
+        <EsqueletoTabla filas={4} columnas={7} />
+      </section>
+    )
   }
 
   if (error) {

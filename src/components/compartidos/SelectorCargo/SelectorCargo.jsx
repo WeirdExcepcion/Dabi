@@ -12,9 +12,6 @@ function SelectorCargo({ id, cargos, valor, onCambio, onCargoCreado }) {
 
   const contenedorRef = useRef(null)
   const inputRef = useRef(null)
-  const unicos = cargos.filter(
-    (c, i) => cargos.findIndex((x) => x.id === c.id) === i
-  )
   const seleccionado = cargos.find((c) => String(c.id) === String(valor))
 
   useEffect(() => {
@@ -83,25 +80,6 @@ function SelectorCargo({ id, cargos, valor, onCambio, onCargoCreado }) {
     if (data.resultado === 'creado') {
       onCargoCreado({ id: data.id, nombre: data.nombre })
       onCambio(String(data.id))
-      cerrar()
-      return
-    }
-
-    if (forzar) {
-      const { data: forzado, error: errorForzado } = await supabase
-        .from('cargos')
-        .insert({ nombre: busqueda.trim() })
-        .select('id, nombre')
-        .single()
-
-      if (errorForzado) {
-        setError('No se pudo crear el cargo')
-        console.error(errorForzado.message)
-        return
-      }
-
-      onCargoCreado(forzado)
-      onCambio(String(forzado.id))
       cerrar()
     }
   }

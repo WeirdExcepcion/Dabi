@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
+import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 import './Aprendices.css'
 
 function Aprendices() {
@@ -73,7 +74,7 @@ function Aprendices() {
         />
       </div>
 
-      {cargando && <p className="aprendices__mensaje">Buscando...</p>}
+      <EsqueletoTabla filas={5} columnas={4} />
 
       {error && <p className="aprendices__mensaje">{error}</p>}
 

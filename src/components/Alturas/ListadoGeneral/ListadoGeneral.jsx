@@ -6,6 +6,7 @@ import Modal from '../../compartidos/Modal/Modal'
 import RegistrarCargue from './RegistrarCargue/RegistrarCargue'
 import PreviaCsv from './PreviaCsv/PreviaCsv'
 import SelectorCoordinador from './SelectorCoordinador/SelectorCoordinador'
+import { EsqueletoTabla } from '../../compartidos/Esqueleto/Esqueleto'
 import './ListadoGeneral.css'
 
 function hoyISO() {
@@ -91,7 +92,17 @@ function ListadoGeneral() {
   }
 
   if (cargando) {
-    return <p className="listado__mensaje">Cargando listado…</p>
+    return (
+      <section className="listado">
+        <header className="listado__header">
+          <div>
+            <p className="listado__eyebrow">Ministerio de Trabajo</p>
+            <h1 className="listado__titulo">Listado General</h1>
+          </div>
+        </header>
+        <EsqueletoTabla filas={5} columnas={11} />
+      </section>
+    )
   }
 
   if (error) {
