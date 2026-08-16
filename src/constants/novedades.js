@@ -1,6 +1,20 @@
-export const VERSION_ACTUAL = '2026.08.12'
+export const VERSION_ACTUAL = '2026.08.15'
 
 export const NOVEDADES = [
+  {
+    version: '2026.08.15',
+    fecha: 'FECHA EN PALABRAS',
+    titulo: 'Navegación y detalles visuales',
+    cambios: [
+      { tipo: 'mejora', texto: 'El menú lateral ahora te acompaña al desplazarte: el correo y el botón de cerrar sesión siempre quedan a la vista.' },
+      { tipo: 'mejora', texto: 'El indicador de la sección activa se desliza suavemente al cambiar de una a otra.' },
+      { tipo: 'mejora', texto: 'Las tablas y listas aparecen de forma escalonada al cargar, en vez de saltar de golpe.' },
+      { tipo: 'mejora', texto: 'Entrar a un módulo desde la pantalla de inicio tiene una transición más limpia.' },
+      { tipo: 'arreglo', texto: 'Los avisos de datos faltantes y de auditoría ya se muestran completos, sin quedar recortados dentro de la tabla.' },
+      { tipo: 'arreglo', texto: 'Al abrir uno de esos avisos, el otro se cierra automáticamente.' },
+      { tipo: 'arreglo', texto: 'Cambiar el coordinador en el Listado General ya no recarga toda la tabla.' },
+    ],
+  },
   {
     version: '2026.08.12',
     fecha: '12 de agosto de 2026',

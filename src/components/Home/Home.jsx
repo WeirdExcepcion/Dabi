@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { SECCIONES } from '../../constants/navegacion'
 import { PUEDE_APROBAR } from '../../constants/permisos'
@@ -19,6 +19,9 @@ function Home({ session, perfil }) {
   const [menuPlegado, setMenuPlegado] = useState(false)
   const [hayNovedades, setHayNovedades] = useState(false)
   const navegar = useNavigate()
+  const ubicacion = useLocation()
+  const listaRef = useRef(null)
+  const [indicador, setIndicador] = useState({ top: 0, alto: 0, visible: false })
 
   useEffect(() => {
     const vista = localStorage.getItem('dabi_version_vista')
@@ -28,6 +31,28 @@ function Home({ session, perfil }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (menuPlegado) {
+      setIndicador((i) => ({ ...i, visible: false }))
+      return
+    }
+
+    const cuadro = listaRef.current
+    if (!cuadro) return
+
+    const activo = cuadro.querySelector('.home__nav-link_activo')
+    if (!activo) {
+      setIndicador((i) => ({ ...i, visible: false }))
+      return
+    }
+
+    setIndicador({
+      top: activo.offsetTop,
+      alto: activo.offsetHeight,
+      visible: true,
+    })
+  }, [ubicacion.pathname, menuPlegado, perfil])
+  
   function cerrarNovedades() {
     localStorage.setItem('dabi_version_vista', VERSION_ACTUAL)
     setNovedadesAbiertas(false)
@@ -119,7 +144,16 @@ function Home({ session, perfil }) {
             </div>
             <p className="home__nav-nombre">{perfil.nombre_completo}</p>
 
-            <ul className="home__nav-lista">
+            <ul className="home__nav-lista" ref={listaRef}>
+              {indicador.visible && (
+                <span
+                  className="home__nav-indicador"
+                  style={{
+                    transform: `translateY(${indicador.top}px)`,
+                    height: `${indicador.alto}px`,
+                  }}
+                />
+              )}
               {seccionesVisibles.map((seccion) => (
                 <li key={seccion.ruta}>
                   <NavLink

@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useAuditoria } from '../../../context/AuditoriaContext'
 import './MarcaAuditoria.css'
 
@@ -31,6 +32,14 @@ function MarcaAuditoria({ matriculaId }) {
   const [pos, setPos] = useState({ top: 0, left: 0 })
   const botonRef = useRef(null)
 
+  useEffect(() => {
+    function cerrar() {
+      setAbierto(false)
+    }
+    document.addEventListener('dabi-cerrar-popovers', cerrar)
+    return () => document.removeEventListener('dabi-cerrar-popovers', cerrar)
+  }, [])
+
   if (!modoActivo) return null
 
   const info = auditadas[matriculaId]
@@ -40,6 +49,7 @@ function MarcaAuditoria({ matriculaId }) {
 
   function abrir(e) {
     e.stopPropagation()
+    document.dispatchEvent(new CustomEvent('dabi-cerrar-popovers'))
     const rect = botonRef.current.getBoundingClientRect()
     setPos({
       top: rect.bottom + 8,
@@ -64,7 +74,8 @@ function MarcaAuditoria({ matriculaId }) {
         </span>
       )}
 
-      {abierto && (
+      {abierto &&
+        createPortal(
         <>
           <span className="marca-audit__cerrar-fondo" onClick={() => setAbierto(false)} />
           <div
@@ -121,8 +132,9 @@ function MarcaAuditoria({ matriculaId }) {
               })}
             </div>
           </div>
-        </>
-      )}
+        </>,
+          document.body
+        )}
     </span>
   )
 }

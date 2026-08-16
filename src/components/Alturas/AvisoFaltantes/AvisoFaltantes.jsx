@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useFaltantes } from '../../../context/FaltantesContext'
 import './AvisoFaltantes.css'
 
@@ -7,6 +8,14 @@ function AvisoFaltantes({ matriculaId }) {
   const [abierto, setAbierto] = useState(false)
   const [pos, setPos] = useState({ top: 0, left: 0 })
   const botonRef = useRef(null)
+  
+  useEffect(() => {
+    function cerrar() {
+      setAbierto(false)
+    }
+    document.addEventListener('dabi-cerrar-popovers', cerrar)
+    return () => document.removeEventListener('dabi-cerrar-popovers', cerrar)
+  }, [])
 
   const lista = faltantes[matriculaId]
 
@@ -15,6 +24,7 @@ function AvisoFaltantes({ matriculaId }) {
 
   function abrir(e) {
     e.stopPropagation()
+    document.dispatchEvent(new CustomEvent('dabi-cerrar-popovers'))
     const rect = botonRef.current.getBoundingClientRect()
     setPos({ top: rect.bottom + 8, left: rect.left + rect.width / 2 })
     setAbierto(true)
@@ -31,61 +41,61 @@ function AvisoFaltantes({ matriculaId }) {
         ref={botonRef}
         className="aviso-falt__punto"
         onClick={abrir}
-        onMouseEnter={abrir}
         aria-label="Información faltante"
       />
 
-      {abierto && (
-        <>
-          <span className="aviso-falt__fondo" onClick={() => setAbierto(false)} />
-          <div
-            className="aviso-falt__panel"
-            style={{ top: `${pos.top}px`, left: `${pos.left}px` }}
-            onClick={(e) => e.stopPropagation()}
-            onMouseLeave={() => setAbierto(false)}
-          >
-            <div className="aviso-falt__header">
-              <span className="aviso-falt__titulo">
-                Falta {lista.length} {lista.length === 1 ? 'dato' : 'datos'}
-              </span>
-            </div>
-
-            <div className="aviso-falt__cuerpo">
-              {datos.length > 0 && (
-                <div className="aviso-falt__grupo">
-                  <p className="aviso-falt__grupo-titulo">Sin llenar</p>
-                  <ul className="aviso-falt__lista">
-                    {datos.map((d) => (
-                      <li key={d} className="aviso-falt__item">{d}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {archivos.length > 0 && (
-                <div className="aviso-falt__grupo">
-                  <p className="aviso-falt__grupo-titulo">Archivos sin subir</p>
-                  <ul className="aviso-falt__lista">
-                    {archivos.map((a) => (
-                      <li key={a} className="aviso-falt__item">{a}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <button
-              className="aviso-falt__ignorar"
-              onClick={() => {
-                ignorar(matriculaId)
-                setAbierto(false)
-              }}
+      {abierto &&
+        createPortal(
+          <>
+            <span className="aviso-falt__fondo" onClick={() => setAbierto(false)} />
+            <div
+              className="aviso-falt__panel"
+              style={{ top: `${pos.top}px`, left: `${pos.left}px` }}
+              onClick={(e) => e.stopPropagation()}
             >
-              Ocultar por ahora
-            </button>
-          </div>
-        </>
-      )}
+              <div className="aviso-falt__header">
+                <span className="aviso-falt__titulo">
+                  Falta {lista.length} {lista.length === 1 ? 'dato' : 'datos'}
+                </span>
+              </div>
+
+              <div className="aviso-falt__cuerpo">
+                {datos.length > 0 && (
+                  <div className="aviso-falt__grupo">
+                    <p className="aviso-falt__grupo-titulo">Sin llenar</p>
+                    <ul className="aviso-falt__lista">
+                      {datos.map((d) => (
+                        <li key={d} className="aviso-falt__item">{d}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {archivos.length > 0 && (
+                  <div className="aviso-falt__grupo">
+                    <p className="aviso-falt__grupo-titulo">Archivos sin subir</p>
+                    <ul className="aviso-falt__lista">
+                      {archivos.map((a) => (
+                        <li key={a} className="aviso-falt__item">{a}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <button
+                className="aviso-falt__ignorar"
+                onClick={() => {
+                  ignorar(matriculaId)
+                  setAbierto(false)
+                }}
+              >
+                Ocultar por ahora
+              </button>
+            </div>
+          </>,
+          document.body
+        )}
     </span>
   )
 }
