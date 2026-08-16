@@ -9,6 +9,7 @@ function Aprendices() {
   const [aprendices, setAprendices] = useState([])
   const [busqueda, setBusqueda] = useState('')
   const [cargando, setCargando] = useState(true)
+  const [primeraCarga, setPrimeraCarga] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -53,6 +54,7 @@ function Aprendices() {
     }
 
     setCargando(false)
+    setPrimeraCarga(false)
   }
 
   return (
@@ -74,9 +76,10 @@ function Aprendices() {
         />
       </div>
 
-      <EsqueletoTabla filas={5} columnas={4} />
-
-      {error && <p className="aprendices__mensaje">{error}</p>}
+      {cargando && primeraCarga && <EsqueletoTabla filas={5} columnas={4} />}
+      {cargando && !primeraCarga && (
+        <p className="aprendices__mensaje">Buscando…</p>
+      )}
 
       {!cargando && !error && aprendices.length === 0 && (
         <p className="aprendices__mensaje">

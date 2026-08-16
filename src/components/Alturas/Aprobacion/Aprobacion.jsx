@@ -6,7 +6,7 @@ import Modal from '../../compartidos/Modal/Modal'
 import DetalleMatricula from '../RegistroDiario/DetalleMatricula/DetalleMatricula'
 import CambioPendiente from './CambioPendiente/CambioPendiente'
 import { useCatalogos } from '../../../hooks/useCatalogos'
-import { EsqueletoTabla, EsqueletoTarjetas } from '../../compartidos/Esqueleto/Esqueleto'
+import { EsqueletoTarjetas } from '../../compartidos/Esqueleto/Esqueleto'
 import './Aprobacion.css'
 
 function hoyISO() {
@@ -209,7 +209,7 @@ function Aprobacion() {
         </div>
       )}
 
-      <EsqueletoTarjetas cantidad={3} />
+      {cargando && <EsqueletoTarjetas cantidad={3} />}
 
       {error && <p className="aprob__mensaje">{error}</p>}
 

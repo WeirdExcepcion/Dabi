@@ -1,6 +1,7 @@
 import './Esqueleto.css'
 
 export function EsqueletoTabla({ filas = 5, columnas = 6 }) {
+  console.log('ESQUELETO renderizado')
   return (
     <div className="esq__tabla-wrap">
       <div className="esq__cabecera">

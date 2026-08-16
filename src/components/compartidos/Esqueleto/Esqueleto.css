@@ -1,25 +1,26 @@
 @keyframes esq-brillo {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
-}
-
-@keyframes esq-entrar {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(100% + 200px) 0;
+  }
 }
 
 .esq__th,
 .esq__celda,
 .esq__linea,
 .esq__bloque {
-  background: linear-gradient(
+  background-color: rgba(2, 17, 60, 0.13);
+  background-image: linear-gradient(
     90deg,
-    rgba(2, 17, 60, 0.05) 25%,
-    rgba(2, 17, 60, 0.09) 50%,
-    rgba(2, 17, 60, 0.05) 75%
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 50%,
+    transparent 100%
   );
-  background-size: 800px 100%;
-  animation: esq-brillo 1.4s linear infinite;
+  background-repeat: no-repeat;
+  background-size: 200px 100%;
+  animation: esq-brillo 1.5s linear infinite;
   border-radius: 4px;
 }
 
@@ -49,8 +50,6 @@
   gap: 20px;
   padding: 15px 16px;
   border-bottom: 1px solid rgba(2, 17, 60, 0.04);
-  opacity: 0;
-  animation: esq-entrar 0.3s ease-out forwards;
 }
 
 .esq__fila:last-child {
@@ -73,8 +72,6 @@
   background-color: var(--blanco);
   border: 1px solid rgba(2, 17, 60, 0.08);
   border-radius: 8px;
-  opacity: 0;
-  animation: esq-entrar 0.3s ease-out forwards;
 }
 
 .esq__linea {
