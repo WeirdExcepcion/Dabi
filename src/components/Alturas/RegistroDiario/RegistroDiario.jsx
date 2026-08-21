@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
+import { hoyISO } from '../../../lib/fechas'
 import { PUEDE_CREAR_MATRICULAS, PUEDE_EDITAR_MATRICULAS, PUEDE_ELIMINAR_MATRICULAS, PUEDE_TRASLADAR } from '../../../constants/permisos'
 import MarcaAuditoria from '../MarcaAuditoria/MarcaAuditoria'
 import AvisoFaltantes from '../AvisoFaltantes/AvisoFaltantes'
@@ -18,14 +19,6 @@ import TrasladarMatricula from '../TrasladarMatricula/TrasladarMatricula'
 
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
-
-function hoyISO() {
-  const hoy = new Date()
-  const yyyy = hoy.getFullYear()
-  const mm = String(hoy.getMonth() + 1).padStart(2, '0')
-  const dd = String(hoy.getDate()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
-}
 
 function formatearFechaLarga(iso) {
   const [anio, mes, dia] = iso.split('-').map(Number)
@@ -275,16 +268,17 @@ function RegistroDiario() {
                         >
                           Ver
                         </button>
-                        {puedeEditar && (
-                    <button
-                      className="matriculas__boton-ver"
-                      onClick={() => setMatriculaEditando(matricula)}
-                    >
-                      Editar
-                    </button>
-                  )}
 
-                  {puedeTrasladar && (
+                        {puedeEditar && (
+                          <button
+                            className="matriculas__boton-ver"
+                            onClick={() => setMatriculaEditando(matricula)}
+                          >
+                            Editar
+                          </button>
+                        )}
+
+                        {puedeTrasladar && (
                           <button
                             className="matriculas__boton-ver"
                             onClick={() => setMatriculaTrasladando(matricula)}
@@ -293,8 +287,9 @@ function RegistroDiario() {
                             Trasladar
                           </button>
                         )}
-                        
-                  <BotonCertificado matricula={matricula} rol={perfil.rol} compacto />
+
+                        <BotonCertificado matricula={matricula} rol={perfil.rol} compacto />
+
                         {puedeEliminar && (
                           <button
                             className="matriculas__boton-eliminar"

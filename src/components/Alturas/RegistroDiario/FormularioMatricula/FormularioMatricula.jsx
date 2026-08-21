@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { supabase } from '../../../../lib/supabaseClient'
+import { hoyISO, formatearFechaCorta } from '../../../../lib/fechas'
 import { useCatalogos } from '../../../../hooks/useCatalogos'
+import { useCargosLocales } from '../../../../hooks/useCargosLocales'
 import SelectorGrupo from '../../SelectorGrupo/SelectorGrupo'
 import './FormularioMatricula.css'
 import SelectorBuscable from '../../../compartidos/SelectorBuscable/SelectorBuscable'
@@ -35,7 +37,7 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
   const [areaId, setAreaId] = useState('')
   const [cargoId, setCargoId] = useState('')
   const [sectorId, setSectorId] = useState('')
-  const [cargosLocales, setCargosLocales] = useState([])
+  const { cargosLocales, agregarCargo } = useCargosLocales(catalogos.cargos)
   const [fechaArl, setFechaArl] = useState('')
   const [fechaExamen, setFechaExamen] = useState('')
 
@@ -116,22 +118,8 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
     }
   }
 
-  function opcional(valor) {
+    function opcional(valor) {
     return valor === '' ? null : valor
-  }
-
-  function hoyLocal() {
-    const hoy = new Date()
-    const yyyy = hoy.getFullYear()
-    const mm = String(hoy.getMonth() + 1).padStart(2, '0')
-    const dd = String(hoy.getDate()).padStart(2, '0')
-    return `${yyyy}-${mm}-${dd}`
-  }
-
-  function formatearFechaCorta(iso) {
-    if (!iso) return '—'
-    const [anio, mes, dia] = iso.split('-')
-    return `${dia}/${mes}/${anio}`
   }
 
   async function guardar() {
@@ -170,7 +158,7 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
       p_cargo_id: opcional(cargoId),
       p_fecha_arl: opcional(fechaArl),
       p_fecha_examen: opcional(fechaExamen),
-      p_fecha_ingreso: hoyLocal(),
+      p_fecha_ingreso: hoyISO(),
       p_sector_id: sectorId ? Number(sectorId) : null,
     })
 
@@ -298,12 +286,12 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
                     {ultimaMatricula.examen_vence && (
                       <span
                         className={
-                          ultimaMatricula.examen_vence < hoyLocal()
+                          ultimaMatricula.examen_vence < hoyISO()
                             ? 'form-matricula__referencia-vencido'
                             : 'form-matricula__referencia-vigente'
                         }
                       >
-                        {ultimaMatricula.examen_vence < hoyLocal()
+                        {ultimaMatricula.examen_vence < hoyISO()
                           ? ' (vencido)'
                           : ` (vigente hasta ${formatearFechaCorta(ultimaMatricula.examen_vence)})`}
                       </span>
@@ -503,14 +491,7 @@ function FormularioMatricula({ onGuardada, onCancelar, grupoFijo = null }) {
                   cargos={[...catalogos.cargos, ...cargosLocales]}
                   valor={cargoId}
                   onCambio={setCargoId}
-                  onCargoCreado={(nuevo) =>
-                    setCargosLocales((antes) => {
-                      const yaEsta =
-                        antes.some((c) => c.id === nuevo.id) ||
-                        catalogos.cargos.some((c) => c.id === nuevo.id)
-                      return yaEsta ? antes : [...antes, nuevo]
-                    })
-                  }
+                  onCargoCreado={agregarCargo}
                 />
               </div>
             </div>

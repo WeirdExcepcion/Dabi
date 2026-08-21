@@ -149,3 +149,40 @@
     align-items: flex-start;
   }
 }
+
+.apr-emp__paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.apr-emp__pagina-boton {
+  padding: 8px 16px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.apr-emp__pagina-boton:hover:not(:disabled) {
+  border-color: var(--ceruleo);
+  background-color: var(--gris-niebla);
+}
+
+.apr-emp__pagina-boton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.apr-emp__pagina-info {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+}

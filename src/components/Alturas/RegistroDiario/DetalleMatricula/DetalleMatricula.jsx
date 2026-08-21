@@ -1,14 +1,10 @@
 import './DetalleMatricula.css'
 import { ESTADOS_MATRICULA as ESTADOS } from '../../../../constants/estados'
+import { formatearFechaCorta } from '../../../../lib/fechas'
 import { useState } from 'react'
-import DocumentosMatricula from "../../DocumentosMatricula/DocumentosMatricula";
+import DocumentosMatricula from '../../DocumentosMatricula/DocumentosMatricula'
+import Pestanas from '../../../compartidos/Pestanas/Pestanas'
 
-
-function formatearFecha(iso) {
-  if (!iso) return '—'
-  const [anio, mes, dia] = iso.split('-')
-  return `${dia}/${mes}/${anio}`
-}
 
 function Dato({ etiqueta, valor }) {
   return (
@@ -54,22 +50,14 @@ function DetalleMatricula({ matricula, onCerrar }) {
         </button>
       </div>
 
-      <div className="detalle__pestanas">
-        <button
-          type="button"
-          className={pestana === 'datos' ? 'detalle__pestana detalle__pestana_activa' : 'detalle__pestana'}
-          onClick={() => setPestana('datos')}
-        >
-          Datos
-        </button>
-        <button
-          type="button"
-          className={pestana === 'documentos' ? 'detalle__pestana detalle__pestana_activa' : 'detalle__pestana'}
-          onClick={() => setPestana('documentos')}
-        >
-          Documentos
-        </button>
-      </div>
+      <Pestanas
+        activa={pestana}
+        onCambio={setPestana}
+        opciones={[
+          { id: 'datos', etiqueta: 'Datos' },
+          { id: 'documentos', etiqueta: 'Documentos' },
+        ]}
+      />
 
       {pestana === 'documentos' && (
         <DocumentosMatricula
@@ -88,7 +76,7 @@ function DetalleMatricula({ matricula, onCerrar }) {
         <div className="detalle__grilla">
           <Dato etiqueta="Sexo" valor={a.sexo} />
           <Dato etiqueta="RH" valor={a.rh} />
-          <Dato etiqueta="Fecha de nacimiento" valor={formatearFecha(a.fecha_nacimiento)} />
+          <Dato etiqueta="Fecha de nacimiento" valor={formatearFechaCorta(a.fecha_nacimiento)} />
           <Dato etiqueta="País" valor={a.pais} />
           <Dato etiqueta="Nivel educativo" valor={a.niveles_educativos?.nombre} />
         </div>
@@ -101,8 +89,8 @@ function DetalleMatricula({ matricula, onCerrar }) {
             etiqueta="Curso"
             valor={`${g.cursos.nombre}${g.identificador ? ` (${g.identificador})` : ''}`}
           />
-          <Dato etiqueta="Inicio" valor={formatearFecha(g.fecha_inicio)} />
-          <Dato etiqueta="Fin" valor={formatearFecha(g.fecha_fin)} />
+          <Dato etiqueta="Inicio" valor={formatearFechaCorta(g.fecha_inicio)} />
+          <Dato etiqueta="Fin" valor={formatearFechaCorta(g.fecha_fin)} />
           <Dato etiqueta="Entrenador" valor={g.entrenador?.nombre_completo} />
         </div>
       </div>
@@ -120,13 +108,13 @@ function DetalleMatricula({ matricula, onCerrar }) {
         <p className="detalle__seccion-titulo">Documentos</p>
         <div className="detalle__grilla">
           <Dato etiqueta="ARL" valor={matricula.arls?.nombre} />
-          <Dato etiqueta="Fecha ARL" valor={formatearFecha(matricula.fecha_arl)} />
+          <Dato etiqueta="Fecha ARL" valor={formatearFechaCorta(matricula.fecha_arl)} />
           <Dato etiqueta="EPS" valor={matricula.eps?.nombre} />
-          <Dato etiqueta="Examen médico" valor={formatearFecha(matricula.fecha_examen)} />
+          <Dato etiqueta="Examen médico" valor={formatearFechaCorta(matricula.fecha_examen)} />
           <div className="detalle__dato">
             <p className="detalle__etiqueta">Vence examen</p>
             <p className={`detalle__valor ${examenVencido ? 'detalle__valor_alerta' : ''}`}>
-              {formatearFecha(matricula.examen_vence)}
+              {formatearFechaCorta(matricula.examen_vence)}
               {examenVencido && ' (vencido)'}
             </p>
           </div>
@@ -155,7 +143,7 @@ function DetalleMatricula({ matricula, onCerrar }) {
       )}
       
       <div className="detalle__pie">
-        <Dato etiqueta="Fecha de ingreso" valor={formatearFecha(matricula.fecha_ingreso)} />
+        <Dato etiqueta="Fecha de ingreso" valor={formatearFechaCorta(matricula.fecha_ingreso)} />
       </div>
     </div>
   )

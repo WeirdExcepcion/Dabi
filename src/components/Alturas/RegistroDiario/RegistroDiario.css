@@ -225,11 +225,6 @@
 .matriculas__boton-ver:hover {
   background-color: var(--gris-niebla);
 }
-.matriculas__td_acciones {
-  width: 140px;
-  text-align: right;
-  white-space: nowrap;
-}
 
 .matriculas__boton-ver + .matriculas__boton-ver {
   margin-left: 6px;

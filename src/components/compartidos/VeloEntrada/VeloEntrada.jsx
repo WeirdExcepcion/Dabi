@@ -7,6 +7,9 @@ function VeloEntrada() {
   const [contrayendo, setContrayendo] = useState(false)
   const yaCorrio = useRef(false)
 
+  // StrictMode monta dos veces en desarrollo: el ref evita que la animación
+  // se dispare de nuevo. Los timers no se cancelan en la limpieza a propósito,
+  // porque el desmontaje que importa aquí es el del propio velo.
   useEffect(() => {
     if (!activo || yaCorrio.current) return
 
@@ -20,7 +23,6 @@ function VeloEntrada() {
     }, 1150)
   }, [activo])
 
-  console.log('VELO texto:', nombre, 'contrayendo:', contrayendo)
   if (!activo) return null
 
   return (

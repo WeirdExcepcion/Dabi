@@ -299,3 +299,40 @@
   color: var(--azul-primario);
   text-align: center;
 }
+
+.empresas__paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.empresas__pagina-boton {
+  padding: 8px 16px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.empresas__pagina-boton:hover:not(:disabled) {
+  border-color: var(--ceruleo);
+  background-color: var(--gris-niebla);
+}
+
+.empresas__pagina-boton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.empresas__pagina-info {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+}

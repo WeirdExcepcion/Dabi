@@ -172,33 +172,3 @@
   border-radius: 4px;
   margin-top: 2px;
 }
-
-.detalle__pestanas {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(2, 17, 60, 0.1);
-}
-
-.detalle__pestana {
-  padding: 10px 18px;
-  border: none;
-  border-bottom: 2px solid transparent;
-  background-color: transparent;
-  color: var(--texto-secundario);
-  font-family: var(--font-brand);
-  font-size: 13.5px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.detalle__pestana:hover {
-  color: var(--azul-medianoche);
-}
-
-.detalle__pestana_activa {
-  color: var(--azul-medianoche);
-  border-bottom-color: var(--ceruleo);
-  font-weight: 600;
-}

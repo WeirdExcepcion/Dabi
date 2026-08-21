@@ -9,9 +9,19 @@
 
 .editar-mat__encabezado {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 24px;
+}
+
+.editar-mat__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 8px;
 }
 
 .editar-mat__titulo {
@@ -69,14 +79,6 @@
   min-width: 0;
 }
 
-.editar-mat__campo_corto {
-  flex: 0 0 100px;
-}
-
-.editar-mat__campo_ancho {
-  margin-bottom: 16px;
-}
-
 .editar-mat__label {
   font-family: var(--font-brand);
   font-size: 11px;
@@ -110,53 +112,6 @@
 .editar-mat__select:disabled {
   background-color: var(--gris-niebla);
   color: var(--texto-secundario);
-}
-
-.editar-mat__boton-buscar {
-  align-self: flex-end;
-  padding: 11px 20px;
-  border: none;
-  border-radius: 6px;
-  background-color: var(--azul-primario);
-  color: var(--blanco);
-  font-family: var(--font-brand);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.15s ease;
-}
-
-.editar-mat__boton-buscar:hover:not(:disabled) {
-  background-color: var(--ceruleo);
-}
-
-.editar-mat__boton-buscar_secundario {
-  background-color: transparent;
-  color: var(--azul-medianoche);
-  border: 1.5px solid var(--azul-acero);
-}
-
-.editar-mat__boton-buscar_secundario:hover {
-  background-color: var(--gris-niebla);
-}
-
-.editar-mat__aviso {
-  font-family: var(--font-brand);
-  font-size: 13px;
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin: 4px 0 0;
-}
-
-.editar-mat__aviso_existe {
-  background-color: rgba(3, 120, 168, 0.1);
-  color: var(--azul-primario);
-}
-
-.editar-mat__aviso_nuevo {
-  background-color: rgba(29, 158, 117, 0.12);
-  color: #0F6E56;
 }
 
 .editar-mat__mensaje {
@@ -216,10 +171,6 @@
 @media (max-width: 620px) {
   .editar-mat__fila {
     flex-direction: column;
-  }
-
-  .editar-mat__campo_corto {
-    flex: 1;
   }
 }
 
@@ -294,34 +245,4 @@
   color: var(--texto-secundario);
   margin: 0 auto 24px;
   max-width: 420px;
-}
-
-.editar-mat__pestanas {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(2, 17, 60, 0.1);
-}
-
-.editar-mat__pestana {
-  padding: 10px 18px;
-  border: none;
-  border-bottom: 2px solid transparent;
-  background-color: transparent;
-  color: var(--texto-secundario);
-  font-family: var(--font-brand);
-  font-size: 13.5px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.editar-mat__pestana:hover {
-  color: var(--azul-medianoche);
-}
-
-.editar-mat__pestana_activa {
-  color: var(--azul-medianoche);
-  border-bottom-color: var(--ceruleo);
-  font-weight: 600;
 }

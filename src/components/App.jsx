@@ -17,8 +17,8 @@ import DetalleGrupo from './Alturas/DetalleGrupo/DetalleGrupo'
 import Verificar from './Verificar/Verificar'
 import RutaModulo from './RutaModulo/RutaModulo'
 import { FaltantesProvider } from '../context/FaltantesContext'
-
 import './App.css'
+
 
 function App() {
   const [session, setSession] = useState(null)
@@ -34,7 +34,6 @@ function App() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        console.log('AUTH:', _event)
         setSession(session)
       }
     )

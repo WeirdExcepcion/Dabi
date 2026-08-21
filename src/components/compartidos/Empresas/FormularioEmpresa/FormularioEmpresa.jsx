@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react'
-import { supabase } from "../../../../lib/supabaseClient";
+import { supabase } from '../../../../lib/supabaseClient'
 import { PUEDE_GESTIONAR_RUT, PUEDE_VER_RUT } from '../../../../constants/permisos'
+import { useCatalogos } from '../../../../hooks/useCatalogos'
 import SubirRut from '../../SubirRut/SubirRut'
 import './FormularioEmpresa.css'
 
+const CATALOGOS = ['arls', 'sectores']
+
+// onUsarExistente lo pasará quien necesite elegir una empresa ya registrada en
+// vez de crear una nueva — pensado para crear empresas desde la matrícula.
+// Sin esa prop el aviso de duplicados solo informa, que es el caso de hoy.
 function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar, onUsarExistente = null }) {
+  const { catalogos } = useCatalogos(CATALOGOS)
+  const { arls, sectores } = catalogos
   const esEdicion = empresa !== null
 
   const [razonSocial, setRazonSocial] = useState(empresa?.razon_social || '')
@@ -15,28 +23,13 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar, onUsar
   const [arlId, setArlId] = useState(empresa?.arl_id || '')
   const [sectorId, setSectorId] = useState(empresa?.sector_id || '')
 
-  const [arls, setArls] = useState([])
-  const [sectores, setSectores] = useState([])
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [similares, setSimilares] = useState([])
-  const [buscandoSimilares, setBuscandoSimilares] = useState(false)
   const [rutPath, setRutPath] = useState(empresa?.rut_path || null)
 
   const puedeGestionarRut = PUEDE_GESTIONAR_RUT.includes(rol)
   const puedeVerRut = PUEDE_VER_RUT.includes(rol)
-
-  useEffect(() => {
-    async function cargarCatalogos() {
-      const [resArls, resSectores] = await Promise.all([
-        supabase.from('arls').select('id, nombre').eq('activo', true).order('nombre'),
-        supabase.from('sectores').select('id, nombre').eq('activo', true).order('nombre'),
-      ])
-      if (resArls.data) setArls(resArls.data)
-      if (resSectores.data) setSectores(resSectores.data)
-    }
-    cargarCatalogos()
-  }, [])
 
   useEffect(() => {
     if (esEdicion) return
@@ -50,14 +43,10 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar, onUsar
         return
       }
 
-      setBuscandoSimilares(true)
-
       const { data, error } = await supabase.rpc('buscar_empresas_similares', {
         p_nit: nitLimpio || null,
         p_razon_social: nombreLimpio || null,
       })
-
-      setBuscandoSimilares(false)
 
       if (error) {
         console.error(error.message)
@@ -209,23 +198,15 @@ function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar, onUsar
         También se sugerirá al matricular.
       </p>
 
-        {esEdicion && puedeVerRut && (
+      {esEdicion && puedeVerRut && (
         <>
           <label className="form-empresa__label">RUT</label>
-          {puedeGestionarRut ? (
-            <SubirRut
-              empresaId={empresa.id}
-              rutPath={rutPath}
-              onSubido={(ruta) => setRutPath(ruta)}
-            />
-          ) : (
-            <SubirRut
-              empresaId={empresa.id}
-              rutPath={rutPath}
-              onSubido={() => {}}
-              soloLectura
-            />
-          )}
+          <SubirRut
+            empresaId={empresa.id}
+            rutPath={rutPath}
+            onSubido={setRutPath}
+            soloLectura={!puedeGestionarRut}
+          />
         </>
       )}
       

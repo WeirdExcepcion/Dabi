@@ -94,11 +94,6 @@
   background-color: rgba(3, 120, 168, 0.1);
 }
 
-.sel-busc__opcion_vacia {
-  color: var(--texto-secundario);
-  border-bottom: 1px solid rgba(2, 17, 60, 0.06);
-}
-
 .sel-busc__sin-resultados {
   padding: 12px;
   font-family: var(--font-brand);

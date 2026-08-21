@@ -12,6 +12,7 @@
   justify-content: space-between;
   padding: 18px 24px;
   background: var(--gradient-oscuro);
+  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
 }
 
 .home__brand {
@@ -98,8 +99,18 @@
   padding: 28px 20px 20px;
   background-color: var(--blanco);
   border-right: 1px solid rgba(2, 17, 60, 0.08);
-  transition: flex-basis 0.22s ease, padding 0.22s ease;
+  
+  /* overflow-x: hidden a propósito — este ancho SOLO cambia por la
+  animación de plegar/expandir (nunca por el usuario), así que nunca
+  debería aparecer una scrollbar horizontal. Sin esto, cualquier cosa
+  que desborde un instante durante la transición genera una scrollbar
+  que roba espacio vertical y mueve todo lo demás. */
+
+  overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: flex-basis 0.22s ease, padding 0.22s ease;
+  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s backwards;
 }
 
 .home__nav-eyebrow {
@@ -109,6 +120,7 @@
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: var(--ceruleo);
+  line-height: 1.4;
   margin: 0 0 4px;
 }
 
@@ -117,6 +129,7 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--azul-medianoche);
+  line-height: 1.4;
   margin: 0 0 28px;
 }
 
@@ -137,8 +150,8 @@
   right: 0;
   border-radius: 6px;
   background-color: var(--azul-medianoche);
-  transition:
-    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    transition:
+    top 0.32s cubic-bezier(0.22, 1, 0.36, 1),
     height 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   z-index: 0;
@@ -155,6 +168,9 @@
   font-weight: 500;
   color: var(--azul-medianoche);
   text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: background-color 0.15s ease, color 0.25s ease;
 }
 
@@ -171,6 +187,7 @@
   padding: 40px;
   min-width: 0;
   overflow-y: auto;
+  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.7s backwards;
 }
 
 @media (max-width: 720px) {
@@ -255,7 +272,9 @@
 
 .home__nav-superior {
   flex: 1;
+  overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   min-height: 0;
 }
 
@@ -314,21 +333,40 @@
 }
 
 .home__nav_plegado {
-  flex-basis: 54px;
+  flex: 0 0 54px;
   padding-left: 8px;
   padding-right: 8px;
-  overflow: hidden;
 }
 
 .home__nav_plegado .home__nav-eyebrow,
 .home__nav_plegado .home__nav-nombre,
 .home__nav_plegado .home__nav-lista,
+.home__nav_plegado .home__nav-indicador,
 .home__nav_plegado .home__nav-pie {
   display: none;
 }
 
 .home__nav_plegado .home__plegar svg {
   transform: rotate(180deg);
+}
+
+/* Mientras el menú se pliega/expande, este texto se congela en una sola
+   línea (con "…" si no cabe) para que el wrap no cambie a mitad de la
+   animación. En reposo (sin esta clase) el texto se organiza normal —
+   la altura ya quedó reservada de antemano por alturaFija en Home.jsx. */
+   
+.home__nav_transicionando .home__nav-eyebrow,
+.home__nav_transicionando .home__nav-nombre,
+.home__nav_transicionando .home__email,
+.home__nav_transicionando .home__logout {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home__nav_transicionando .home__nav-eyebrow,
+.home__nav_transicionando .home__logout {
+  min-width: 0;
 }
 
 .home__nav-cabecera {
@@ -371,16 +409,4 @@
   to {
     opacity: 1;
   }
-}
-
-.home__header {
-  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
-}
-
-.home__nav {
-  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s backwards;
-}
-
-.home__content {
-  animation: home-entrar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.7s backwards;
 }

@@ -1,9 +1,24 @@
-export const VERSION_ACTUAL = '2026.08.15'
+export const VERSION_ACTUAL = '2026.08.21'
 
 export const NOVEDADES = [
   {
+    version: '2026.08.21',
+    fecha: '21 de agosto de 2026',
+    titulo: 'Velocidad y menú lateral',
+    cambios: [
+      { tipo: 'mejora', texto: 'Los formularios de matrícula abren mucho más rápido. Las listas de empresas, ARL, EPS, áreas y cargos se cargan una sola vez al entrar, en vez de volver a pedirse cada vez que abres una ventana.' },
+      { tipo: 'mejora', texto: 'Empresas ahora se muestra por páginas y la búsqueda recorre toda la base, no solo lo que estaba cargado. Escribe y espera un instante a que traiga los resultados.' },
+      { tipo: 'mejora', texto: 'La lista de aprendices de una empresa también va por páginas, y puedes buscar por nombre, apellido o documento, en el orden que quieras.' },
+      { tipo: 'mejora', texto: 'Al eliminar una empresa ya no sale el aviso gris del navegador: ahora es una ventana del sistema, con el mismo aspecto que el resto.' },
+      { tipo: 'arreglo', texto: 'Al plegar y desplegar el menú lateral ya no se mueve el texto ni aparece una barra de desplazamiento por un momento.' },
+      { tipo: 'arreglo', texto: 'El indicador de la sección activa se desliza de una sección a otra y se queda en su sitio aunque cambies el tamaño de la ventana.' },
+      { tipo: 'arreglo', texto: 'En el selector de cargos, el botón "Aun así, crear" ya funciona. Antes no hacía nada al pulsarlo.' },
+      { tipo: 'arreglo', texto: 'El encabezado de la ventana de editar matrícula ya se ve con el estilo correcto.' },
+    ],
+  },
+  {
     version: '2026.08.15',
-    fecha: 'FECHA EN PALABRAS',
+    fecha: '15 de agosto de 2026',
     titulo: 'Navegación y detalles visuales',
     cambios: [
       { tipo: 'mejora', texto: 'El menú lateral ahora te acompaña al desplazarte: el correo y el botón de cerrar sesión siempre quedan a la vista.' },

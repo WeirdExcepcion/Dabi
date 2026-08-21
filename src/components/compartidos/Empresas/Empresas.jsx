@@ -2,9 +2,25 @@ import { useState, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabaseClient'
 import { PUEDE_CREAR_EMPRESAS, PUEDE_EDITAR_EMPRESAS, PUEDE_ELIMINAR_EMPRESAS } from '../../../constants/permisos'
+import { invalidarCatalogo } from '../../../lib/catalogos'
+import { useCatalogos } from '../../../hooks/useCatalogos'
 import Modal from '../Modal/Modal'
+import Confirmacion from '../Confirmacion/Confirmacion'
 import FormularioEmpresa from './FormularioEmpresa/FormularioEmpresa'
 import './Empresas.css'
+
+// Fuera del componente: si se declarara dentro, sería un array nuevo en cada
+// render y useCatalogos volvería a disparar su efecto.
+const CATALOGOS_FILTROS = ['arls', 'sectores']
+
+const POR_PAGINA = 25
+
+const ORDENES = {
+  alfabetico: { columna: 'razon_social', ascendente: true },
+  recientes: { columna: 'created_at', ascendente: false },
+  antiguas: { columna: 'created_at', ascendente: true },
+  aprendices: { columna: 'total_aprendices', ascendente: false },
+}
 
 const CAMPOS = `
   id, razon_social, nit, representante_legal, correo, telefono,
@@ -12,20 +28,36 @@ const CAMPOS = `
   arls ( nombre ), sectores ( nombre )
 `
 
+// PostgREST separa los filtros de or() con comas y agrupa con paréntesis, así
+// que esos caracteres dentro del término romperían la consulta.
+function limpiarParaFiltro(texto) {
+  return texto.replace(/[,()]/g, ' ').trim()
+}
+
 function Empresas() {
   const { perfil } = useOutletContext()
   const navegar = useNavigate()
 
+  const { catalogos } = useCatalogos(CATALOGOS_FILTROS)
+  const { arls, sectores } = catalogos
+
   const [empresas, setEmpresas] = useState([])
-  const [arls, setArls] = useState([])
-  const [sectores, setSectores] = useState([])
+  const [total, setTotal] = useState(0)
+  const [conteos, setConteos] = useState({ activas: 0, inactivas: 0 })
+  const [pagina, setPagina] = useState(0)
+
+  const [iniciando, setIniciando] = useState(true)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+
   const [mostrandoFormulario, setMostrandoFormulario] = useState(false)
   const [empresaEditando, setEmpresaEditando] = useState(null)
+  const [empresaEliminando, setEmpresaEliminando] = useState(null)
   const [verInactivas, setVerInactivas] = useState(false)
   const [mensajeAccion, setMensajeAccion] = useState('')
+
   const [busqueda, setBusqueda] = useState('')
+  const [busquedaAplicada, setBusquedaAplicada] = useState('')
 
   const [orden, setOrden] = useState('alfabetico')
   const [filtroArl, setFiltroArl] = useState('')
@@ -36,56 +68,99 @@ function Empresas() {
   const puedeEditar = PUEDE_EDITAR_EMPRESAS.includes(perfil.rol)
   const puedeEliminar = PUEDE_ELIMINAR_EMPRESAS.includes(perfil.rol)
 
-  async function obtenerEmpresas() {
-    const { data, error } = await supabase
-      .from('empresas_con_conteo')
-      .select(CAMPOS)
-      .order('razon_social', { ascending: true })
+  // El input se actualiza en cada tecla, pero la consulta espera a que pares.
+  useEffect(() => {
+    const temporizador = setTimeout(() => {
+      setBusquedaAplicada(busqueda.trim())
+      setPagina(0)
+    }, 400)
+    return () => clearTimeout(temporizador)
+  }, [busqueda])
 
-    if (error) {
+  async function obtenerEmpresas() {
+    setCargando(true)
+    setError('')
+
+    let consulta = supabase
+      .from('empresas_con_conteo')
+      .select(CAMPOS, { count: 'exact' })
+
+    if (!verInactivas) consulta = consulta.eq('activo', true)
+    if (filtroArl) consulta = consulta.eq('arl_id', filtroArl)
+    if (filtroSector) consulta = consulta.eq('sector_id', filtroSector)
+    if (minAprendices) consulta = consulta.gte('total_aprendices', Number(minAprendices))
+
+    if (busquedaAplicada) {
+      const termino = limpiarParaFiltro(busquedaAplicada)
+      if (termino) {
+        consulta = consulta.or(`razon_social.ilike.%${termino}%,nit.ilike.%${termino}%`)
+      }
+    }
+
+    const { columna, ascendente } = ORDENES[orden] || ORDENES.alfabetico
+    consulta = consulta.order(columna, { ascending: ascendente })
+
+    const desde = pagina * POR_PAGINA
+    const { data, error: errorConsulta, count } = await consulta.range(desde, desde + POR_PAGINA - 1)
+
+    if (errorConsulta) {
       setError('No se pudieron cargar las empresas')
-      console.error(error.message)
+      console.error(errorConsulta.message)
     } else {
-      setEmpresas(data)
+      setEmpresas(data || [])
+      setTotal(count || 0)
     }
 
     setCargando(false)
+    setIniciando(false)
+  }
+
+  async function obtenerConteos() {
+    const [resActivas, resInactivas] = await Promise.all([
+      supabase.from('empresas_con_conteo').select('id', { count: 'exact', head: true }).eq('activo', true),
+      supabase.from('empresas_con_conteo').select('id', { count: 'exact', head: true }).eq('activo', false),
+    ])
+    setConteos({
+      activas: resActivas.count || 0,
+      inactivas: resInactivas.count || 0,
+    })
   }
 
   useEffect(() => {
-    async function cargarCatalogos() {
-      const [resArls, resSectores] = await Promise.all([
-        supabase.from('arls').select('id, nombre').eq('activo', true).order('nombre'),
-        supabase.from('sectores').select('id, nombre').eq('activo', true).order('nombre'),
-      ])
-      if (resArls.data) setArls(resArls.data)
-      if (resSectores.data) setSectores(resSectores.data)
-    }
-
     obtenerEmpresas()
-    cargarCatalogos()
+  }, [busquedaAplicada, filtroArl, filtroSector, minAprendices, orden, verInactivas, pagina])
+
+  useEffect(() => {
+    obtenerConteos()
   }, [])
 
-  function handleEmpresaCreada() {
-    setMostrandoFormulario(false)
+  function refrescar() {
     obtenerEmpresas()
+    obtenerConteos()
+  }
+
+  function handleEmpresaCreada() {
+    invalidarCatalogo('empresas')
+    setMostrandoFormulario(false)
+    refrescar()
   }
 
   function handleEmpresaEditada() {
+    invalidarCatalogo('empresas')
     setEmpresaEditando(null)
-    obtenerEmpresas()
+    refrescar()
   }
 
   async function eliminarEmpresa(empresa) {
     setMensajeAccion('')
 
-    const { data, error } = await supabase.rpc('eliminar_empresa', {
+    const { data, error: errorRpc } = await supabase.rpc('eliminar_empresa', {
       p_empresa_id: empresa.id,
     })
 
-    if (error) {
+    if (errorRpc) {
       setMensajeAccion('No se pudo procesar la solicitud')
-      console.error(error.message)
+      console.error(errorRpc.message)
       return
     }
 
@@ -97,76 +172,44 @@ function Empresas() {
       setMensajeAccion(`${empresa.razon_social} se eliminó.`)
     }
 
-    obtenerEmpresas()
+    invalidarCatalogo('empresas')
+    refrescar()
   }
 
   async function reactivarEmpresa(empresa) {
     setMensajeAccion('')
 
-    const { error } = await supabase.rpc('reactivar_empresa', {
+    const { error: errorRpc } = await supabase.rpc('reactivar_empresa', {
       p_empresa_id: empresa.id,
     })
 
-    if (error) {
+    if (errorRpc) {
       setMensajeAccion('No se pudo reactivar')
-      console.error(error.message)
+      console.error(errorRpc.message)
       return
     }
 
-    obtenerEmpresas()
+    invalidarCatalogo('empresas')
+    refrescar()
   }
 
   function limpiarFiltros() {
     setFiltroArl('')
     setFiltroSector('')
     setMinAprendices('')
+    setPagina(0)
   }
 
-  if (cargando) return null
+  if (iniciando) return null
 
   if (error) {
     return <p className="empresas__mensaje">{error}</p>
   }
 
-  const activas = empresas.filter((e) => e.activo)
-  const inactivas = empresas.filter((e) => !e.activo)
-  let visibles = verInactivas ? empresas : activas
-
-  const termino = busqueda.trim().toLowerCase()
-  if (termino) {
-    visibles = visibles.filter(
-      (e) =>
-        e.razon_social.toLowerCase().includes(termino) ||
-        (e.nit || '').toLowerCase().includes(termino)
-    )
-  }
-
-  if (filtroArl) {
-    visibles = visibles.filter((e) => String(e.arl_id) === String(filtroArl))
-  }
-
-  if (filtroSector) {
-    visibles = visibles.filter((e) => String(e.sector_id) === String(filtroSector))
-  }
-
-  if (minAprendices) {
-    visibles = visibles.filter((e) => (e.total_aprendices || 0) >= Number(minAprendices))
-  }
-
-  visibles = [...visibles].sort((a, b) => {
-    if (orden === 'recientes') {
-      return new Date(b.created_at) - new Date(a.created_at)
-    }
-    if (orden === 'antiguas') {
-      return new Date(a.created_at) - new Date(b.created_at)
-    }
-    if (orden === 'aprendices') {
-      return (b.total_aprendices || 0) - (a.total_aprendices || 0)
-    }
-    return a.razon_social.localeCompare(b.razon_social)
-  })
-
   const hayFiltros = filtroArl || filtroSector || minAprendices
+  const hayCriterio = hayFiltros || busquedaAplicada
+  const totalPaginas = Math.ceil(total / POR_PAGINA)
+  const sinEmpresas = conteos.activas === 0 && conteos.inactivas === 0
 
   return (
     <section className="empresas">
@@ -177,7 +220,7 @@ function Empresas() {
         </div>
 
         <div className="empresas__header-acciones">
-          <span className="empresas__conteo">{activas.length} activas</span>
+          <span className="empresas__conteo">{conteos.activas} activas</span>
           {puedeCrear && !mostrandoFormulario && (
             <button
               className="empresas__boton-nueva"
@@ -210,6 +253,20 @@ function Empresas() {
         </Modal>
       )}
 
+      {empresaEliminando && (
+        <Confirmacion
+          titulo={`¿Eliminar ${empresaEliminando.razon_social}?`}
+          mensaje="Si tiene matrículas registradas se desactivará en lugar de borrarse, y su historial queda intacto."
+          textoConfirmar="Eliminar"
+          onConfirmar={() => {
+            const empresa = empresaEliminando
+            setEmpresaEliminando(null)
+            eliminarEmpresa(empresa)
+          }}
+          onCancelar={() => setEmpresaEliminando(null)}
+        />
+      )}
+
       <div className="empresas__buscador">
         <input
           type="text"
@@ -218,9 +275,9 @@ function Empresas() {
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
-        {termino && (
+        {busquedaAplicada && (
           <span className="empresas__resultado-conteo">
-            {visibles.length} {visibles.length === 1 ? 'resultado' : 'resultados'}
+            {total} {total === 1 ? 'resultado' : 'resultados'}
           </span>
         )}
       </div>
@@ -232,7 +289,7 @@ function Empresas() {
             id="orden"
             className="empresas__filtro-select"
             value={orden}
-            onChange={(e) => setOrden(e.target.value)}
+            onChange={(e) => { setOrden(e.target.value); setPagina(0) }}
           >
             <option value="alfabetico">Orden alfabético</option>
             <option value="recientes">Más recientes</option>
@@ -247,7 +304,7 @@ function Empresas() {
             id="f_sector"
             className="empresas__filtro-select"
             value={filtroSector}
-            onChange={(e) => setFiltroSector(e.target.value)}
+            onChange={(e) => { setFiltroSector(e.target.value); setPagina(0) }}
           >
             <option value="">Todos</option>
             {sectores.map((s) => (
@@ -262,7 +319,7 @@ function Empresas() {
             id="f_arl"
             className="empresas__filtro-select"
             value={filtroArl}
-            onChange={(e) => setFiltroArl(e.target.value)}
+            onChange={(e) => { setFiltroArl(e.target.value); setPagina(0) }}
           >
             <option value="">Todas</option>
             {arls.map((a) => (
@@ -279,7 +336,7 @@ function Empresas() {
             min="0"
             className="empresas__filtro-input"
             value={minAprendices}
-            onChange={(e) => setMinAprendices(e.target.value)}
+            onChange={(e) => { setMinAprendices(e.target.value); setPagina(0) }}
             placeholder="0"
           />
         </div>
@@ -295,92 +352,118 @@ function Empresas() {
         <p className="empresas__mensaje-accion">{mensajeAccion}</p>
       )}
 
-      {inactivas.length > 0 && (
+      {conteos.inactivas > 0 && (
         <button
           className="empresas__toggle"
-          onClick={() => setVerInactivas((v) => !v)}
+          onClick={() => { setVerInactivas((v) => !v); setPagina(0) }}
         >
-          {verInactivas ? 'Ocultar inactivas' : `Ver inactivas (${inactivas.length})`}
+          {verInactivas ? 'Ocultar inactivas' : `Ver inactivas (${conteos.inactivas})`}
         </button>
       )}
 
-      {empresas.length === 0 ? (
+      {sinEmpresas ? (
         <p className="empresas__mensaje">Aún no hay empresas registradas.</p>
-      ) : visibles.length === 0 ? (
-        <p className="empresas__mensaje">Ninguna empresa coincide con los filtros.</p>
+      ) : total === 0 ? (
+        <p className="empresas__mensaje">
+          {hayCriterio
+            ? 'Ninguna empresa coincide con los filtros.'
+            : 'No hay empresas para mostrar.'}
+        </p>
       ) : (
-        <div className="empresas__tabla-wrap entra-bloque">
-          <table className="empresas__tabla entra-tabla">
-            <thead>
-              <tr>
-                <th className="empresas__th">Razón social</th>
-                <th className="empresas__th">NIT</th>
-                <th className="empresas__th">Representante legal</th>
-                <th className="empresas__th">Teléfono</th>
-                <th className="empresas__th">ARL</th>
-                <th className="empresas__th">Sector</th>
-                <th className="empresas__th">Aprendices</th>
-                <th className="empresas__th"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibles.map((empresa) => (
-                <tr
-                  key={empresa.id}
-                  className="empresas__fila"
-                  onClick={() => navegar(`/alturas/empresas/${empresa.id}`)}
-                >
-                  <td className="empresas__td empresas__td_principal">{empresa.razon_social}</td>
-                  <td className="empresas__td">{empresa.nit || '—'}</td>
-                  <td className="empresas__td">{empresa.representante_legal || '—'}</td>
-                  <td className="empresas__td">{empresa.telefono || '—'}</td>
-                  <td className="empresas__td">{empresa.arls?.nombre || '—'}</td>
-                  <td className="empresas__td">{empresa.sectores?.nombre || '—'}</td>
-                  <td className="empresas__td empresas__td_conteo">
-                    {empresa.total_aprendices || 0}
-                  </td>
-                  <td className="empresas__td empresas__td_acciones">
-                    {puedeEditar && (
-                      <button
-                        className="empresas__boton-editar"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setEmpresaEditando(empresa)
-                        }}
-                      >
-                        Editar
-                      </button>
-                    )}
-                    {puedeEliminar && empresa.activo && (
-                      <button
-                        className="empresas__boton-eliminar"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (window.confirm(`¿Eliminar ${empresa.razon_social}? Si tiene matrículas registradas, se desactivará en lugar de borrarse.`)) {
-                            eliminarEmpresa(empresa)
-                          }
-                        }}
-                      >
-                        Eliminar
-                      </button>
-                    )}
-                    {puedeEliminar && !empresa.activo && (
-                      <button
-                        className="empresas__boton-reactivar"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          reactivarEmpresa(empresa)
-                        }}
-                      >
-                        Reactivar
-                      </button>
-                    )}
-                  </td>
+        <>
+          <div className="empresas__tabla-wrap entra-bloque">
+            <table className="empresas__tabla entra-tabla">
+              <thead>
+                <tr>
+                  <th className="empresas__th">Razón social</th>
+                  <th className="empresas__th">NIT</th>
+                  <th className="empresas__th">Representante legal</th>
+                  <th className="empresas__th">Teléfono</th>
+                  <th className="empresas__th">ARL</th>
+                  <th className="empresas__th">Sector</th>
+                  <th className="empresas__th">Aprendices</th>
+                  <th className="empresas__th"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {empresas.map((empresa) => (
+                  <tr
+                    key={empresa.id}
+                    className="empresas__fila"
+                    onClick={() => navegar(`/alturas/empresas/${empresa.id}`)}
+                  >
+                    <td className="empresas__td empresas__td_principal">{empresa.razon_social}</td>
+                    <td className="empresas__td">{empresa.nit || '—'}</td>
+                    <td className="empresas__td">{empresa.representante_legal || '—'}</td>
+                    <td className="empresas__td">{empresa.telefono || '—'}</td>
+                    <td className="empresas__td">{empresa.arls?.nombre || '—'}</td>
+                    <td className="empresas__td">{empresa.sectores?.nombre || '—'}</td>
+                    <td className="empresas__td empresas__td_conteo">
+                      {empresa.total_aprendices || 0}
+                    </td>
+                    <td className="empresas__td empresas__td_acciones">
+                      {puedeEditar && (
+                        <button
+                          className="empresas__boton-editar"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setEmpresaEditando(empresa)
+                          }}
+                        >
+                          Editar
+                        </button>
+                      )}
+                      {puedeEliminar && empresa.activo && (
+                        <button
+                          className="empresas__boton-eliminar"
+                                                    onClick={(e) => {
+                            e.stopPropagation()
+                            setEmpresaEliminando(empresa)
+                          }}
+                        >
+                          Eliminar
+                        </button>
+                      )}
+                      {puedeEliminar && !empresa.activo && (
+                        <button
+                          className="empresas__boton-reactivar"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            reactivarEmpresa(empresa)
+                          }}
+                        >
+                          Reactivar
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {totalPaginas > 1 && (
+            <div className="empresas__paginacion">
+              <button
+                className="empresas__pagina-boton"
+                onClick={() => setPagina((p) => Math.max(p - 1, 0))}
+                disabled={pagina === 0 || cargando}
+              >
+                ← Anterior
+              </button>
+              <span className="empresas__pagina-info">
+                Página {pagina + 1} de {totalPaginas}
+              </span>
+              <button
+                className="empresas__pagina-boton"
+                onClick={() => setPagina((p) => Math.min(p + 1, totalPaginas - 1))}
+                disabled={pagina >= totalPaginas - 1 || cargando}
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
+        </>
       )}
     </section>
   )

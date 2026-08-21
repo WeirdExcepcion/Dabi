@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { SECCIONES } from '../../constants/navegacion'
@@ -17,10 +17,20 @@ function Home({ session, perfil }) {
   const [auditoriaAbierta, setAuditoriaAbierta] = useState(false)
   const [novedadesAbiertas, setNovedadesAbiertas] = useState(false)
   const [menuPlegado, setMenuPlegado] = useState(false)
+  // true mientras dura la animación de ancho del menú (plegar/expandir).
+  // Mientras esto es true, el rol/nombre/correo/botón de salir se congelan
+  // en una sola línea (ver .home__nav_transicionando en Home.css) para que
+  // el wrap del texto no salte a mitad de la animación.
+  const [transicionando, setTransicionando] = useState(false)
   const [hayNovedades, setHayNovedades] = useState(false)
   const navegar = useNavigate()
   const ubicacion = useLocation()
   const listaRef = useRef(null)
+  const navRef = useRef(null)
+  const eyebrowRef = useRef(null)
+  const nombreRef = useRef(null)
+  const emailRef = useRef(null)
+  const [alturaFija, setAlturaFija] = useState({ rol: null, nombre: null, email: null })
   const [indicador, setIndicador] = useState({ top: 0, alto: 0, visible: false })
 
   useEffect(() => {
@@ -40,19 +50,50 @@ function Home({ session, perfil }) {
     const cuadro = listaRef.current
     if (!cuadro) return
 
-    const activo = cuadro.querySelector('.home__nav-link_activo')
-    if (!activo) {
-      setIndicador((i) => ({ ...i, visible: false }))
-      return
+    // offsetTop/offsetHeight (no getBoundingClientRect): dan la posición ya relativa
+    // a .home__nav-lista (su position:relative), sin que el scroll del navegador
+    // pueda desincronizar el cálculo.
+
+    const medir = () => {
+      const activo = cuadro.querySelector('.home__nav-link_activo')
+      if (!activo) {
+        setIndicador((i) => ({ ...i, visible: false }))
+        return
+      }
+
+      setIndicador({
+        top: activo.offsetTop,
+        alto: activo.offsetHeight,
+        visible: true,
+      })
     }
 
-    setIndicador({
-      top: activo.offsetTop,
-      alto: activo.offsetHeight,
-      visible: true,
-    })
+    // Ya no hace falta ResizeObserver aquí: .home__nav-link tiene
+    // white-space: nowrap permanente, así que su alto nunca cambia sin
+    // importar el ancho de .home__nav — por lo tanto la posición del
+    // activo dentro de la lista no se mueve durante la animación de
+    // plegar/expandir, y basta con medir una vez cuando cambia la ruta,
+    // el menú se pliega/expande, o cambia el perfil.
+    const raf = requestAnimationFrame(medir)
+    return () => cancelAnimationFrame(raf)
   }, [ubicacion.pathname, menuPlegado, perfil])
   
+  // Mide una sola vez (al montar, con el menú ya expandido) cuánto alto
+  // necesita realmente el rol/nombre/correo — 1 o 2 líneas según el
+  // contenido — y lo deja fijo como min-height. Así el texto se puede
+  // envolver libremente sin que nada de abajo se mueva, sin importar
+  // cuántas veces se pliegue/expanda el menú después. No depende de
+  // menuPlegado a propósito: si volviera a medir en cada toggle, mediría
+  // con el texto ya congelado en una línea (por transicionando) y
+  // guardaría un alto incorrecto — eso fue un bug real que ya pasó aquí.
+  useLayoutEffect(() => {
+    const altoRol = eyebrowRef.current?.offsetHeight
+    const altoNombre = nombreRef.current?.offsetHeight
+    const altoEmail = emailRef.current?.offsetHeight
+    if (!altoRol || !altoNombre || !altoEmail) return
+    setAlturaFija({ rol: altoRol, nombre: altoNombre, email: altoEmail })
+  }, [perfil?.rol, perfil?.nombre_completo, session?.user?.email])
+
   function cerrarNovedades() {
     localStorage.setItem('dabi_version_vista', VERSION_ACTUAL)
     setNovedadesAbiertas(false)
@@ -127,13 +168,38 @@ function Home({ session, perfil }) {
       )}
       
       <div className="home__body">
-        <nav className={menuPlegado ? 'home__nav home__nav_plegado' : 'home__nav'}>
+        <nav
+          ref={navRef}
+          className={[
+            'home__nav',
+            menuPlegado && 'home__nav_plegado',
+            transicionando && 'home__nav_transicionando',
+          ].filter(Boolean).join(' ')}
+
+          // Se apaga transicionando cuando termina la transición de flex-basis
+          // (el ancho), no antes por tiempo fijo — así nunca se desincroniza
+          // aunque cambies la duración de la transición en el CSS.
+          onTransitionEnd={(e) => {
+            if (e.target === e.currentTarget && e.propertyName === 'flex-basis') {
+              setTransicionando(false)
+            }
+          }}
+        >
           <div className="home__nav-superior">
             <div className="home__nav-cabecera">
-              <p className="home__nav-eyebrow">{perfil.rol}</p>
+              <p
+                className="home__nav-eyebrow"
+                ref={eyebrowRef}
+                style={alturaFija.rol ? { minHeight: `${alturaFija.rol}px` } : undefined}
+              >
+                {perfil.rol}
+              </p>
               <button
                 className="home__plegar"
-                onClick={() => setMenuPlegado((v) => !v)}
+                onClick={() => {
+                  setTransicionando(true)
+                  setMenuPlegado((v) => !v)
+                }}
                 title={menuPlegado ? 'Mostrar menú' : 'Ocultar menú'}
                 aria-label={menuPlegado ? 'Mostrar menú' : 'Ocultar menú'}
               >
@@ -142,14 +208,20 @@ function Home({ session, perfil }) {
                 </svg>
               </button>
             </div>
-            <p className="home__nav-nombre">{perfil.nombre_completo}</p>
+            <p
+              className="home__nav-nombre"
+              ref={nombreRef}
+              style={alturaFija.nombre ? { minHeight: `${alturaFija.nombre}px` } : undefined}
+            >
+              {perfil.nombre_completo}
+            </p>
 
             <ul className="home__nav-lista" ref={listaRef}>
-              {indicador.visible && (
+                {indicador.visible && (
                 <span
                   className="home__nav-indicador"
                   style={{
-                    transform: `translateY(${indicador.top}px)`,
+                    top: `${indicador.top}px`,
                     height: `${indicador.alto}px`,
                   }}
                 />
@@ -170,7 +242,13 @@ function Home({ session, perfil }) {
           </div>
 
           <div className="home__nav-pie">
-            <p className="home__email">{session.user.email}</p>
+            <p
+              className="home__email"
+              ref={emailRef}
+              style={alturaFija.email ? { minHeight: `${alturaFija.email}px` } : undefined}
+            >
+              {session.user.email}
+            </p>
             <div className="home__pie-acciones">
               <button className="home__logout" onClick={handleLogout}>
                 Cerrar sesión

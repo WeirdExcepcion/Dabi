@@ -1,50 +1,38 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { pedirCatalogo } from '../lib/catalogos'
 
-export function useCatalogos() {
-  const [catalogos, setCatalogos] = useState({
-    empresas: [],
-    arls: [],
-    eps: [],
-    areas: [],
-    cargos: [],
-    sectores: [],
-    nivelesEducativos: [],
-  })
+const TODOS = ['empresas', 'arls', 'eps', 'areas', 'cargos', 'sectores', 'nivelesEducativos']
+
+export function useCatalogos(nombres = TODOS) {
+  // La clave estabiliza la dependencia del efecto: si se pasara el array,
+  // una literal nueva en cada render lo volvería a disparar.
+  const clave = nombres.join(',')
+
+  const [catalogos, setCatalogos] = useState(() =>
+    Object.fromEntries(nombres.map((n) => [n, []]))
+  )
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    async function cargar() {
-      const [empresas, arls, eps, areas, cargos, sectores, niveles] = await Promise.all([
-        supabase.from('empresas').select('id, razon_social, arl_id, sector_id, es_independiente').eq('activo', true).order('razon_social'),
-        supabase.from('arls').select('id, nombre').eq('activo', true).order('nombre'),
-        supabase.from('eps').select('id, nombre').eq('activo', true).order('nombre'),
-        supabase.from('areas').select('id, nombre').eq('activo', true).order('nombre'),
-        supabase.from('cargos').select('id, nombre').eq('activo', true).order('nombre'),
-        supabase.from('sectores').select('id, nombre').eq('activo', true).order('nombre'),
-        supabase.from('niveles_educativos').select('id, nombre').order('nombre'),
-      ])
+    let vigente = true
+    setCargando(true)
 
-      const resultados = [empresas, arls, eps, areas, cargos, sectores, niveles]
-      resultados.forEach((r) => {
-        if (r.error) console.error('Error cargando catálogo:', r.error.message)
+    Promise.all(nombres.map(pedirCatalogo))
+      .then((listas) => {
+        if (!vigente) return
+        setCatalogos(Object.fromEntries(nombres.map((n, i) => [n, listas[i]])))
+        setCargando(false)
+      })
+      .catch((e) => {
+        if (!vigente) return
+        console.error('Error cargando catálogos:', e.message)
+        setCargando(false)
       })
 
-      setCatalogos({
-        empresas: empresas.data || [],
-        arls: arls.data || [],
-        eps: eps.data || [],
-        areas: areas.data || [],
-        cargos: cargos.data || [],
-        sectores: sectores.data || [],
-        nivelesEducativos: niveles.data || [],
-      })
-
-      setCargando(false)
+    return () => {
+      vigente = false
     }
-
-    cargar()
-  }, [])
+  }, [clave])
 
   return { catalogos, cargando }
 }

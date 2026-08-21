@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { supabase } from '../../../../lib/supabaseClient'
 import { useCatalogos } from '../../../../hooks/useCatalogos'
+import { useCargosLocales } from '../../../../hooks/useCargosLocales'
 import { PUEDE_CAMBIAR_ESTADO_GRUPO } from '../../../../constants/permisos'
-import SelectorBuscable from "../../../compartidos/SelectorBuscable/SelectorBuscable";
+import SelectorBuscable from '../../../compartidos/SelectorBuscable/SelectorBuscable'
 import SelectorCargo from '../../../compartidos/SelectorCargo/SelectorCargo'
+import Pestanas from '../../../compartidos/Pestanas/Pestanas'
 import './EditarMatricula.css'
 import { ESTADOS_MATRICULA, ESTADOS_APROBACION } from '../../../../constants/estados'
 import DocumentosMatricula from '../../DocumentosMatricula/DocumentosMatricula'
@@ -19,7 +21,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const [areaId, setAreaId] = useState(matricula.area_id || '')
   const [cargoId, setCargoId] = useState(matricula.cargo_id || '')
   const [sectorId, setSectorId] = useState(matricula.sector_id || '')
-  const [cargosLocales, setCargosLocales] = useState([])
+  const { cargosLocales, agregarCargo } = useCargosLocales(catalogos.cargos)
   const [fechaArl, setFechaArl] = useState(matricula.fecha_arl || '')
   const [fechaExamen, setFechaExamen] = useState(matricula.fecha_examen || '')
   const [estado, setEstado] = useState(matricula.estado)
@@ -155,22 +157,14 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
           </p>
         </div>
       )}
-        <div className="editar-mat__pestanas">
-        <button
-          type="button"
-          className={pestana === 'datos' ? 'editar-mat__pestana editar-mat__pestana_activa' : 'editar-mat__pestana'}
-          onClick={() => setPestana('datos')}
-        >
-          Datos
-        </button>
-        <button
-          type="button"
-          className={pestana === 'documentos' ? 'editar-mat__pestana editar-mat__pestana_activa' : 'editar-mat__pestana'}
-          onClick={() => setPestana('documentos')}
-        >
-          Documentos
-        </button>
-      </div>
+      <Pestanas
+        activa={pestana}
+        onCambio={setPestana}
+        opciones={[
+          { id: 'datos', etiqueta: 'Datos' },
+          { id: 'documentos', etiqueta: 'Documentos' },
+        ]}
+      />
 
       {pestana === 'documentos' && (
         <DocumentosMatricula
@@ -268,14 +262,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
               cargos={[...catalogos.cargos, ...cargosLocales]}
               valor={cargoId}
               onCambio={setCargoId}
-              onCargoCreado={(nuevo) =>
-                    setCargosLocales((antes) => {
-                      const yaEsta =
-                        antes.some((c) => c.id === nuevo.id) ||
-                        catalogos.cargos.some((c) => c.id === nuevo.id)
-                      return yaEsta ? antes : [...antes, nuevo]
-                    })
-                  }
+              onCargoCreado={agregarCargo}
             />
           </div>
         </div>
