@@ -108,3 +108,33 @@ export const NOVEDADES = [
     ],
   },
 ]
+
+export const VERSION_CONTABILIDAD = '2026.08.26'
+
+export const NOVEDADES_CONTABILIDAD = [
+  {
+    version: '2026.08.26',
+    fecha: '26 de agosto de 2026',
+    titulo: 'Primer registro diario',
+    cambios: [
+      { tipo: 'nuevo', texto: 'Contabilidad tiene su propio módulo, con el registro diario de matrículas del día que elijas.' },
+      { tipo: 'nuevo', texto: 'La columna "Aprendiz" trae el nombre, el tipo y el número de documento en un solo texto, listo para copiar y pegar al software contable.' },
+      { tipo: 'nuevo', texto: 'Con el botón "Ver datos separados" puedes cambiar a tres columnas — nombre completo, tipo y número — y el sistema recuerda cómo lo prefieres.' },
+    ],
+  },
+]
+
+// Cada módulo lleva sus propias novedades y su propia marca de "ya visto",
+// para que entrar a uno no dé por leídas las novedades del otro.
+export const NOVEDADES_MODULO = {
+  alturas: {
+    version: VERSION_ACTUAL,
+    clave: 'dabi_version_vista',
+    entradas: NOVEDADES,
+  },
+  contabilidad: {
+    version: VERSION_CONTABILIDAD,
+    clave: 'dabi_version_vista_contabilidad',
+    entradas: NOVEDADES_CONTABILIDAD,
+  },
+}

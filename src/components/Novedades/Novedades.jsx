@@ -1,4 +1,3 @@
-import { NOVEDADES } from '../../constants/novedades'
 import './Novedades.css'
 
 const ETIQUETAS = {
@@ -7,7 +6,8 @@ const ETIQUETAS = {
   arreglo: 'Corregido',
 }
 
-function Novedades({ onCerrar }) {
+// Las entradas llegan por prop porque cada módulo tiene su propia lista.
+function Novedades({ entradas = [], onCerrar }) {
   return (
     <div className="novedades">
       <div className="novedades__encabezado">
@@ -26,7 +26,7 @@ function Novedades({ onCerrar }) {
       </div>
 
       <div className="novedades__scroll">
-        {NOVEDADES.map((v) => (
+        {entradas.map((v) => (
           <section key={v.version} className="novedades__version">
             <div className="novedades__version-cabecera">
               <span className="novedades__version-titulo">{v.titulo}</span>
