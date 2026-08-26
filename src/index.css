@@ -67,6 +67,11 @@ body {
 .entra-bloque {
   opacity: 0;
   animation: entrada-bloque 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  /* Los envoltorios de tabla declaran overflow-x: auto, y al declarar un
+     solo eje el navegador pone el otro en auto. Como el translateY de las
+     animaciones extiende el área desplazable, aparecía una barra vertical
+     durante la entrada. Se corta aquí, donde está la causa. */
+  overflow-y: hidden;
 }
 
 .entra-tabla tbody tr {
