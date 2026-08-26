@@ -1,0 +1,207 @@
+.conta-reg__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.conta-reg__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 6px;
+}
+
+.conta-reg__titulo {
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.conta-reg__fecha-larga {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.conta-reg__acciones {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.conta-reg__campo-fecha {
+  display: flex;
+  flex-direction: column;
+}
+
+.conta-reg__label {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.conta-reg__input-fecha {
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+}
+
+.conta-reg__input-fecha:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.conta-reg__toggle {
+  padding: 11px 18px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.conta-reg__toggle:hover {
+  border-color: var(--ceruleo);
+  background-color: var(--blanco);
+}
+
+.conta-reg__resumen {
+  margin-bottom: 12px;
+}
+
+.conta-reg__conteo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+}
+
+.conta-reg__mensaje {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
+.conta-reg__tabla-wrap {
+  background-color: var(--blanco);
+  border-radius: 8px;
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  overflow-x: auto;
+}
+
+.conta-reg__tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.conta-reg__th {
+  padding: 14px 16px;
+  text-align: left;
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+  border-bottom: 1px solid rgba(2, 17, 60, 0.08);
+  white-space: nowrap;
+}
+
+.conta-reg__td {
+  padding: 14px 16px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  border-bottom: 1px solid rgba(2, 17, 60, 0.05);
+}
+
+.conta-reg__tabla tbody tr:last-child .conta-reg__td {
+  border-bottom: none;
+}
+
+.conta-reg__tabla tbody tr:hover {
+  background-color: var(--gris-niebla);
+}
+
+.conta-reg__td_fecha,
+.conta-reg__td_doc {
+  white-space: nowrap;
+}
+
+.conta-reg__td_principal {
+  font-weight: 500;
+}
+
+/* El texto que el contable copia y pega al software contable: monoespaciado
+   para que se lea sin ambigüedad y seleccionable de un doble clic. */
+.conta-reg__td_identificacion {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.conta-reg__paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.conta-reg__pagina-boton {
+  padding: 8px 16px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.conta-reg__pagina-boton:hover:not(:disabled) {
+  border-color: var(--ceruleo);
+  background-color: var(--gris-niebla);
+}
+
+.conta-reg__pagina-boton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.conta-reg__pagina-info {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--texto-secundario);
+}
+
+@media (max-width: 720px) {
+  .conta-reg__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

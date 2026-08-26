@@ -16,6 +16,8 @@ import Grupos from './Alturas/Grupos/Grupos'
 import DetalleGrupo from './Alturas/DetalleGrupo/DetalleGrupo'
 import Verificar from './Verificar/Verificar'
 import RutaModulo from './RutaModulo/RutaModulo'
+import Contabilidad from './Contabilidad/Contabilidad'
+import RegistroContabilidad from './Contabilidad/RegistroContabilidad/RegistroContabilidad'
 import { FaltantesProvider } from '../context/FaltantesContext'
 import './App.css'
 
@@ -83,7 +85,8 @@ function App() {
       )}
 
       {/* Privado — requiere sesión */}
-      {session ? (
+            {session ? (
+        <>
         <Route
           path="/alturas"
           element={
@@ -104,8 +107,21 @@ function App() {
           <Route path="personal" element={<Personal />} />
           <Route path="listado" element={<ListadoGeneral />} />
           <Route path="grupos" element={<Grupos />} />
-          <Route path="grupos/:grupoId" element={<DetalleGrupo />} />
+                    <Route path="grupos/:grupoId" element={<DetalleGrupo />} />
         </Route>
+
+        <Route
+          path="/contabilidad"
+          element={
+            <RutaModulo perfil={perfil} modulo="contabilidad">
+              <Contabilidad session={session} perfil={perfil} />
+            </RutaModulo>
+          }
+        >
+          <Route index element={<Navigate to="/contabilidad/registro" replace />} />
+          <Route path="registro" element={<RegistroContabilidad />} />
+        </Route>
+        </>
       ) : (
         <Route path="*" element={<Navigate to="/login" replace />} />
       )}

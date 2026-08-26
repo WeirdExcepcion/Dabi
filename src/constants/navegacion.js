@@ -35,3 +35,17 @@ export const SECCIONES = [
     roles: ['admin', 'gerente-general','director-operaciones','coordinador-procesos', 'director-operaciones', 'coordinador-procesos', 'coordinador', 'supervisor','espectador'],
   },
 ]
+export const SECCIONES_CONTABILIDAD = [
+  {
+    ruta: '/contabilidad/registro',
+    etiqueta: 'Registro diario',
+    roles: [
+      'admin',
+      'gerente-general',
+      'director-operaciones',
+      'coordinador-procesos',
+      'contable',
+      'auxiliar-cont',
+    ],
+  },
+]

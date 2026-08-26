@@ -11,3 +11,13 @@ export function formatearFechaCorta(iso) {
   const [anio, mes, dia] = iso.split('-')
   return `${dia}/${mes}/${anio}`
 }
+
+const MESES = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+]
+
+export function formatearFechaLarga(iso) {
+  const [anio, mes, dia] = iso.split('-').map(Number)
+  return `${dia} de ${MESES[mes - 1]} de ${anio}`
+}
