@@ -25,6 +25,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
   const [fechaArl, setFechaArl] = useState(matricula.fecha_arl || '')
   const [fechaExamen, setFechaExamen] = useState(matricula.fecha_examen || '')
   const [estado, setEstado] = useState(matricula.estado)
+  const [observaciones, setObservaciones] = useState(matricula.observaciones || '')
 
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -35,8 +36,20 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
     return valor === '' ? null : Number(valor)
   }
 
-  function opcionalFecha(valor) {
+    function opcionalFecha(valor) {
     return valor === '' ? null : valor
+  }
+
+  // null y no '' cuando queda vacío: enviar '' sobre una matrícula que ya
+  // tenía null contaría como cambio y quedaría auditado sin haber cambiado nada.
+  function opcionalTexto(valor) {
+    return valor.trim() === '' ? null : valor.trim()
+  }
+
+  // null y no '' cuando queda vacío: enviar '' sobre una matrícula que ya
+  // tenía null contaría como cambio y quedaría auditado sin haber cambiado nada.
+  function opcionalTexto(valor) {
+    return valor.trim() === '' ? null : valor.trim()
   }
 
   async function guardar() {
@@ -58,6 +71,7 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
       sector_id: opcional(sectorId),
       fecha_arl: opcionalFecha(fechaArl),
       fecha_examen: opcionalFecha(fechaExamen),
+      observaciones: opcionalTexto(observaciones),
     }
 
     if (puedeEstadoGrupo) {
@@ -317,6 +331,20 @@ function EditarMatricula({ matricula, rol, onGuardada, onCancelar }) {
               onChange={(e) => setFechaExamen(e.target.value)}
             />
           </div>
+        </div>
+      </fieldset>
+
+      <fieldset className="editar-mat__seccion">
+        <legend className="editar-mat__legend">Observaciones</legend>
+        <div className="editar-mat__campo">
+          <textarea
+            id="edit_observaciones"
+            className="editar-mat__textarea"
+            value={observaciones}
+            onChange={(e) => setObservaciones(e.target.value)}
+            rows={3}
+            placeholder="Aclaraciones, permisos, de qué se trata el documento «Otro»…"
+          />
         </div>
       </fieldset>
               </>

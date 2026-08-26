@@ -121,6 +121,13 @@ function DetalleMatricula({ matricula, onCerrar }) {
         </div>
       </div>
 
+      {matricula.observaciones && (
+        <div className="detalle__seccion">
+          <p className="detalle__seccion-titulo">Observaciones</p>
+          <p className="detalle__observaciones">{matricula.observaciones}</p>
+        </div>
+      )}
+
       {certificado && (
         <div className="detalle__seccion">
           <p className="detalle__seccion-titulo">Certificado</p>

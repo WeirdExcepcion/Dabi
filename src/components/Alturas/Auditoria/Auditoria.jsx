@@ -13,11 +13,13 @@ const ETIQUETAS_CAMPO = {
   fecha_examen: 'Examen médico',
   grupo_id: 'Grupo',
   estado: 'Estado',
+  observaciones: 'Observaciones',
 }
 
 const ACCIONES = {
   edicion_certificada: 'editó directamente',
   edicion_certificada_aprobada: 'solicitó un cambio',
+  edicion_observaciones: 'escribió una observación',
 }
 
 const ESTADOS = {

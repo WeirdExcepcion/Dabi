@@ -11,6 +11,11 @@ const DOCS_MATRICULA = [
   { tipo: 'arl', etiqueta: 'ARL' },
   { tipo: 'eps', etiqueta: 'EPS' },
   { tipo: 'examen_medico', etiqueta: 'Examen médico' },
+  {
+    tipo: 'otro',
+    etiqueta: 'Otro',
+    nota: 'Permisos, aclaraciones, correos… di de qué se trata en las observaciones.',
+  },
 ]
 
 function extensionDe(archivo) {
@@ -191,6 +196,28 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
     cargar()
   }
 
+    // La marca de SENA justifica que NO haya archivo, así que la fila puede
+  // no existir todavía: por eso upsert y no update como las otras marcas.
+  async function marcarSena(valor) {
+    setError('')
+
+    const { error: errorMarca } = await supabase
+      .from('documentos_aprendiz')
+      .upsert(
+        { aprendiz_id: aprendizId, tipo: 'certificado_previo', es_sena: valor },
+        { onConflict: 'aprendiz_id,tipo' }
+      )
+
+    if (errorMarca) {
+      setError('No se pudo guardar la marca')
+      console.error(errorMarca.message)
+      return
+    }
+
+    cargar()
+    if (matriculaId) refrescarUna(matriculaId)
+  }
+
   async function verArchivo(ruta) {
     setError('')
 
@@ -209,6 +236,8 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
 
   function Fila({ tipo, etiqueta, doc, alSubir, deshabilitado, nota, marca }) {
     const tiene = Boolean(doc?.archivo_path)
+    const marcado = Boolean(marca && doc?.[marca.campo])
+    const justificado = marcado && marca.sinArchivo
     const ocupado = subiendo === tipo
 
     return (
@@ -217,16 +246,18 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
           <span className="doc-fila__etiqueta">{etiqueta}</span>
           {tiene ? (
             <span className="doc-fila__estado doc-fila__estado_ok">Cargado</span>
+          ) : justificado ? (
+            <span className="doc-fila__estado doc-fila__estado_ok">Justificado</span>
           ) : (
             <span className="doc-fila__estado">Sin cargar</span>
           )}
-          {marca && tiene && (
+          {marca && (tiene || marca.sinArchivo) && (
             <label className="doc-fila__marca">
               <input
                 type="checkbox"
-                checked={Boolean(doc[marca.campo])}
+                checked={marcado}
                 onChange={(e) => marca.alCambiar(e.target.checked)}
-                disabled={soloLectura}
+                disabled={soloLectura || deshabilitado}
               />
               {marca.etiqueta}
             </label>
@@ -294,17 +325,12 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
             doc={docsAprendiz.certificado_previo}
             alSubir={subirDeAprendiz}
             deshabilitado={!aprendizId}
-            nota="Avanzado o trabajador autorizado"
+            nota="Avanzado o trabajador autorizado. Si es del SENA, marca la casilla en lugar de subir el archivo."
             marca={{
               campo: 'es_sena',
               etiqueta: 'SENA',
-              alCambiar: (v) =>
-                cambiarMarca(
-                  'documentos_aprendiz',
-                  { aprendiz_id: aprendizId, tipo: 'certificado_previo' },
-                  'es_sena',
-                  v
-                ),
+              sinArchivo: true,
+              alCambiar: marcarSena,
             }}
           />
         )}
@@ -330,6 +356,7 @@ function DocumentosMatricula({ matriculaId, aprendizId, requiereCertificadoPrevi
             doc={docsMatricula[d.tipo]}
             alSubir={subirDeMatricula}
             deshabilitado={!matriculaId}
+            nota={d.nota}
             marca={
               d.tipo === 'arl'
                 ? {

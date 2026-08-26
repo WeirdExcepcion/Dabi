@@ -45,6 +45,7 @@ const CAMPOS_MATRICULA = `
   fecha_arl,
   fecha_examen,
   examen_vence,
+  observaciones,
   grupo_id,
   aprendiz_id,
   empresa_id,
