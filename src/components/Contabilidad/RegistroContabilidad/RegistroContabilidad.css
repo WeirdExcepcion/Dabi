@@ -199,6 +199,79 @@
   color: var(--texto-secundario);
 }
 
+.conta-reg__aviso {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: var(--azul-primario);
+  margin-left: 14px;
+}
+
+.conta-reg__td_estados {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.conta-reg__marca {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.conta-reg__marca_pendiente {
+  background-color: rgba(2, 17, 60, 0.07);
+  color: var(--texto-secundario);
+}
+
+.conta-reg__marca_facturado {
+  background-color: rgba(3, 120, 168, 0.12);
+  color: var(--azul-primario);
+}
+
+.conta-reg__marca_pago {
+  background-color: rgba(31, 138, 76, 0.14);
+  color: #1F6E42;
+}
+
+.conta-reg__marca_no-pago {
+  background-color: rgba(234, 145, 12, 0.16);
+  color: #8A5200;
+}
+
+.conta-reg__td_valor {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.conta-reg__td_accion {
+  text-align: right;
+}
+
+.conta-reg__boton-fila {
+  padding: 7px 14px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.conta-reg__boton-fila:hover {
+  border-color: var(--ceruleo);
+  background-color: var(--gris-niebla);
+}
+
 @media (max-width: 720px) {
   .conta-reg__header {
     flex-direction: column;

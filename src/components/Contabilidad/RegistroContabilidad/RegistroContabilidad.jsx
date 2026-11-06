@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabaseClient'
 import { hoyISO, formatearFechaLarga } from '../../../lib/fechas'
+import { formatearPesos } from '../../../lib/dinero'
+import Modal from '../../compartidos/Modal/Modal'
+import Diligenciar from './Diligenciar/Diligenciar'
 import './RegistroContabilidad.css'
 
 const POR_PAGINA = 25
@@ -13,6 +16,12 @@ function RegistroContabilidad() {
   const [pagina, setPagina] = useState(0)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+
+  // Fila abierta en el formulario de diligenciar, y contador para volver a
+  // consultar después de guardar sin duplicar la lógica de carga.
+  const [diligenciando, setDiligenciando] = useState(null)
+  const [version, setVersion] = useState(0)
+  const [aviso, setAviso] = useState('')
 
   // Cómo se muestra la identidad del aprendiz: junta en una sola columna lista
   // para copiar al software contable, o separada en nombre, tipo y número.
@@ -59,7 +68,25 @@ function RegistroContabilidad() {
     }
 
     cargar()
-  }, [fecha, pagina])
+  }, [fecha, pagina, version])
+
+  function alGuardar(resultado) {
+    setDiligenciando(null)
+    setVersion((v) => v + 1)
+
+    if (resultado?.movida_desde) {
+      setAviso(
+        `Se movió de la factura ${resultado.movida_desde} a la ${resultado.numero}.`
+      )
+    } else if (resultado?.creada) {
+      setAviso(`Se creó la factura ${resultado.numero}.`)
+    } else if (resultado?.numero) {
+      setAviso(
+        `Se agregó a la factura ${resultado.numero}, que ahora cubre ` +
+        `${resultado.total_aprendices} ${resultado.total_aprendices === 1 ? 'aprendiz' : 'aprendices'}.`
+      )
+    }
+  }
 
   const totalPaginas = Math.ceil(total / POR_PAGINA)
 
@@ -83,6 +110,7 @@ function RegistroContabilidad() {
               onChange={(e) => {
                 setFecha(e.target.value)
                 setPagina(0)
+                setAviso('')
               }}
               max={hoyISO()}
             />
@@ -106,6 +134,7 @@ function RegistroContabilidad() {
             <span className="conta-reg__conteo">
               {total} {total === 1 ? 'registro' : 'registros'}
             </span>
+            {aviso && <span className="conta-reg__aviso">{aviso}</span>}
           </div>
 
           {total === 0 && !cargando ? (
@@ -129,38 +158,90 @@ function RegistroContabilidad() {
                       <th className="conta-reg__th">Curso</th>
                       <th className="conta-reg__th">NIT</th>
                       <th className="conta-reg__th">Empresa</th>
+                      <th className="conta-reg__th">Estado</th>
+                      <th className="conta-reg__th">Factura</th>
+                      <th className="conta-reg__th">Valor</th>
+                      <th className="conta-reg__th" />
                     </tr>
                   </thead>
                   <tbody>
-                    {filas.map((fila) => (
-                      <tr key={fila.matricula_id}>
-                        <td className="conta-reg__td conta-reg__td_fecha">
-                          {fila.fecha_ingreso}
-                        </td>
+                    {filas.map((fila) => {
+                      const facturado = fila.estado_facturacion === 'facturado'
 
-                        {separada ? (
-                          <>
-                            <td className="conta-reg__td conta-reg__td_principal">
-                              {fila.nombre_completo}
-                            </td>
-                            <td className="conta-reg__td">{fila.tipo_documento}</td>
-                            <td className="conta-reg__td conta-reg__td_doc">
-                              {fila.numero_documento}
-                            </td>
-                          </>
-                        ) : (
-                          <td className="conta-reg__td conta-reg__td_identificacion">
-                            {fila.identificacion}
+                      return (
+                        <tr key={fila.matricula_id}>
+                          <td className="conta-reg__td conta-reg__td_fecha">
+                            {fila.fecha_ingreso}
                           </td>
-                        )}
 
-                        <td className="conta-reg__td">{fila.curso}</td>
-                        <td className="conta-reg__td conta-reg__td_doc">
-                          {fila.nit || '—'}
-                        </td>
-                        <td className="conta-reg__td">{fila.empresa || '—'}</td>
-                      </tr>
-                    ))}
+                          {separada ? (
+                            <>
+                              <td className="conta-reg__td conta-reg__td_principal">
+                                {fila.nombre_completo}
+                              </td>
+                              <td className="conta-reg__td">{fila.tipo_documento}</td>
+                              <td className="conta-reg__td conta-reg__td_doc">
+                                {fila.numero_documento}
+                              </td>
+                            </>
+                          ) : (
+                            <td className="conta-reg__td conta-reg__td_identificacion">
+                              {fila.identificacion}
+                            </td>
+                          )}
+
+                          <td className="conta-reg__td">{fila.curso}</td>
+                          <td className="conta-reg__td conta-reg__td_doc">
+                            {fila.nit || '—'}
+                          </td>
+                          <td className="conta-reg__td">{fila.empresa || '—'}</td>
+
+                          <td className="conta-reg__td conta-reg__td_estados">
+                            {facturado ? (
+                              <>
+                                <span className="conta-reg__marca conta-reg__marca_facturado">
+                                  Facturado
+                                </span>
+                                <span
+                                  className={
+                                    fila.estado_pago === 'pago'
+                                      ? 'conta-reg__marca conta-reg__marca_pago'
+                                      : 'conta-reg__marca conta-reg__marca_no-pago'
+                                  }
+                                >
+                                  {fila.estado_pago === 'pago' ? 'Pagado' : 'No pagado'}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="conta-reg__marca conta-reg__marca_pendiente">
+                                Sin facturar
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="conta-reg__td conta-reg__td_identificacion">
+                            {fila.numero_factura || '—'}
+                          </td>
+
+                          <td className="conta-reg__td conta-reg__td_valor">
+                            {facturado ? formatearPesos(fila.valor_sin_iva) : '—'}
+                          </td>
+
+                          <td className="conta-reg__td conta-reg__td_accion">
+                            <button
+                              type="button"
+                              className="conta-reg__boton-fila"
+                              onClick={() => {
+                                setAviso('')
+                                setDiligenciando(fila)
+                              }}
+                            >
+                              {facturado ? 'Corregir' : 'Diligenciar'}
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -189,6 +270,16 @@ function RegistroContabilidad() {
             </>
           )}
         </>
+      )}
+
+      {diligenciando && (
+        <Modal onCerrar={() => setDiligenciando(null)}>
+          <Diligenciar
+            fila={diligenciando}
+            onGuardada={alGuardar}
+            onCancelar={() => setDiligenciando(null)}
+          />
+        </Modal>
       )}
     </section>
   )

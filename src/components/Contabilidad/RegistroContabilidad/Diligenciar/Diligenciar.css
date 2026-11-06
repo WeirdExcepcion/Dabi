@@ -1,0 +1,299 @@
+.conta-dil {
+  padding: 28px;
+  background-color: var(--blanco);
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  border-radius: 8px;
+}
+
+.conta-dil__encabezado {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.conta-dil__eyebrow {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 8px;
+}
+
+.conta-dil__titulo {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.conta-dil__doc {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.conta-dil__cerrar {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--texto-secundario);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.conta-dil__cerrar:hover {
+  background-color: var(--gris-niebla);
+}
+
+/* Lo que ya registró Alturas: se muestra, no se edita. */
+.conta-dil__datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 32px;
+  padding: 16px;
+  margin: 0;
+  background-color: var(--gris-niebla);
+  border-radius: 6px;
+}
+
+.conta-dil__dato-clave {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+  margin-bottom: 3px;
+}
+
+.conta-dil__dato-valor {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.conta-dil__dato-valor_mono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.conta-dil__bloqueo {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #B36A00;
+  background-color: rgba(234, 145, 12, 0.12);
+  border-left: 3px solid #EF9F27;
+  border-radius: 0 6px 6px 0;
+  padding: 14px 16px;
+  margin: 16px 0 0;
+}
+
+.conta-dil__seccion {
+  border: none;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+  padding: 20px 0 4px;
+  margin: 4px 0 0;
+}
+
+.conta-dil__legend {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  padding: 0 10px 0 0;
+}
+
+.conta-dil__fila {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.conta-dil__campo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.conta-dil__label {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.conta-dil__input,
+.conta-dil__select,
+.conta-dil__textarea {
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.conta-dil__textarea {
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.conta-dil__input:focus,
+.conta-dil__select:focus,
+.conta-dil__textarea:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.conta-dil__calculo,
+.conta-dil__nota {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  color: var(--texto-secundario);
+  margin: 6px 0 0;
+}
+
+.conta-dil__calculo {
+  font-weight: 500;
+  color: var(--azul-medianoche);
+}
+
+/* Facturas de la misma empresa a las que se puede sumar este aprendiz. */
+.conta-dil__sugerencias {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  border: 1px solid rgba(2, 17, 60, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.conta-dil__sugerencia {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.conta-dil__sugerencia:hover {
+  background-color: var(--gris-niebla);
+}
+
+.conta-dil__sugerencia-numero {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--azul-medianoche);
+}
+
+.conta-dil__sugerencia-nota {
+  font-family: var(--font-brand);
+  font-size: 11px;
+  color: var(--texto-secundario);
+  white-space: nowrap;
+}
+
+.conta-dil__aviso {
+  padding: 14px 16px;
+  margin-bottom: 4px;
+  background-color: rgba(3, 120, 168, 0.1);
+  border-left: 3px solid var(--ceruleo);
+  border-radius: 0 6px 6px 0;
+}
+
+.conta-dil__aviso-titulo {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--azul-primario);
+  margin: 0 0 6px;
+}
+
+.conta-dil__aviso-texto {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--azul-medianoche);
+  margin: 0;
+}
+
+.conta-dil__error {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  color: #B3261E;
+  margin: 16px 0 0;
+}
+
+.conta-dil__acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(2, 17, 60, 0.08);
+}
+
+.conta-dil__boton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.conta-dil__boton:hover:not(:disabled) {
+  background-color: var(--ceruleo);
+}
+
+.conta-dil__boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.conta-dil__boton_secundario {
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  border: 1.5px solid var(--azul-acero);
+}
+
+.conta-dil__boton_secundario:hover {
+  background-color: var(--gris-niebla);
+}
+
+@media (max-width: 620px) {
+  .conta-dil__fila {
+    flex-direction: column;
+  }
+}
