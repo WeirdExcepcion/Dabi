@@ -1,0 +1,205 @@
+.resolver__seccion + .resolver__seccion {
+  margin-top: 24px;
+}
+
+.resolver__titulo {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ceruleo);
+  margin: 0 0 10px;
+}
+
+.resolver__nota-seccion {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  color: var(--texto-secundario);
+  margin: -4px 0 10px;
+}
+
+.resolver__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resolver__item {
+  padding: 16px;
+  border: 1px solid rgba(2, 17, 60, 0.1);
+  border-radius: 8px;
+  background-color: var(--blanco);
+}
+
+/* Lo que todavía bloquea filas se distingue a simple vista. */
+.resolver__item_falta {
+  border-color: rgba(234, 145, 12, 0.55);
+  background-color: rgba(234, 145, 12, 0.05);
+}
+
+.resolver__cabeza {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.resolver__tipo {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+}
+
+.resolver__texto {
+  font-family: var(--font-brand);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--azul-medianoche);
+  margin: 2px 0 0;
+}
+
+.resolver__nit {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--texto-secundario);
+  margin: 2px 0 0;
+}
+
+.resolver__nota {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--texto-secundario);
+  margin: 4px 0 0;
+}
+
+.resolver__nota_detalle {
+  margin-top: 10px;
+}
+
+.resolver__filas {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--texto-secundario);
+  text-align: right;
+  max-width: 45%;
+}
+
+.resolver__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.resolver__accion {
+  padding: 6px 14px;
+  border: 1.5px solid rgba(2, 17, 60, 0.12);
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.resolver__accion:hover {
+  border-color: var(--azul-acero);
+}
+
+.resolver__accion_activa,
+.resolver__accion_activa:hover {
+  border-color: var(--azul-primario);
+  background-color: var(--azul-primario);
+  color: var(--blanco);
+}
+
+.resolver__detalle {
+  margin-top: 12px;
+  max-width: 460px;
+}
+
+.resolver__sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.resolver__sugerencias-titulo {
+  font-family: var(--font-brand);
+  font-size: 12px;
+  color: var(--texto-secundario);
+}
+
+.resolver__sugerencia {
+  padding: 4px 10px;
+  border: 1px dashed var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.resolver__sugerencia_activa {
+  border-style: solid;
+  border-color: var(--ceruleo);
+  background-color: rgba(3, 120, 168, 0.1);
+}
+
+.resolver__label {
+  display: block;
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--azul-medianoche);
+  margin-bottom: 6px;
+}
+
+.resolver__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  color: var(--azul-medianoche);
+  background-color: var(--blanco);
+}
+
+.resolver__input:focus {
+  outline: none;
+  border-color: var(--ceruleo);
+  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
+}
+
+.resolver__sin-salida {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #8C1D18;
+  margin: 10px 0 0;
+}
+
+@media (max-width: 620px) {
+  .resolver__cabeza {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .resolver__filas {
+    text-align: left;
+    max-width: none;
+  }
+}

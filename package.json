@@ -7,13 +7,15 @@
     "dev": "vite --open",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prueba:importar": "node pruebas/importarMatriculas.prueba.mjs && node pruebas/planImportacion.prueba.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
+    "papaparse": "^5.7.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

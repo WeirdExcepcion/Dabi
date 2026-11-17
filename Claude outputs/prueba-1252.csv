@@ -1,0 +1,7 @@
+Tipo de documento;Número de documento;Nombres;Apellidos;Curso;Fecha inicial;Fecha final;Fecha de ingreso;NIT;Empresa;Sexo;RH;Fecha de nacimiento;País;Nivel educativo;ARL;Fecha ARL;EPS;Fecha examen médico;Área;Cargo;Sector;Observaciones
+CC;1.023.456.789;José Andrés;Peña Muñoz;Trabajo en alturas avanzado;03/11/2026;07/11/2026;03/11/2026;890.903.938-8;Bancolombia;M;O+;12/05/1990;;Bachiller;Sura;01/11/2026;Nueva EPS;28/10/2026;Operaciones;Técnico electricista;Construcción;
+CC;52123456;María Fernanda;Gómez Ríos;Trabajo en alturas básico;03/11/2026;03/11/2026;03/11/2026;independiente;;F;A+;;;;;;;;;;;
+CE;987654;Luis;Ortiz Zúñiga;Trabajo en alturas avanzado;03/11/2026;07/11/2026;10/11/2026;900123456;Constructora Andina SAS;Masculino;Z+;;;;;;;;;;;Llegó tarde, sin casco
+CC;80123123;Carlos;Benavides;Trabajo en alturas avanzado;03/11/2026;07/11/2026;03/11/2026;890903938-7;Bancolombia;;;;;;;;;;;;;
+CC;1010101010;Ana;Ruiz;Reentrenamiento;31/02/2026;45967;03/11/2026;;;;;;;;;;;;;;;
+CC;1023456789;José;Peña;TRABAJO EN ALTURAS AVANZADO;03/11/2026;07/11/2026;03/11/2026;890903938;Bancolombia;;;;;;;;;;;;;

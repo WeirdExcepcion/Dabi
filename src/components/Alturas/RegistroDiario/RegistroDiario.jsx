@@ -16,6 +16,7 @@ import SelectorEstado from '../SelectorEstado/SelectorEstado'
 import BotonCertificado from '../BotonCertificado/BotonCertificado'
 import EliminarMatricula from '../EliminarMatricula/EliminarMatricula'
 import TrasladarMatricula from '../TrasladarMatricula/TrasladarMatricula'
+import ImportarMatriculas from './ImportarMatriculas/ImportarMatriculas'
 
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
@@ -74,7 +75,8 @@ function RegistroDiario() {
   const puedeEditar = PUEDE_EDITAR_MATRICULAS.includes(perfil.rol)
   const [matriculaEliminando, setMatriculaEliminando] = useState(null)
   const [matriculaTrasladando, setMatriculaTrasladando] = useState(null)
-  
+  const [importando, setImportando] = useState(false)
+
 
   const puedeCrear = PUEDE_CREAR_MATRICULAS.includes(perfil.rol)
   const puedeEliminar = PUEDE_ELIMINAR_MATRICULAS.includes(perfil.rol)
@@ -143,8 +145,31 @@ function RegistroDiario() {
               Agregar aprendiz
             </button>
           )}
+
+          {/* Sin la condición de esHoy que tiene "Agregar aprendiz": cada fila
+              del archivo trae su propia fecha de ingreso. */}
+          {puedeCrear && !mostrandoFormulario && (
+            <button
+              className="matriculas__boton-importar"
+              onClick={() => setImportando(true)}
+            >
+              Importar CSV
+            </button>
+          )}
         </div>
       </header>
+
+      {importando && (
+        <Modal onCerrar={() => setImportando(false)} bloquearCierre amplio>
+          <ImportarMatriculas
+            rol={perfil.rol}
+            onCerrar={(huboCargas) => {
+              setImportando(false)
+              if (huboCargas) obtenerMatriculas()
+            }}
+          />
+        </Modal>
+      )}
 
       {mostrandoFormulario && (
         <Modal onCerrar={() => setMostrandoFormulario(false)} bloquearCierre>

@@ -18,6 +18,10 @@
   will-change: transform, opacity;
 }
 
+.modal__contenido_amplio {
+  max-width: 1100px;
+}
+
 @keyframes modal-fondo {
   from {
     opacity: 0;

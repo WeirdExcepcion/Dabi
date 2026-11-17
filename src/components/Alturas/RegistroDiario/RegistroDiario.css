@@ -92,6 +92,25 @@
   cursor: default;
 }
 
+.matriculas__boton-importar {
+  padding: 11px 20px;
+  border: 1.5px solid var(--azul-acero);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--azul-medianoche);
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.matriculas__boton-importar:hover {
+  border-color: var(--ceruleo);
+  background-color: var(--blanco);
+}
+
 .matriculas__resumen {
   margin-bottom: 12px;
 }
