@@ -63,7 +63,12 @@ async function buscarAprendices(numeros) {
 // Todo lo que construirPlan necesita de la base, en una sola pasada.
 export async function cargarContexto(filas) {
   const validas = filas.filter((f) => f.estado !== 'error')
-  const inicios = validas.map((f) => f.datos.fecha_inicio).sort()
+  // Todas las fechas que traiga el archivo, porque el grupo se puede buscar por
+  // cualquiera de ellas.
+  const fechas = validas
+    .flatMap((f) => [f.datos.fecha_inicio, f.datos.fecha_fin, f.datos.fecha_ingreso])
+    .filter(Boolean)
+    .sort()
   const numeros = [...new Set(validas.map((f) => f.datos.numero_documento))]
 
   const [cursos, grupos, empresas, catalogos, aprendices] = await Promise.all([
@@ -72,8 +77,8 @@ export async function cargarContexto(filas) {
       supabase
         .from('grupos')
         .select('id, curso_id, fecha_inicio, fecha_fin, identificador')
-        .gte('fecha_inicio', sumarDias(inicios[0], -DIAS_VENTANA_GRUPOS))
-        .lte('fecha_inicio', sumarDias(inicios.at(-1), DIAS_VENTANA_GRUPOS))
+        .gte('fecha_inicio', sumarDias(fechas[0], -DIAS_VENTANA_GRUPOS))
+        .lte('fecha_inicio', sumarDias(fechas.at(-1), DIAS_VENTANA_GRUPOS))
         .order('id')
     ),
     // También las desactivadas: si el NIT es de una de ellas, crearla de

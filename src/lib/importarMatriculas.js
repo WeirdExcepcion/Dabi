@@ -2,15 +2,16 @@ import Papa from 'papaparse'
 
 // Columnas de la plantilla, en el orden en que se descarga. Empresa no es
 // obligatoria aquí porque solo hace falta cuando el NIT no existe en la base,
-// y eso se sabe al cruzar con la base, no al leer el archivo.
+// y eso se sabe al cruzar con la base, no al leer el archivo. Las fechas del
+// curso tampoco: la que falte se calcula con la duración del curso.
 export const COLUMNAS = [
   { clave: 'tipo_documento', encabezado: 'Tipo de documento', obligatoria: true },
   { clave: 'numero_documento', encabezado: 'Número de documento', obligatoria: true },
   { clave: 'nombres', encabezado: 'Nombres', obligatoria: true },
   { clave: 'apellidos', encabezado: 'Apellidos', obligatoria: true },
   { clave: 'curso', encabezado: 'Curso', obligatoria: true },
-  { clave: 'fecha_inicio', encabezado: 'Fecha inicial', obligatoria: true },
-  { clave: 'fecha_fin', encabezado: 'Fecha final', obligatoria: true },
+  { clave: 'fecha_inicio', encabezado: 'Fecha inicial' },
+  { clave: 'fecha_fin', encabezado: 'Fecha final' },
   { clave: 'fecha_ingreso', encabezado: 'Fecha de ingreso', obligatoria: true },
   { clave: 'nit', encabezado: 'NIT', obligatoria: true },
   { clave: 'empresa', encabezado: 'Empresa' },
@@ -122,6 +123,13 @@ export function parsearFecha(texto) {
   return `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
 }
 
+// Para fechas opcionales que vienen anotadas, como "PLANILLA 06/11/2026": si
+// hay exactamente una fecha en el texto, es esa.
+function extraerFecha(texto) {
+  const encontradas = String(texto).match(/\d{1,2}[/.-]\d{1,2}[/.-]\d{4}|\d{4}-\d{1,2}-\d{1,2}/g)
+  return encontradas?.length === 1 ? parsearFecha(encontradas[0]) : null
+}
+
 function explicarFechaInvalida(nombre, texto) {
   // Una columna con formato de número guarda la fecha como su serial de Excel.
   if (/^\d{5}$/.test(String(texto).trim())) {
@@ -145,6 +153,11 @@ export function digitoVerificacion(nit) {
   }
   const residuo = suma % 11
   return residuo > 1 ? 11 - residuo : residuo
+}
+
+function esSuDocumento(nit, documento) {
+  const n = String(nit).replace(/\D/g, '')
+  return n !== '' && (n === documento || n === documento + digitoVerificacion(documento))
 }
 
 function normalizarSexo(texto) {
@@ -195,14 +208,16 @@ function procesarFila(celdas, indices, fila) {
   datos.curso = celda('curso')
   if (!datos.curso) errores.push('Falta el curso')
 
-  for (const [clave, nombre] of [
-    ['fecha_inicio', 'Fecha inicial'],
-    ['fecha_fin', 'Fecha final'],
-    ['fecha_ingreso', 'Fecha de ingreso'],
+  // Una fecha del curso que no viene se calcula después con la duración del
+  // curso; una que viene mal escrita sí es error, porque define el grupo.
+  for (const [clave, nombre, obligatoria] of [
+    ['fecha_inicio', 'Fecha inicial', false],
+    ['fecha_fin', 'Fecha final', false],
+    ['fecha_ingreso', 'Fecha de ingreso', true],
   ]) {
     const texto = celda(clave)
     if (!texto) {
-      errores.push(`Falta la ${nombre.toLowerCase()}`)
+      if (obligatoria) errores.push(`Falta la ${nombre.toLowerCase()}`)
       continue
     }
     const iso = parsearFecha(texto)
@@ -214,17 +229,20 @@ function procesarFila(celdas, indices, fila) {
     errores.push('La fecha final es anterior a la inicial')
   }
 
-  // Se permite a propósito: hay casos reales de ingreso posterior al curso.
-  // Se marca para que alguien lo mire, sin frenar la carga.
-  if (datos.fecha_ingreso && datos.fecha_fin && datos.fecha_ingreso > datos.fecha_fin) {
-    inconsistencias.push('La fecha de ingreso es posterior a la fecha final del curso')
-  }
+  datos.empresa = celda('empresa')
 
+  // Independiente se reconoce de tres formas, porque las tres aparecen en los
+  // archivos reales: la palabra en el NIT, la palabra en Empresa, o el NIT
+  // igual al documento del propio aprendiz.
   const nit = celda('nit')
-  if (!nit) {
-    errores.push('Falta el NIT (o la palabra "independiente")')
-  } else if (normalizar(nit) === NIT_INDEPENDIENTE) {
+  if (
+    normalizar(nit) === NIT_INDEPENDIENTE ||
+    normalizar(datos.empresa) === NIT_INDEPENDIENTE ||
+    (nit && datos.numero_documento && esSuDocumento(nit, datos.numero_documento))
+  ) {
     datos.independiente = true
+  } else if (!nit) {
+    errores.push('Falta el NIT (o la palabra "independiente")')
   } else if (!/\d/.test(nit)) {
     errores.push(`NIT "${nit}" no válido`)
   } else {
@@ -237,8 +255,6 @@ function procesarFila(celdas, indices, fila) {
       errores.push(`El dígito de verificación del NIT ${nit} no corresponde: revisa el número`)
     }
   }
-
-  datos.empresa = celda('empresa')
 
   // --- Opcionales: si vienen mal se dejan vacíos y se avisa. La matrícula
   // entra y el dato aparece en Faltantes, igual que al registrar a mano.
@@ -262,7 +278,7 @@ function procesarFila(celdas, indices, fila) {
   ]) {
     const texto = celda(clave)
     if (!texto) continue
-    datos[clave] = parsearFecha(texto)
+    datos[clave] = parsearFecha(texto) || extraerFecha(texto)
     if (!datos[clave]) inconsistencias.push(`${explicarFechaInvalida(nombre, texto)} Queda vacía.`)
   }
 
@@ -281,9 +297,10 @@ function marcarRepetidas(filas) {
 
   for (const f of filas) {
     const d = f.datos
-    if (!d.tipo_documento || !d.numero_documento || !d.curso || !d.fecha_inicio) continue
+    const fecha = d.fecha_inicio || d.fecha_fin || d.fecha_ingreso
+    if (!d.tipo_documento || !d.numero_documento || !d.curso || !fecha) continue
 
-    const llave = [d.tipo_documento, d.numero_documento, normalizar(d.curso), d.fecha_inicio].join('|')
+    const llave = [d.tipo_documento, d.numero_documento, normalizar(d.curso), fecha].join('|')
     if (vistas.has(llave)) {
       f.errores.push(`Repetida: es la misma persona y el mismo curso de la fila ${vistas.get(llave)}`)
       f.estado = 'error'

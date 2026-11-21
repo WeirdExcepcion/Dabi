@@ -135,6 +135,41 @@ prueba('grupo nuevo: se propone crearlo, una vez, y avisa si la fecha final no c
   assert.equal(llavesPorCrear(plan).length, 2)
 })
 
+prueba('solo la fecha final: se busca el grupo que termina ese día', () => {
+  const filas = leer('CC;1;A;B;Trabajo en alturas avanzado;;07/11/2026;10/11/2026;independiente')
+  const plan = construirPlan(filas, base(), {}, TODOS)
+  assert.equal(plan.pendientes.length, 0)
+  assert.deepEqual(plan.filas[0].refs.grupo, { id: 10 })
+  assert.match(plan.filas[0].avisos.at(-1), /ingreso es posterior/)
+})
+
+prueba('solo la fecha final y no hay grupo: se crea con la inicial calculada', () => {
+  const filas = leer('CC;1;A;B;Trabajo en alturas avanzado;;21/11/2026;21/11/2026;independiente')
+  const [g] = construirPlan(filas, base(), {}, TODOS).pendientes
+  assert.deepEqual(g.crear, { curso_id: 1, fecha_inicio: '2026-11-17', fecha_fin: '2026-11-21' })
+  assert.match(g.nota, /que termine ese día/)
+})
+
+prueba('sin fechas del curso: el grupo que estaba en curso el día de ingreso', () => {
+  const filas = leer('CC;1;A;B;Trabajo en alturas avanzado;;;05/11/2026;independiente')
+  const plan = construirPlan(filas, base(), {}, TODOS)
+  assert.equal(plan.pendientes.length, 0)
+  assert.deepEqual(plan.filas[0].refs.grupo, { id: 10 })
+  assert.equal(plan.filas[0].avisos.length, 0)
+})
+
+prueba('sin fechas y sin grupo en curso: se crea empezando el día de ingreso', () => {
+  const filas = leer(
+    'CC;1;A;B;Trabajo en alturas avanzado;;;20/11/2026;independiente',
+    'CC;2;C;D;Trabajo en alturas avanzado;;;20/11/2026;independiente',
+  )
+  const plan = construirPlan(filas, base(), {}, TODOS)
+  assert.equal(plan.pendientes.length, 1)
+  assert.deepEqual(plan.pendientes[0].crear, { curso_id: 1, fecha_inicio: '2026-11-20', fecha_fin: '2026-11-24' })
+  assert.match(plan.filas[0].avisos[0], /empieza el día de ingreso/)
+  assert.equal(plan.conteo.lista, 2)
+})
+
 prueba('recepción no puede crear grupos: elige uno existente o la fila queda bloqueada', () => {
   const filas = leer('CC;1;A;B;Trabajo en alturas avanzado;04/11/2026;08/11/2026;04/11/2026;independiente')
   const plan = construirPlan(filas, base(), {}, RECEPCION)

@@ -525,6 +525,15 @@ function PasoResumen({ resumen }) {
   )
 }
 
+// La fecha que falte se calcula al cruzar con la base, con la duración del
+// curso; aquí todavía no se conoce.
+function rangoFechas(d) {
+  if (!d.fecha_inicio && !d.fecha_fin) return 'Fechas por calcular'
+  const inicio = d.fecha_inicio ? formatearFechaCorta(d.fecha_inicio) : '…'
+  const fin = d.fecha_fin ? formatearFechaCorta(d.fecha_fin) : '…'
+  return `${inicio} – ${fin}`
+}
+
 // La misma tabla en los tres pasos; cambia qué estado y qué mensajes muestra.
 function TablaFilas({ filas, estado, mensajes, columnaCurso = false, vacio }) {
   return (
@@ -561,9 +570,7 @@ function TablaFilas({ filas, estado, mensajes, columnaCurso = false, vacio }) {
                 {columnaCurso && (
                   <td className="importar__td">
                     <span className="importar__principal">{d.curso || '—'}</span>
-                    <span className="importar__secundario">
-                      {formatearFechaCorta(d.fecha_inicio)} – {formatearFechaCorta(d.fecha_fin)}
-                    </span>
+                    <span className="importar__secundario">{rangoFechas(d)}</span>
                     <span className="importar__secundario">
                       Ingreso {formatearFechaCorta(d.fecha_ingreso)}
                     </span>

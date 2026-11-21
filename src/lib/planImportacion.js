@@ -245,52 +245,81 @@ export function construirPlan(filas, contexto, decisiones, permisos) {
       else motivos.push(`Falta decidir a qué curso corresponde "${d.curso}"`)
     }
 
-    // --- Grupo: se identifica por curso y fecha de inicio.
+    // --- Grupo. Se busca por lo que dice el archivo: la fecha inicial si
+    // viene; si no, la final; si no trae ninguna, el grupo que estaba en curso
+    // el día de ingreso. La fecha que falte se calcula con la duración del
+    // curso, igual que al crear un grupo a mano.
 
     if (curso) {
+      const dias = curso.duracion_dias - 1
       const delCurso = contexto.grupos.filter((g) => g.curso_id === curso.id)
-      const mismoInicio = delCurso.filter((g) => g.fecha_inicio === d.fecha_inicio)
 
-      if (mismoInicio.length === 1) {
-        refs.grupo = { id: mismoInicio[0].id }
-        if (mismoInicio[0].fecha_fin !== d.fecha_fin) {
-          avisos.push(`El grupo existente termina el ${fechaCorta(mismoInicio[0].fecha_fin)}, no el ${fechaCorta(d.fecha_fin)} del archivo`)
+      let candidatos, fechas, como
+      if (d.fecha_inicio) {
+        candidatos = delCurso.filter((g) => g.fecha_inicio === d.fecha_inicio)
+        fechas = { inicio: d.fecha_inicio, fin: d.fecha_fin || sumarDias(d.fecha_inicio, dias) }
+        como = 'que empiece ese día'
+      } else if (d.fecha_fin) {
+        candidatos = delCurso.filter((g) => g.fecha_fin === d.fecha_fin)
+        fechas = { inicio: sumarDias(d.fecha_fin, -dias), fin: d.fecha_fin }
+        como = 'que termine ese día'
+      } else {
+        candidatos = delCurso.filter((g) => g.fecha_inicio <= d.fecha_ingreso && d.fecha_ingreso <= g.fecha_fin)
+        fechas = { inicio: d.fecha_ingreso, fin: sumarDias(d.fecha_ingreso, dias) }
+        como = 'en curso el día de ingreso'
+      }
+
+      let grupo = null
+      if (candidatos.length === 1) {
+        grupo = candidatos[0]
+        refs.grupo = { id: grupo.id }
+        if (d.fecha_inicio && d.fecha_fin && grupo.fecha_fin !== d.fecha_fin) {
+          avisos.push(`El grupo existente termina el ${fechaCorta(grupo.fecha_fin)}, no el ${fechaCorta(d.fecha_fin)} del archivo`)
         }
       } else {
-        // Con varios grupos el mismo día (paralelos) la fecha final no
-        // desempata, así que no entra en la llave.
-        const llave = mismoInicio.length
-          ? `grupo|${curso.id}|${d.fecha_inicio}`
-          : `grupo|${curso.id}|${d.fecha_inicio}|${d.fecha_fin}`
+        const llave = `grupo|${curso.id}|${fechas.inicio}|${fechas.fin}`
 
         const decision = anotar(llave, () => {
-          const paralelos = mismoInicio.length > 1
+          const paralelos = candidatos.length > 1
           const puedeCrear = !paralelos && permisos.crearGrupos
           return {
             tipo: 'grupo',
             etiqueta: 'Grupo',
-            texto: `${curso.nombre} · ${fechaCorta(d.fecha_inicio)} – ${fechaCorta(d.fecha_fin)}`,
+            texto: `${curso.nombre} · ${fechaCorta(fechas.inicio)} – ${fechaCorta(fechas.fin)}`,
             nota: paralelos
-              ? 'Hay varios grupos de este curso que empiezan ese día: elige cuál.'
-              : 'No existe un grupo de este curso que empiece ese día.',
+              ? `Hay varios grupos de este curso ${como}: elige cuál.`
+              : `No existe un grupo de este curso ${como}.`,
             obligatorio: true,
-            opciones: (paralelos ? mismoInicio : delCurso).map((g) => ({ ...g, nombre: etiquetaGrupo(g) })),
+            opciones: (paralelos ? candidatos : delCurso).map((g) => ({ ...g, nombre: etiquetaGrupo(g) })),
             sugerencias: [],
             puedeCrear,
             puedeVaciar: false,
-            crear: { curso_id: curso.id, fecha_inicio: d.fecha_inicio, fecha_fin: d.fecha_fin },
+            crear: { curso_id: curso.id, fecha_inicio: fechas.inicio, fecha_fin: fechas.fin },
             porDefecto: puedeCrear ? { accion: 'crear' } : null,
           }
         }, f.fila)
 
-        if (decision?.accion === 'existente') refs.grupo = { id: decision.id }
-        else if (decision?.accion === 'crear') refs.grupo = { crear: llave }
-        else motivos.push('Falta decidir el grupo')
-
-        const finEsperado = sumarDias(d.fecha_inicio, curso.duracion_dias - 1)
-        if (decision?.accion === 'crear' && d.fecha_fin !== finEsperado) {
-          avisos.push(`La fecha final no corresponde a la duración del curso (${curso.duracion_dias} ${curso.duracion_dias === 1 ? 'día' : 'días'}): se crea el grupo con la del archivo`)
+        if (decision?.accion === 'existente') {
+          grupo = contexto.grupos.find((g) => g.id === decision.id)
+          refs.grupo = { id: decision.id }
+        } else if (decision?.accion === 'crear') {
+          grupo = { fecha_inicio: fechas.inicio, fecha_fin: fechas.fin }
+          refs.grupo = { crear: llave }
+          if (d.fecha_inicio && d.fecha_fin && d.fecha_fin !== sumarDias(d.fecha_inicio, dias)) {
+            avisos.push(`La fecha final no corresponde a la duración del curso (${curso.duracion_dias} ${curso.duracion_dias === 1 ? 'día' : 'días'}): se crea el grupo con la del archivo`)
+          }
+          if (!d.fecha_inicio && !d.fecha_fin) {
+            avisos.push('Sin fechas del curso: el grupo nuevo empieza el día de ingreso')
+          }
+        } else {
+          motivos.push('Falta decidir el grupo')
         }
+      }
+
+      // Se permite a propósito: hay casos reales de ingreso posterior al
+      // curso. Se marca para que alguien lo mire, sin frenar la carga.
+      if (grupo && d.fecha_ingreso > grupo.fecha_fin) {
+        avisos.push('La fecha de ingreso es posterior a la fecha final del curso')
       }
     }
 

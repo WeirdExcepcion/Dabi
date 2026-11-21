@@ -87,7 +87,8 @@ prueba('errores y avisos de cada tipo', () => {
     'CC;10;A;B;Curso;01/11/2026;05/11/2026;01/11/2026;890903938-7',
     // 3: fecha imposible y serial de Excel
     'CC;11;A;B;Curso;31/02/2026;45967;01/11/2026;independiente',
-    // 4: ingreso después del curso -> solo aviso
+    // 4: ingreso después del curso: aquí no se marca, se marca al cruzar con
+    // la base, cuando ya se conocen las fechas reales del grupo.
     'CC;12;A;B;Curso;01/11/2026;05/11/2026;10/11/2026;independiente',
     // 5: opcionales mal escritos -> avisos, y RH con cero y en palabras
     'CC;13;A;B;Curso;01/11/2026;05/11/2026;01/11/2026;independiente;;Masculino;0 positivo;30/02/1990',
@@ -110,7 +111,7 @@ prueba('errores y avisos de cada tipo', () => {
   assert.ok(porFila[3].errores.some((e) => /número de Excel/.test(e)))
   assert.ok(porFila[3].errores.some((e) => /31\/02\/2026/.test(e)))
 
-  assert.equal(porFila[4].estado, 'inconsistencia')
+  assert.equal(porFila[4].estado, 'valida')
 
   assert.equal(porFila[5].estado, 'inconsistencia', JSON.stringify(porFila[5]))
   assert.equal(porFila[5].datos.sexo, 'M')
@@ -130,6 +131,45 @@ prueba('errores y avisos de cada tipo', () => {
 
   assert.equal(porFila[9].estado, 'error')
   assert.match(porFila[9].errores.at(-1), /fila 4/)
+})
+
+prueba('así llegan los archivos reales', () => {
+  const csv = [
+    ENC.join(';'),
+    // 2: sin ninguna fecha del curso: se calcula después.
+    'CC;101;A;B;Curso;;;20/11/2026;900560647-1;Eficiencia',
+    // 3: solo la final.
+    'CC;102;A;B;Curso;;20/11/2026;20/11/2026;900560647-1;Eficiencia',
+    // 4: independiente escrito en la columna Empresa, con la cédula en el NIT.
+    'CC;1023967653;A;B;Curso;;;20/11/2026;1023967653;INDEPENDIENTE',
+    // 5: el NIT es la cédula del aprendiz, y la empresa su propio nombre.
+    'CC;1036630032;A;B;Curso;;;20/11/2026;1036630032;A B',
+    // 6: independiente en Empresa y sin NIT.
+    'CC;104;A;B;Curso;;;20/11/2026;;Independiente',
+    // 7: NIT con espacios entre los dígitos y fechas opcionales anotadas.
+    'CC;105;A;B;Curso;;;20/11/2026;9 0 0 5 4 5 9 6 0 1;Procom;;;;;;SURA;PLANILLA 06/11/2026;;GLOBAL',
+    // 8: una fecha del curso mal escrita sí es error.
+    'CC;106;A;B;Curso;20-11;;20/11/2026;independiente',
+  ].join('\n')
+  const porFila = Object.fromEntries(procesarArchivo(utf8(csv)).filas.map((f) => [f.fila, f]))
+
+  assert.equal(porFila[2].estado, 'valida', JSON.stringify(porFila[2]))
+  assert.equal(porFila[2].datos.fecha_inicio, undefined)
+  assert.equal(porFila[3].datos.fecha_fin, '2026-11-20')
+
+  for (const n of [4, 5, 6]) {
+    assert.equal(porFila[n].estado, 'valida', JSON.stringify(porFila[n]))
+    assert.equal(porFila[n].datos.independiente, true, `fila ${n}`)
+  }
+
+  assert.equal(porFila[7].datos.independiente, false)
+  assert.equal(porFila[7].datos.fecha_arl, '2026-11-06')
+  assert.equal(porFila[7].datos.fecha_examen, null)
+  assert.equal(porFila[7].estado, 'inconsistencia')
+  assert.match(porFila[7].inconsistencias[0], /GLOBAL/)
+
+  assert.equal(porFila[8].estado, 'error')
+  assert.match(porFila[8].errores[0], /Fecha inicial/)
 })
 
 prueba('columnas obligatorias faltantes e ignoradas', () => {
