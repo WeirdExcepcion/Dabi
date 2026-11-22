@@ -171,11 +171,10 @@ export function etiquetaGrupo(g) {
   return g.identificador ? `${fechas} (${g.identificador})` : fechas
 }
 
-// Una decisión sin el dato que necesita cuenta como no tomada.
+// Elegir "usar uno existente" sin haber escogido cuál no resuelve nada.
 function resuelta(decision) {
   if (!decision) return null
   if (decision.accion === 'existente' && !decision.id) return null
-  if (decision.accion === 'crear' && decision.nombre !== undefined && !decision.nombre.trim()) return null
   return decision
 }
 
@@ -185,7 +184,9 @@ function resuelta(decision) {
 //
 // filas: las de procesarArchivo.
 // contexto: lo que hay en la base (cargarContexto).
-// decisiones: { [llave]: { accion: 'existente' | 'crear' | 'vacio', id?, nombre? } }
+// decisiones: { [llave]: { accion: 'existente' | 'crear' | 'vacio', id? } }
+// ('crear' solo para cargos: grupos y empresas se crean antes, con su
+// formulario, y desde ahí son 'existente').
 // permisos: { crearGrupos, crearEmpresas }
 export function construirPlan(filas, contexto, decisiones, permisos) {
   const pendientes = new Map()
@@ -199,7 +200,7 @@ export function construirPlan(filas, contexto, decisiones, permisos) {
     if (!pendientes.has(llave)) {
       const p = { llave, filas: [], ...crear() }
       // elegida es lo que muestra la pantalla; decision, lo que vale para
-      // cargar: un "crear" sin nombre se ve elegido pero no resuelve nada.
+      // cargar.
       p.elegida = decisiones[llave] ?? p.porDefecto
       p.decision = resuelta(p.elegida)
       pendientes.set(llave, p)
@@ -248,25 +249,29 @@ export function construirPlan(filas, contexto, decisiones, permisos) {
     // --- Grupo. Se busca por lo que dice el archivo: la fecha inicial si
     // viene; si no, la final; si no trae ninguna, el grupo que estaba en curso
     // el día de ingreso. La fecha que falte se calcula con la duración del
-    // curso, igual que al crear un grupo a mano.
+    // curso, igual que al crear un grupo a mano. Un grupo nuevo se crea en el
+    // momento con el formulario de grupos, y desde ahí ya existe para el plan.
 
     if (curso) {
       const dias = curso.duracion_dias - 1
       const delCurso = contexto.grupos.filter((g) => g.curso_id === curso.id)
 
-      let candidatos, fechas, como
+      let candidatos, fechas, ninguno, varios
       if (d.fecha_inicio) {
         candidatos = delCurso.filter((g) => g.fecha_inicio === d.fecha_inicio)
         fechas = { inicio: d.fecha_inicio, fin: d.fecha_fin || sumarDias(d.fecha_inicio, dias) }
-        como = 'que empiece ese día'
+        ninguno = 'No existe un grupo de este curso que empiece ese día.'
+        varios = 'Hay varios grupos de este curso que empiezan ese día: elige cuál.'
       } else if (d.fecha_fin) {
         candidatos = delCurso.filter((g) => g.fecha_fin === d.fecha_fin)
         fechas = { inicio: sumarDias(d.fecha_fin, -dias), fin: d.fecha_fin }
-        como = 'que termine ese día'
+        ninguno = 'No existe un grupo de este curso que termine ese día.'
+        varios = 'Hay varios grupos de este curso que terminan ese día: elige cuál.'
       } else {
         candidatos = delCurso.filter((g) => g.fecha_inicio <= d.fecha_ingreso && d.fecha_ingreso <= g.fecha_fin)
         fechas = { inicio: d.fecha_ingreso, fin: sumarDias(d.fecha_ingreso, dias) }
-        como = 'en curso el día de ingreso'
+        ninguno = 'El archivo no trae fechas y ningún grupo de este curso estaba activo el día de ingreso. Se propone crearlo desde ese día.'
+        varios = 'El archivo no trae fechas y había varios grupos de este curso activos el día de ingreso: elige cuál.'
       }
 
       let grupo = null
@@ -281,38 +286,26 @@ export function construirPlan(filas, contexto, decisiones, permisos) {
 
         const decision = anotar(llave, () => {
           const paralelos = candidatos.length > 1
-          const puedeCrear = !paralelos && permisos.crearGrupos
           return {
             tipo: 'grupo',
             etiqueta: 'Grupo',
             texto: `${curso.nombre} · ${fechaCorta(fechas.inicio)} – ${fechaCorta(fechas.fin)}`,
-            nota: paralelos
-              ? `Hay varios grupos de este curso ${como}: elige cuál.`
-              : `No existe un grupo de este curso ${como}.`,
+            nota: paralelos ? varios : ninguno,
             obligatorio: true,
             opciones: (paralelos ? candidatos : delCurso).map((g) => ({ ...g, nombre: etiquetaGrupo(g) })),
             sugerencias: [],
-            puedeCrear,
+            puedeCrear: !paralelos && permisos.crearGrupos,
             puedeVaciar: false,
-            crear: { curso_id: curso.id, fecha_inicio: fechas.inicio, fecha_fin: fechas.fin },
-            porDefecto: puedeCrear ? { accion: 'crear' } : null,
+            inicial: { curso_id: curso.id, fecha_inicio: fechas.inicio },
+            porDefecto: null,
           }
         }, f.fila)
 
         if (decision?.accion === 'existente') {
           grupo = contexto.grupos.find((g) => g.id === decision.id)
           refs.grupo = { id: decision.id }
-        } else if (decision?.accion === 'crear') {
-          grupo = { fecha_inicio: fechas.inicio, fecha_fin: fechas.fin }
-          refs.grupo = { crear: llave }
-          if (d.fecha_inicio && d.fecha_fin && d.fecha_fin !== sumarDias(d.fecha_inicio, dias)) {
-            avisos.push(`La fecha final no corresponde a la duración del curso (${curso.duracion_dias} ${curso.duracion_dias === 1 ? 'día' : 'días'}): se crea el grupo con la del archivo`)
-          }
-          if (!d.fecha_inicio && !d.fecha_fin) {
-            avisos.push('Sin fechas del curso: el grupo nuevo empieza el día de ingreso')
-          }
         } else {
-          motivos.push('Falta decidir el grupo')
+          motivos.push('Falta crear o elegir el grupo')
         }
       }
 
@@ -350,11 +343,6 @@ export function construirPlan(filas, contexto, decisiones, permisos) {
           const bloqueante = similares.find(
             (s) => s.coincidencia === 'nit_exacto' || s.coincidencia === 'nombre_exacto'
           )
-          const puedeCrear = permisos.crearEmpresas && !bloqueante
-
-          let porDefecto = null
-          if (bloqueante) porDefecto = { accion: 'existente', id: bloqueante.id }
-          else if (puedeCrear && nombre) porDefecto = { accion: 'crear', nombre }
 
           return {
             tipo: 'empresa',
@@ -372,21 +360,18 @@ export function construirPlan(filas, contexto, decisiones, permisos) {
               ...s,
               nombre: s.razon_social + (DETALLE_COINCIDENCIA[s.coincidencia] || ''),
             })),
-            puedeCrear,
+            puedeCrear: permisos.crearEmpresas && !bloqueante,
             puedeVaciar: false,
-            crear: { nit: nueva.nit },
-            nombreSugerido: nombre,
-            porDefecto,
+            inicial: { razon_social: nombre, nit: nueva.nit.replace(/\s+/g, '') },
+            porDefecto: bloqueante ? { accion: 'existente', id: bloqueante.id } : null,
           }
         }, f.fila)
 
         if (decision?.accion === 'existente') {
           empresa = contexto.empresas.find((e) => e.id === decision.id)
           refs.empresa = { id: decision.id }
-        } else if (decision?.accion === 'crear') {
-          refs.empresa = { crear: llave }
         } else {
-          motivos.push(`Falta decidir la empresa del NIT ${d.nit}`)
+          motivos.push(`Falta crear o elegir la empresa del NIT ${d.nit}`)
         }
       }
     }
@@ -478,8 +463,8 @@ export function construirPlan(filas, contexto, decisiones, permisos) {
   return { pendientes: listaPendientes, filas: resultado, conteo }
 }
 
-// Llaves de lo que hay que crear y que de verdad usa alguna fila lista. Un
-// grupo nuevo cuyas filas quedaron todas bloqueadas por otra razón no se crea.
+// Lo que se crea al cargar (hoy, solo cargos) y que de verdad usa alguna fila
+// lista: un cargo de filas que quedaron bloqueadas por otra razón no se crea.
 export function llavesPorCrear(plan) {
   const usadas = new Set()
   for (const f of plan.filas) {

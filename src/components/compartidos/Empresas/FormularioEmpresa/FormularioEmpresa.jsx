@@ -7,16 +7,17 @@ import './FormularioEmpresa.css'
 
 const CATALOGOS = ['arls', 'sectores']
 
-// onUsarExistente lo pasará quien necesite elegir una empresa ya registrada en
-// vez de crear una nueva — pensado para crear empresas desde la matrícula.
-// Sin esa prop el aviso de duplicados solo informa, que es el caso de hoy.
-function FormularioEmpresa({ empresa = null, rol, onGuardada, onCancelar, onUsarExistente = null }) {
+// onUsarExistente lo pasa quien necesita elegir una empresa ya registrada en
+// vez de crear una nueva, como la importación de matrículas. Sin esa prop el
+// aviso de duplicados solo informa.
+// inicial: valores con los que arranca una empresa nueva; no la vuelve edición.
+function FormularioEmpresa({ empresa = null, inicial = null, rol, onGuardada, onCancelar, onUsarExistente = null }) {
   const { catalogos } = useCatalogos(CATALOGOS)
   const { arls, sectores } = catalogos
   const esEdicion = empresa !== null
 
-  const [razonSocial, setRazonSocial] = useState(empresa?.razon_social || '')
-  const [nit, setNit] = useState(empresa?.nit || '')
+  const [razonSocial, setRazonSocial] = useState(empresa?.razon_social || inicial?.razon_social || '')
+  const [nit, setNit] = useState(empresa?.nit || inicial?.nit || '')
   const [representanteLegal, setRepresentanteLegal] = useState(empresa?.representante_legal || '')
   const [correo, setCorreo] = useState(empresa?.correo || '')
   const [telefono, setTelefono] = useState(empresa?.telefono || '')

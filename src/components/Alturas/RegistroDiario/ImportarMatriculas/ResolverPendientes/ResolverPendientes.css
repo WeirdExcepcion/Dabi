@@ -38,6 +38,25 @@
   background-color: rgba(234, 145, 12, 0.05);
 }
 
+/* Con el formulario abierto la tarjeta se vuelve fondo, y el formulario, que
+   trae su propio blanco, queda al frente. */
+.resolver__item_formulario {
+  background-color: var(--gris-niebla);
+  border-color: rgba(2, 17, 60, 0.1);
+}
+
+.resolver__formulario {
+  margin-top: 14px;
+}
+
+.resolver__estado {
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  color: #1F6E42;
+  margin: 10px 0 0;
+}
+
 .resolver__cabeza {
   display: flex;
   align-items: flex-start;
@@ -75,10 +94,6 @@
   line-height: 1.45;
   color: var(--texto-secundario);
   margin: 4px 0 0;
-}
-
-.resolver__nota_detalle {
-  margin-top: 10px;
 }
 
 .resolver__filas {
@@ -154,34 +169,6 @@
   border-style: solid;
   border-color: var(--ceruleo);
   background-color: rgba(3, 120, 168, 0.1);
-}
-
-.resolver__label {
-  display: block;
-  font-family: var(--font-brand);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--azul-medianoche);
-  margin-bottom: 6px;
-}
-
-.resolver__input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid var(--azul-acero);
-  border-radius: 6px;
-  font-family: var(--font-brand);
-  font-size: 14px;
-  color: var(--azul-medianoche);
-  background-color: var(--blanco);
-}
-
-.resolver__input:focus {
-  outline: none;
-  border-color: var(--ceruleo);
-  box-shadow: 0 0 0 3px rgba(3, 120, 168, 0.18);
 }
 
 .resolver__sin-salida {

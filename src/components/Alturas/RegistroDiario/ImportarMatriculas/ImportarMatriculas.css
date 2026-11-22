@@ -386,6 +386,23 @@
   margin-top: 20px;
 }
 
+.importar__creados {
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 500;
+  color: #1F6E42;
+  background-color: rgba(31, 138, 76, 0.08);
+  border-left: 3px solid #1F8A4C;
+  border-radius: 0 6px 6px 0;
+}
+
+.importar__creados-cuenta {
+  font-weight: 400;
+  color: var(--texto-secundario);
+}
+
 .importar__subtitulo {
   font-family: var(--font-brand);
   font-size: 10px;

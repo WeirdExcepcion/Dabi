@@ -31,12 +31,15 @@ const CAMPOS_GRUPO = `
   supervisor:supervisor_id ( nombre_completo )
 `
 
-function FormularioGrupo({ onCreado, onCancelar }) {
+// inicial: { curso_id, fecha_inicio } para arrancar con un grupo ya
+// determinado, como en la importación. El curso queda fijo: cambiarlo dejaría
+// a las personas en un grupo de otro curso.
+function FormularioGrupo({ inicial = null, onCreado, onCancelar }) {
   const [cursos, setCursos] = useState([])
   const [entrenadores, setEntrenadores] = useState([])
 
-  const [cursoId, setCursoId] = useState('')
-  const [fechaInicio, setFechaInicio] = useState(hoyISO())
+  const [cursoId, setCursoId] = useState(inicial?.curso_id ?? '')
+  const [fechaInicio, setFechaInicio] = useState(inicial?.fecha_inicio ?? hoyISO())
   const [entrenadorId, setEntrenadorId] = useState('')
   const [supervisorId, setSupervisorId] = useState('')
   const [identificador, setIdentificador] = useState('')
@@ -120,6 +123,7 @@ function FormularioGrupo({ onCreado, onCancelar }) {
             className="form-grupo__select"
             value={cursoId}
             onChange={(e) => setCursoId(e.target.value)}
+            disabled={Boolean(inicial?.curso_id)}
           >
             <option value="">Selecciona…</option>
             {cursos.map((curso) => (

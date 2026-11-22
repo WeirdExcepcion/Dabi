@@ -106,50 +106,20 @@ export async function cargarContexto(filas) {
   return { cursos, grupos, empresas, catalogos, aprendices, similaresEmpresa }
 }
 
-async function crear(p) {
-  if (p.tipo === 'grupo') {
-    const { data, error } = await supabase.from('grupos').insert(p.crear).select('id').single()
-    if (error) {
-      console.error(error.message)
-      return { error: `No se pudo crear el grupo ${p.texto}` }
-    }
-    return { id: data.id }
+// Al cargar solo se crean cargos: no piden más dato que el nombre. Grupos y
+// empresas se crean antes, desde su formulario, en la pantalla de resolución.
+async function crearCargo(p) {
+  // p_forzar porque la decisión ya se tomó en la pantalla de resolución.
+  const { data, error } = await supabase.rpc('crear_o_encontrar_cargo', {
+    p_nombre: p.crear.nombre,
+    p_forzar: true,
+  })
+  if (error) {
+    console.error(error.message)
+    return { error: `No se pudo crear el cargo ${p.crear.nombre}` }
   }
-
-  if (p.tipo === 'empresa') {
-    const { data, error } = await supabase
-      .from('empresas')
-      .insert({ razon_social: p.decision.nombre.trim(), nit: p.crear.nit })
-      .select('id')
-      .single()
-    if (error) {
-      console.error(error.message)
-      return {
-        error: error.code === '23505'
-          ? `Ya existe una empresa con el NIT ${p.crear.nit}`
-          : `No se pudo crear la empresa ${p.decision.nombre}`,
-      }
-    }
-    return { id: data.id }
-  }
-
-  if (p.tipo === 'cargo') {
-    // p_forzar porque la decisión ya se tomó en la pantalla de resolución.
-    const { data, error } = await supabase.rpc('crear_o_encontrar_cargo', {
-      p_nombre: p.crear.nombre,
-      p_forzar: true,
-    })
-    if (error) {
-      console.error(error.message)
-      return { error: `No se pudo crear el cargo ${p.crear.nombre}` }
-    }
-    return { id: data.id }
-  }
-
-  return { error: `No se sabe crear ${p.etiqueta.toLowerCase()}` }
+  return { id: data.id }
 }
-
-const OBLIGATORIOS = ['grupo', 'empresa']
 
 async function registrar(f, creados) {
   const ids = {}
@@ -161,15 +131,11 @@ async function registrar(f, creados) {
       ids[clave] = ref.id
       continue
     }
+    // Lo que se crea al cargar es opcional: si falla, la matrícula entra con
+    // ese dato vacío.
     const creado = creados[ref.crear]
-    if (creado.id) {
-      ids[clave] = creado.id
-    } else if (OBLIGATORIOS.includes(clave)) {
-      return { resultado: 'error', motivo: creado.error }
-    } else {
-      // Un opcional que no se pudo crear no frena la matrícula: queda vacío.
-      avisosCarga.push(`${creado.error}: queda vacío`)
-    }
+    if (creado.id) ids[clave] = creado.id
+    else avisosCarga.push(`${creado.error}: queda vacío`)
   }
 
   const a = f.aprendiz
@@ -212,23 +178,20 @@ async function registrar(f, creados) {
   return { resultado: 'error', motivo: 'No se pudo registrar la matrícula', detalle: error.message, avisosCarga }
 }
 
-// Primero crea lo nuevo (grupos, empresas, cargos) y después registra fila por
-// fila, en orden: una misma persona en dos cursos del archivo necesita que la
-// primera matrícula la haya creado antes de llegar a la segunda.
+// Primero crea los cargos nuevos y después registra fila por fila, en orden:
+// una misma persona en dos cursos del archivo necesita que la primera
+// matrícula la haya creado antes de llegar a la segunda.
 export async function ejecutarCarga(plan, alAvanzar) {
   const creados = {}
   for (const p of llavesPorCrear(plan)) {
     try {
-      creados[p.llave] = await crear(p)
+      creados[p.llave] = await crearCargo(p)
     } catch (err) {
       console.error(err)
-      creados[p.llave] = { error: `No se pudo crear ${p.etiqueta.toLowerCase()} ${p.texto}` }
+      creados[p.llave] = { error: `No se pudo crear el cargo ${p.texto}` }
     }
   }
-
-  const llaves = Object.keys(creados)
-  if (llaves.some((l) => l.startsWith('empresa|'))) invalidarCatalogo('empresas')
-  if (llaves.some((l) => l.startsWith('cargo|'))) invalidarCatalogo('cargos')
+  if (Object.keys(creados).length) invalidarCatalogo('cargos')
 
   const listas = plan.filas.filter((f) => f.estado === 'lista')
   const resultados = []

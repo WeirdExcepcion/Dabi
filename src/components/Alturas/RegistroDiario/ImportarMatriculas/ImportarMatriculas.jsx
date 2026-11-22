@@ -1,8 +1,9 @@
 import { useState, useMemo, useEffect } from 'react'
 import { procesarArchivo, generarPlantilla } from '../../../../lib/importarMatriculas'
-import { construirPlan } from '../../../../lib/planImportacion'
+import { construirPlan, etiquetaGrupo } from '../../../../lib/planImportacion'
 import { cargarContexto, ejecutarCarga } from '../../../../lib/cargaImportacion'
 import { descargarCsv } from '../../../../lib/csvMintrabajo'
+import { invalidarCatalogo } from '../../../../lib/catalogos'
 import { formatearFechaCorta } from '../../../../lib/fechas'
 import { PUEDE_CREAR_GRUPOS, PUEDE_CREAR_EMPRESAS } from '../../../../constants/permisos'
 import ResolverPendientes from './ResolverPendientes/ResolverPendientes'
@@ -53,6 +54,7 @@ function ImportarMatriculas({ rol, onCerrar }) {
   const [cargandoContexto, setCargandoContexto] = useState(false)
   const [errorContexto, setErrorContexto] = useState('')
   const [decisiones, setDecisiones] = useState({})
+  const [creados, setCreados] = useState([])
 
   const [progreso, setProgreso] = useState({ hechas: 0, total: 0 })
   const [resumen, setResumen] = useState(null)
@@ -92,6 +94,7 @@ function ImportarMatriculas({ rol, onCerrar }) {
     setFiltro('todas')
     setContexto(null)
     setDecisiones({})
+    setCreados([])
 
     if (/\.xlsx?$/i.test(archivo.name)) {
       setResultado({
@@ -123,6 +126,27 @@ function ImportarMatriculas({ rol, onCerrar }) {
       setErrorContexto('No se pudo consultar la base. Revisa la conexión e inténtalo de nuevo.')
     }
     setCargandoContexto(false)
+  }
+
+  // Lo creado con su formulario ya existe en la base: se suma al contexto para
+  // que el plan lo encuentre como a cualquier otro, y queda decidido.
+  function alCrear(p, entidad) {
+    if (p.tipo === 'empresa') {
+      invalidarCatalogo('empresas')
+      setContexto((c) => ({ ...c, empresas: [...c.empresas, entidad] }))
+      setCreados((l) => [...l, `Empresa ${entidad.razon_social}`])
+    } else {
+      const grupo = {
+        id: entidad.id,
+        curso_id: p.inicial.curso_id,
+        fecha_inicio: entidad.fecha_inicio,
+        fecha_fin: entidad.fecha_fin,
+        identificador: entidad.identificador,
+      }
+      setContexto((c) => ({ ...c, grupos: [...c.grupos, grupo] }))
+      setCreados((l) => [...l, `Grupo ${entidad.cursos.nombre} · ${etiquetaGrupo(grupo)}`])
+    }
+    setDecisiones((d) => ({ ...d, [p.llave]: { accion: 'existente', id: entidad.id } }))
   }
 
   async function cargar() {
@@ -193,6 +217,9 @@ function ImportarMatriculas({ rol, onCerrar }) {
       {paso === 'resolver' && (
         <PasoResolver
           plan={plan}
+          rol={rol}
+          creados={creados}
+          onCreado={alCrear}
           cargando={cargandoContexto}
           error={errorContexto}
           onReintentar={() => {
@@ -403,7 +430,7 @@ function PasoArchivo({ nombreArchivo, resultado, leyendo, filtro, onFiltro, onAr
   )
 }
 
-function PasoResolver({ plan, cargando, error, onReintentar, onDecidir }) {
+function PasoResolver({ plan, rol, creados, onCreado, cargando, error, onReintentar, onDecidir }) {
   if (cargando) {
     return <p className="importar__intro">Cruzando el archivo con lo que hay en Dabi…</p>
   }
@@ -443,13 +470,31 @@ function PasoResolver({ plan, cargando, error, onReintentar, onDecidir }) {
         )}
       </div>
 
+      {/* Lo último creado y la cuenta: crear algo lo hace desaparecer de la
+          lista de pendientes, y sin esto no quedaría rastro de que pasó. */}
+      {creados.length > 0 && (
+        <p className="importar__creados">
+          Creado: {creados.at(-1)}
+          {creados.length > 1 && (
+            <span className="importar__creados-cuenta">
+              {' '}· {creados.length} en esta importación
+            </span>
+          )}
+        </p>
+      )}
+
       <div className="importar__resolver">
         {plan.pendientes.length === 0 ? (
           <p className="importar__intro">
             Todo coincide con lo que ya hay en Dabi: no hay nada que decidir.
           </p>
         ) : (
-          <ResolverPendientes pendientes={plan.pendientes} onDecidir={onDecidir} />
+          <ResolverPendientes
+            pendientes={plan.pendientes}
+            rol={rol}
+            onDecidir={onDecidir}
+            onCreado={onCreado}
+          />
         )}
       </div>
 

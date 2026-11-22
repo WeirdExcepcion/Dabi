@@ -117,7 +117,7 @@ prueba('curso desconocido: una sola decisión para todas sus filas, y bloquea ha
   assert.deepEqual(plan.filas[0].refs.grupo, { id: 10 })
 })
 
-prueba('grupo nuevo: se propone crearlo, una vez, y avisa si la fecha final no cuadra', () => {
+prueba('grupo nuevo: una sola tarjeta para crearlo, y al crearlo las filas lo encuentran', () => {
   const filas = leer(
     'CC;1;A;B;Trabajo en alturas avanzado;17/11/2026;21/11/2026;17/11/2026;independiente',
     'CC;2;C;D;Trabajo en alturas avanzado;17/11/2026;21/11/2026;17/11/2026;independiente',
@@ -126,13 +126,21 @@ prueba('grupo nuevo: se propone crearlo, una vez, y avisa si la fecha final no c
   const plan = construirPlan(filas, base(), {}, TODOS)
   const grupos = plan.pendientes.filter((p) => p.tipo === 'grupo')
   assert.equal(grupos.length, 2)
-  assert.equal(grupos[0].decision.accion, 'crear')
-  assert.deepEqual(grupos[0].crear, { curso_id: 1, fecha_inicio: '2026-11-17', fecha_fin: '2026-11-21' })
-  assert.equal(plan.conteo.lista, 3)
-  assert.equal(plan.filas[0].avisos.length, 0)
-  // Del 24 al 30 son 7 días y el curso dura 5.
-  assert.match(plan.filas[2].avisos.at(-1), /duración del curso \(5 días\)/)
-  assert.equal(llavesPorCrear(plan).length, 2)
+  // No se crea nada por su cuenta: se llena el formulario o se elige otro.
+  assert.equal(grupos[0].decision, null)
+  assert.equal(grupos[0].puedeCrear, true)
+  assert.deepEqual(grupos[0].inicial, { curso_id: 1, fecha_inicio: '2026-11-17' })
+  assert.equal(plan.conteo.bloqueada, 3)
+
+  // Creado con el formulario, el grupo ya está en la base y las dos filas lo
+  // encuentran solas.
+  const contexto = base()
+  contexto.grupos.push({ id: 50, curso_id: 1, fecha_inicio: '2026-11-17', fecha_fin: '2026-11-21', identificador: null })
+  const despues = construirPlan(filas, contexto, {}, TODOS)
+  assert.equal(despues.pendientes.filter((p) => p.tipo === 'grupo').length, 1)
+  assert.deepEqual(despues.filas[0].refs.grupo, { id: 50 })
+  assert.equal(despues.conteo.lista, 2)
+  assert.equal(llavesPorCrear(despues).length, 0)
 })
 
 prueba('solo la fecha final: se busca el grupo que termina ese día', () => {
@@ -143,10 +151,10 @@ prueba('solo la fecha final: se busca el grupo que termina ese día', () => {
   assert.match(plan.filas[0].avisos.at(-1), /ingreso es posterior/)
 })
 
-prueba('solo la fecha final y no hay grupo: se crea con la inicial calculada', () => {
+prueba('solo la fecha final y no hay grupo: el formulario arranca con la inicial calculada', () => {
   const filas = leer('CC;1;A;B;Trabajo en alturas avanzado;;21/11/2026;21/11/2026;independiente')
   const [g] = construirPlan(filas, base(), {}, TODOS).pendientes
-  assert.deepEqual(g.crear, { curso_id: 1, fecha_inicio: '2026-11-17', fecha_fin: '2026-11-21' })
+  assert.deepEqual(g.inicial, { curso_id: 1, fecha_inicio: '2026-11-17' })
   assert.match(g.nota, /que termine ese día/)
 })
 
@@ -158,16 +166,16 @@ prueba('sin fechas del curso: el grupo que estaba en curso el día de ingreso', 
   assert.equal(plan.filas[0].avisos.length, 0)
 })
 
-prueba('sin fechas y sin grupo en curso: se crea empezando el día de ingreso', () => {
+prueba('sin fechas y sin grupo en curso: se propone crearlo desde el día de ingreso', () => {
   const filas = leer(
     'CC;1;A;B;Trabajo en alturas avanzado;;;20/11/2026;independiente',
     'CC;2;C;D;Trabajo en alturas avanzado;;;20/11/2026;independiente',
   )
   const plan = construirPlan(filas, base(), {}, TODOS)
   assert.equal(plan.pendientes.length, 1)
-  assert.deepEqual(plan.pendientes[0].crear, { curso_id: 1, fecha_inicio: '2026-11-20', fecha_fin: '2026-11-24' })
-  assert.match(plan.filas[0].avisos[0], /empieza el día de ingreso/)
-  assert.equal(plan.conteo.lista, 2)
+  assert.deepEqual(plan.pendientes[0].inicial, { curso_id: 1, fecha_inicio: '2026-11-20' })
+  assert.match(plan.pendientes[0].nota, /crearlo desde ese día/)
+  assert.equal(plan.conteo.bloqueada, 2)
 })
 
 prueba('recepción no puede crear grupos: elige uno existente o la fila queda bloqueada', () => {
@@ -190,7 +198,7 @@ prueba('grupos paralelos el mismo día: hay que elegir, no se adivina', () => {
   assert.equal(plan.conteo.bloqueada, 1)
 })
 
-prueba('empresa nueva: una sola aunque el NIT venga con y sin DV, con el nombre que aparezca', () => {
+prueba('empresa nueva: una sola aunque el NIT venga con y sin DV, y el formulario arranca lleno', () => {
   const filas = leer(
     'CC;1;A;B;Trabajo en alturas avanzado;03/11/2026;07/11/2026;03/11/2026;800200300;',
     'CC;2;C;D;Trabajo en alturas avanzado;03/11/2026;07/11/2026;03/11/2026;800.200.300-5;Andamios del Sur',
@@ -200,17 +208,18 @@ prueba('empresa nueva: una sola aunque el NIT venga con y sin DV, con el nombre 
   assert.equal(plan.pendientes.length, 1)
   const [e] = plan.pendientes
   assert.equal(e.tipo, 'empresa')
-  assert.deepEqual(e.decision, { accion: 'crear', nombre: 'Andamios del Sur' })
+  assert.equal(e.decision, null)
   assert.deepEqual(e.filas, [2, 3, 4])
-  // Se guarda el NIT más completo, con su dígito de verificación.
-  assert.equal(e.crear.nit, '800.200.300-5')
-  assert.equal(plan.conteo.lista, 3)
+  // El NIT más completo, con su dígito de verificación, y el primer nombre.
+  assert.deepEqual(e.inicial, { razon_social: 'Andamios del Sur', nit: '800.200.300-5' })
+  assert.equal(plan.conteo.bloqueada, 3)
 
-  // Borrar el nombre deja la decisión elegida en pantalla pero sin resolver.
-  const sinNombre = construirPlan(filas, base(), { [e.llave]: { accion: 'crear', nombre: '  ' } }, TODOS)
-  assert.equal(sinNombre.pendientes[0].elegida.accion, 'crear')
-  assert.equal(sinNombre.pendientes[0].decision, null)
-  assert.equal(sinNombre.conteo.bloqueada, 3)
+  // Guardada con el formulario, las tres filas la encuentran por NIT.
+  const contexto = base()
+  contexto.empresas.push({ id: 60, razon_social: 'Andamios del Sur', nit: '800.200.300-5', es_independiente: false, activo: true })
+  const despues = construirPlan(filas, contexto, {}, TODOS)
+  assert.equal(despues.pendientes.length, 0)
+  assert.equal(despues.conteo.lista, 3)
 })
 
 prueba('empresa con el mismo nombre ya registrado: no deja crear otra', () => {
@@ -270,12 +279,18 @@ prueba('las filas con error del archivo se omiten y no generan decisiones', () =
   assert.equal(plan.filas[0].estado, 'omitida')
 })
 
-prueba('no se crea lo que solo usan filas bloqueadas', () => {
-  // Grupo nuevo, pero la empresa queda sin resolver para recepción.
-  const filas = leer('CC;1;A;B;Trabajo en alturas avanzado;17/11/2026;21/11/2026;17/11/2026;800200300;Andamios')
-  const plan = construirPlan(filas, base(), {}, { crearGrupos: true, crearEmpresas: false })
+prueba('no se crea un cargo que solo usan filas bloqueadas', () => {
+  // Cargo nuevo, pero la empresa no existe y recepción no puede crearla.
+  const filas = leer('CC;1;A;B;Trabajo en alturas avanzado;03/11/2026;07/11/2026;03/11/2026;800200300;Andamios;;;;;;;;;;;Soldador')
+  const plan = construirPlan(filas, base(), {}, RECEPCION)
   assert.equal(plan.conteo.bloqueada, 1)
+  assert.ok(plan.pendientes.some((p) => p.tipo === 'cargo'))
   assert.equal(llavesPorCrear(plan).length, 0)
+
+  // Con la empresa resuelta, el cargo sí se crea.
+  const resuelta = construirPlan(filas, base(), { 'empresa|800200300': { accion: 'existente', id: 40 } }, RECEPCION)
+  assert.equal(resuelta.conteo.lista, 1)
+  assert.deepEqual(llavesPorCrear(resuelta).map((p) => p.tipo), ['cargo'])
 })
 
 console.log(`\n${pasadas} pruebas pasadas`)
