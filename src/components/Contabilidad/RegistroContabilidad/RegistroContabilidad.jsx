@@ -9,6 +9,19 @@ import './RegistroContabilidad.css'
 const POR_PAGINA = 25
 const CLAVE_IDENTIDAD = 'dabi_conta_identidad_separada'
 
+// Un solo estado de cobro por fila, en orden de avance: sin factura vigente no
+// hay nada que cobrar todavía; con factura, está pagada o no.
+function estadoCobro(fila) {
+  if (fila.estado_facturacion !== 'facturado') return 'sin-facturar'
+  return fila.estado_pago === 'pago' ? 'pagado' : 'no-pagado'
+}
+
+const ETIQUETA_COBRO = {
+  'sin-facturar': 'Sin facturar',
+  'no-pagado': 'No pagado',
+  pagado: 'Pagado',
+}
+
 function RegistroContabilidad() {
   const [fecha, setFecha] = useState(hoyISO())
   const [filas, setFilas] = useState([])
@@ -167,9 +180,10 @@ function RegistroContabilidad() {
                   <tbody>
                     {filas.map((fila) => {
                       const facturado = fila.estado_facturacion === 'facturado'
+                      const cobro = estadoCobro(fila)
 
                       return (
-                        <tr key={fila.matricula_id}>
+                        <tr key={fila.matricula_id} className={`conta-reg__fila conta-reg__fila_${cobro}`}>
                           <td className="conta-reg__td conta-reg__td_fecha">
                             {fila.fecha_ingreso}
                           </td>
@@ -196,27 +210,10 @@ function RegistroContabilidad() {
                           </td>
                           <td className="conta-reg__td">{fila.empresa || '—'}</td>
 
-                          <td className="conta-reg__td conta-reg__td_estados">
-                            {facturado ? (
-                              <>
-                                <span className="conta-reg__marca conta-reg__marca_facturado">
-                                  Facturado
-                                </span>
-                                <span
-                                  className={
-                                    fila.estado_pago === 'pago'
-                                      ? 'conta-reg__marca conta-reg__marca_pago'
-                                      : 'conta-reg__marca conta-reg__marca_no-pago'
-                                  }
-                                >
-                                  {fila.estado_pago === 'pago' ? 'Pagado' : 'No pagado'}
-                                </span>
-                              </>
-                            ) : (
-                              <span className="conta-reg__marca conta-reg__marca_pendiente">
-                                Sin facturar
-                              </span>
-                            )}
+                          <td className="conta-reg__td">
+                            <span className={`conta-reg__marca conta-reg__marca_${cobro}`}>
+                              {ETIQUETA_COBRO[cobro]}
+                            </span>
                           </td>
 
                           <td className="conta-reg__td conta-reg__td_identificacion">
