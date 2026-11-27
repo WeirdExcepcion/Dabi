@@ -18,8 +18,8 @@ function estadoCobro(fila) {
 
 const ETIQUETA_COBRO = {
   'sin-facturar': 'Sin facturar',
-  'no-pagado': 'No pagado',
-  pagado: 'Pagado',
+  'no-pagado': 'Facturado · No pagado',
+  pagado: 'Facturado · Pagado',
 }
 
 function RegistroContabilidad() {

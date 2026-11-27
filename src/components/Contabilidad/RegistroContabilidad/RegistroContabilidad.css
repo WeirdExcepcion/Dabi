@@ -206,15 +206,19 @@
   margin-left: 14px;
 }
 
-/* Lo que falta por cobrar se marca en la fila entera, no solo en una etiqueta:
-   una línea en el borde superior y un fondo apenas tibio, para que se vea al
-   recorrer la tabla. Lo pagado queda tranquilo: ya no pide nada. */
-.conta-reg__fila_no-pagado {
-  background-color: rgba(239, 159, 39, 0.06);
+/* El estado de cobro se marca en la fila entera, con una línea en el borde
+   superior del color de su etiqueta: se lee al recorrer la tabla sin tener
+   que buscar la columna. */
+.conta-reg__fila_sin-facturar .conta-reg__td {
+  box-shadow: inset 0 2px 0 #C62828;
 }
 
 .conta-reg__fila_no-pagado .conta-reg__td {
   box-shadow: inset 0 2px 0 #EF9F27;
+}
+
+.conta-reg__fila_pagado .conta-reg__td {
+  box-shadow: inset 0 2px 0 #1F8A4C;
 }
 
 .conta-reg__marca {
@@ -228,8 +232,8 @@
 }
 
 .conta-reg__marca_sin-facturar {
-  background-color: rgba(2, 17, 60, 0.07);
-  color: var(--texto-secundario);
+  background-color: rgba(198, 40, 40, 0.12);
+  color: #8C1D18;
 }
 
 .conta-reg__marca_no-pagado {
