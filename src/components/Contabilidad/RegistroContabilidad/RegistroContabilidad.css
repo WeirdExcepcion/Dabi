@@ -135,6 +135,7 @@
   font-size: 14px;
   color: var(--azul-medianoche);
   border-bottom: 1px solid rgba(2, 17, 60, 0.05);
+  transition: box-shadow 0.15s ease;
 }
 
 .conta-reg__tabla tbody tr:last-child .conta-reg__td {
@@ -206,18 +207,18 @@
   margin-left: 14px;
 }
 
-/* El estado de cobro se marca en la fila entera, con una línea en el borde
-   superior del color de su etiqueta: se lee al recorrer la tabla sin tener
-   que buscar la columna. */
-.conta-reg__fila_sin-facturar .conta-reg__td {
+/* La línea del color del estado aparece solo en la fila sobre la que está el
+   puntero, o la que tiene el foco al recorrer con Tab: con todas encendidas a
+   la vez la tabla se cargaba de color. */
+.conta-reg__fila_sin-facturar:is(:hover, :focus-within) .conta-reg__td {
   box-shadow: inset 0 2px 0 #C62828;
 }
 
-.conta-reg__fila_no-pagado .conta-reg__td {
+.conta-reg__fila_no-pagado:is(:hover, :focus-within) .conta-reg__td {
   box-shadow: inset 0 2px 0 #EF9F27;
 }
 
-.conta-reg__fila_pagado .conta-reg__td {
+.conta-reg__fila_pagado:is(:hover, :focus-within) .conta-reg__td {
   box-shadow: inset 0 2px 0 #1F8A4C;
 }
 
